@@ -182,12 +182,6 @@
           ]
         },
         {
-          "id": "hiragana-a-row-pronunciation",
-          "kind": "audio",
-          "reference": "hiragana-a-row",
-          "label": "Hear the row"
-        },
-        {
           "id": "hiragana-a-row-guided",
           "kind": "exercise-slot",
           "title": "Guided practice",
@@ -325,12 +319,6 @@
               "reading": "ko"
             }
           ]
-        },
-        {
-          "id": "hiragana-k-row-pronunciation",
-          "kind": "audio",
-          "reference": "hiragana-k-row",
-          "label": "Hear the row"
         },
         {
           "id": "hiragana-k-row-guided",
@@ -472,12 +460,6 @@
           ]
         },
         {
-          "id": "hiragana-s-row-pronunciation",
-          "kind": "audio",
-          "reference": "hiragana-s-row",
-          "label": "Hear the row"
-        },
-        {
           "id": "hiragana-s-row-guided",
           "kind": "exercise-slot",
           "title": "Guided practice",
@@ -615,12 +597,6 @@
               "reading": "to"
             }
           ]
-        },
-        {
-          "id": "hiragana-t-row-pronunciation",
-          "kind": "audio",
-          "reference": "hiragana-t-row",
-          "label": "Hear the row"
         },
         {
           "id": "hiragana-t-row-guided",
