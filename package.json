@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest run --environment jsdom",
+    "content:validate": "node --experimental-strip-types scripts/content-validate.ts",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b --pretty false"
   },

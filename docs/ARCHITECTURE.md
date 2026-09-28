@@ -7,4 +7,4 @@
 - **UI:** React components render application state and provide touch-friendly controls without relying on hover.
 - **Offline support:** the shell includes a web app manifest. Service-worker caching and offline behavior are future work.
 
-The source tree reserves boundaries for lessons, exercises, review, progress, auth, sync, content, storage, spaced repetition, and learning sessions. Features will be added in their planned work rather than implemented in this bootstrap.
+The source tree reserves boundaries for lessons, exercises, review, progress, auth, sync, content, storage, spaced repetition, and learning sessions. Canonical curriculum records live in `src/content/catalog.json`; typed models and deterministic validation live under `src/lib/content`. The content registry has no UI or service dependencies.
