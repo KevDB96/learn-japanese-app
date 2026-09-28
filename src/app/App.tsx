@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { LearnContinue } from '../features/lessons/LearnContinue.tsx'
+import { AccountPanel } from '../features/auth/AccountPanel.tsx'
+import { createAuthAdapter } from '../lib/auth/auth.ts'
 import './app.css'
 
 const destinations = [
@@ -10,6 +12,7 @@ const destinations = [
 ] as const
 
 type Destination = (typeof destinations)[number]['id']
+const auth = createAuthAdapter()
 
 function destinationFromHash(): Destination {
   const id = window.location.hash.slice(1)
@@ -40,7 +43,7 @@ export function App() {
       <main id="main-content" className="page-content" tabIndex={-1}>
         <section aria-labelledby="page-title">
           <h1 id="page-title">{current.title}</h1>
-          {active === 'learn' ? <LearnContinue /> : <p className="empty-state">{current.message}</p>}
+          {active === 'learn' ? <LearnContinue /> : active === 'more' ? <AccountPanel auth={auth} /> : <p className="empty-state">{current.message}</p>}
         </section>
       </main>
       <nav className="bottom-nav" aria-label="Main navigation">

@@ -69,6 +69,12 @@ h1 {
 }
 
 .learn-continue { display: grid; gap: 1rem; margin-top: 1.5rem; }
+.account-panel { display: grid; gap: .9rem; max-width: 28rem; margin-top: 1.5rem; }
+.account-panel p { margin: 0; color: #59645f; }
+.account-panel form, .account-panel label { display: grid; gap: .5rem; }
+.account-panel input { min-height: 2.75rem; padding: .5rem .75rem; border: 1px solid #aeb9b3; border-radius: .6rem; font: inherit; }
+.account-panel button { min-height: 2.75rem; padding: .4rem .9rem; border: 1px solid #b8c2bc; border-radius: .65rem; background: #fffefa; color: #174f43; font-weight: 700; touch-action: manipulation; }
+.account-actions { display: flex; flex-wrap: wrap; gap: .6rem; }
 .learn-continue p { margin: 0; color: #59645f; font-size: 1.125rem; }
 .primary-action {
   width: 100%;

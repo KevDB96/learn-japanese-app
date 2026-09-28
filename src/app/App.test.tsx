@@ -46,4 +46,12 @@ describe('App navigation shell', () => {
     expect(screen.getByRole('heading', { name: 'Welcome to Japanese' })).toBeInTheDocument()
     expect(screen.queryByText(/due|review count/i)).not.toBeInTheDocument()
   })
+
+  it('keeps guest mode available in More without Supabase credentials', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'More' }))
+    expect(screen.getByText('Guest mode')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue as Guest' })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Email')).not.toBeInTheDocument()
+  })
 })
