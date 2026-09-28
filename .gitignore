@@ -6,3 +6,7 @@ coverage/
 .env
 .env.*
 !.env.example
+
+.playwright-browsers/
+test-results/
+playwright-report/

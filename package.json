@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "vitest run --environment jsdom",
+    "preview": "vite preview",
+    "test": "vitest run src --environment jsdom",
     "content:validate": "node --experimental-strip-types scripts/content-validate.ts",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && node scripts/generate-service-worker.mjs",
+    "test:browser": "playwright test",
     "typecheck": "tsc -b --pretty false"
   },
   "dependencies": {
@@ -16,6 +18,7 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/react": "^19.1.12",
