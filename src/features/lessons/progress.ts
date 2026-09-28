@@ -4,6 +4,7 @@ import type { ConceptLifecycle, ConceptState, LessonProgress, StoredRecord } fro
 export type ProgressRepositories = {
   lessonProgress: { get(id: string): Promise<LessonProgress | undefined>; put(value: LessonProgress): Promise<void>; list(): Promise<LessonProgress[]> };
   conceptStates: { get(id: string): Promise<ConceptState | undefined>; put(value: ConceptState): Promise<void>; list(): Promise<ConceptState[]> };
+  reviews?: { introduce(conceptId: string, at: number): Promise<void> };
 };
 
 export type ResumeResult = { readonly kind: "resume"; readonly blockIndex: number } | { readonly kind: "content-changed"; readonly blockIndex: 0 };
@@ -48,6 +49,7 @@ export async function completeLesson(repos: ProgressRepositories, catalog: Conte
   if (existing?.status === "completed") return;
   const updatedAt = stamp(now);
   for (const conceptId of new Set([...lesson.introduces, ...lesson.reinforces])) {
+    await repos.reviews?.introduce(conceptId, Date.parse(updatedAt));
     const previous = await repos.conceptStates.get(conceptId);
     const lifecycle: ConceptLifecycle = getConceptLifecycle(previous) === "UNSEEN" ? "INTRODUCED" : getConceptLifecycle(previous);
     await repos.conceptStates.put({

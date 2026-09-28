@@ -29,6 +29,22 @@ export interface ManualPracticeActivity {
   affectsSchedule: false
 }
 
+export interface DueReviewCandidate {
+  readonly cardId: string;
+  readonly conceptId: string;
+  readonly dueAt: string;
+  readonly overdueMs: number;
+}
+
+export interface SchedulingReviewEvent {
+  readonly id: string;
+  readonly conceptId: string;
+  readonly cardId: string;
+  readonly reviewedAt: string;
+  readonly rating: ReviewRating;
+  readonly kind: 'scheduled-review' | 'practice';
+}
+
 const fsrsScheduler = fsrs({ enable_fuzz: false })
 
 const ratingMap: Record<ReviewRating, FsrsRating> = {
@@ -66,6 +82,29 @@ export function createSrsState(conceptId: string, at: number): SrsState {
       repetitions: card.reps,
     },
   }
+}
+
+export function applyReviewEvent(state: SrsState | undefined, event: SchedulingReviewEvent): SrsState | undefined {
+  if (event.kind === 'practice') return state;
+  const at = Date.parse(event.reviewedAt);
+  if (!Number.isFinite(at)) throw new RangeError('Review timestamp must be valid');
+  return reviewSrsState(state ?? createSrsState(event.conceptId, at), event.rating, at);
+}
+
+/** Due cards sort most overdue first, then by scheduler due time and stable card identity. */
+export function selectDueReviews(states: readonly { readonly cardId: string; readonly conceptId: string; readonly state: SrsState }[], now: number): DueReviewCandidate[] {
+  return states.flatMap(({ cardId, conceptId, state }) => {
+    const dueAt = Date.parse(state.nextDueAt);
+    return dueAt <= now ? [{ cardId, conceptId, dueAt: state.nextDueAt, overdueMs: now - dueAt }] : [];
+  }).sort((a, b) => b.overdueMs - a.overdueMs || a.dueAt.localeCompare(b.dueAt) || a.cardId.localeCompare(b.cardId));
+}
+
+export function rebuildSrsState(events: readonly SchedulingReviewEvent[], conceptId: string, cardId: string): SrsState | undefined {
+  let state: SrsState | undefined;
+  const ordered = events.filter((event) => event.conceptId === conceptId && event.cardId === cardId && event.kind === 'scheduled-review')
+    .slice().sort((a, b) => a.reviewedAt.localeCompare(b.reviewedAt) || a.id.localeCompare(b.id));
+  for (const event of ordered) state = applyReviewEvent(state, event);
+  return state;
 }
 
 export function reviewSrsState(state: SrsState, rating: ReviewRating, reviewedAt: number): SrsState {

@@ -3,7 +3,7 @@ import { STORAGE_DATABASE_NAME, STORAGE_SCHEMA_VERSION } from "./types";
 
 export const STORE_NAMES = [
   "profiles", "settings", "lessonProgress", "conceptStates", "reviewEvents",
-  "pendingSync", "appMetadata", "deviceMetadata",
+  "pendingSync", "appMetadata", "deviceMetadata", "reviewStates",
 ] as const;
 export type StoreName = (typeof STORE_NAMES)[number];
 
@@ -12,7 +12,7 @@ type Migration = (db: IDBDatabase, transaction: IDBTransaction) => void;
 /** Add one migration per schema version. A migration only runs when upgrading to that version. */
 export const migrations: Readonly<Record<number, Migration>> = {
   1(db, transaction) {
-    for (const name of STORE_NAMES) {
+    for (const name of STORE_NAMES.filter((name) => name !== "reviewStates")) {
       if (!db.objectStoreNames.contains(name)) db.createObjectStore(name, { keyPath: "id" });
     }
     const now = new Date().toISOString();
@@ -20,6 +20,9 @@ export const migrations: Readonly<Record<number, Migration>> = {
     const device: DeviceMetadata = { id: "device", recordVersion: 1, updatedAt: now, deviceId: "", registeredAt: now };
     transaction.objectStore("appMetadata").put(app);
     transaction.objectStore("deviceMetadata").put(device);
+  },
+  2(db) {
+    if (!db.objectStoreNames.contains("reviewStates")) db.createObjectStore("reviewStates", { keyPath: "id" });
   },
 };
 

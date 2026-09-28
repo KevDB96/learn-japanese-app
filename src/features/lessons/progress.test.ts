@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ContentCatalog, ContentId, Lesson } from "../../lib/content/types.ts";
-import type { ConceptState, LessonProgress } from "../../lib/storage/types.ts";
+import type { ConceptState, LessonProgress, ReviewCardState } from "../../lib/storage/types.ts";
 import { completeLesson, getConceptLifecycle, getContinueLesson, getNextLesson, getUnlockedLessons, resolveLessonResume, saveLessonPosition } from "./progress.ts";
 
 const cid = (id: string) => id as ContentId;
@@ -12,11 +12,13 @@ const catalog: ContentCatalog = { metadata: { schemaVersion: 1, contentVersion: 
 function memory() {
   const lessons = new Map<string, LessonProgress>();
   const concepts = new Map<string, ConceptState>();
+  const reviewStates = new Map<string, ReviewCardState>();
   return {
-    lessons, concepts,
+    lessons, concepts, reviewStates,
     repos: {
       lessonProgress: { get: async (id: string) => lessons.get(id), put: async (item: LessonProgress) => { lessons.set(item.id, item); }, list: async () => [...lessons.values()] },
       conceptStates: { get: async (id: string) => concepts.get(id), put: async (item: ConceptState) => { concepts.set(item.id, item); }, list: async () => [...concepts.values()] },
+      reviews: { introduce: async (conceptId: string, at: number) => { if (!reviewStates.has(conceptId)) reviewStates.set(conceptId, { id: conceptId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId: conceptId, state: { schemaVersion: 1, conceptId, difficulty: 0, stability: 0, lastReviewedAt: null, nextDueAt: new Date(at).toISOString(), reviewCount: 0, lapseCount: 0, scheduler: { state: "New", elapsedDays: 0, scheduledDays: 0, learningSteps: 0, repetitions: 0 } } }); } },
     },
   };
 }
@@ -37,6 +39,7 @@ describe("lesson progress", () => {
     await completeLesson(db.repos, catalog, intro, () => new Date("2026-01-02T00:00:00Z"));
     expect(db.lessons.get("intro")?.completedAt).toBe(completedAt);
     expect(getConceptLifecycle(db.concepts.get("concept-a"))).toBe("INTRODUCED");
+    expect(db.reviewStates.get("concept-a")?.state).toMatchObject({ reviewCount: 0, lapseCount: 0, lastReviewedAt: null });
     expect(getUnlockedLessons(catalog, [db.lessons.get("intro")!], [...db.concepts.values()]).map((item) => item.id)).toEqual(["next"]);
   });
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { contentCatalog } from "../../lib/content/catalog.ts";
+import type { ContentId } from "../../lib/content/types.ts";
 import { composeSession, type SessionPlan } from "../../lib/session/session.ts";
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import { getContinueLesson } from "./progress.ts";
@@ -17,10 +18,10 @@ export function LearnContinue() {
     let cancelled = false;
     void openLocalRepositories().then(async (repos) => {
       try {
-        const [progress, concepts] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list()]);
+        const [progress, concepts, due] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(Date.now())]);
         const lesson = getContinueLesson(contentCatalog, progress, concepts);
         const lessonMode = progress.some((item) => item.lessonId === lesson?.id && item.status === "in-progress") ? "resume" : "new";
-        const plan = composeSession({ dueReviewIds: [], weakConceptIds: [], currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP });
+        const plan = composeSession({ dueReviewIds: due.map((candidate) => candidate.conceptId as ContentId), weakConceptIds: [], currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP });
         if (!cancelled) setState({ plan, lessonId: lesson?.id });
       } catch {
         if (!cancelled) setError(true);
@@ -38,9 +39,12 @@ export function LearnContinue() {
     return <LessonSession lesson={lesson} />;
   }
   const nextItem = state.plan.items.find((item) => item.kind === "lesson");
-  if (!nextItem) return <p className="empty-state">No lesson is ready yet.</p>;
+  if (!nextItem) return state.plan.summary.reviewCount > 0
+    ? <p className="empty-state">{state.plan.summary.reviewCount} reviews due</p>
+    : <p className="empty-state">No lesson is ready yet.</p>;
   const lesson = contentCatalog.lessons.find((item) => item.id === nextItem.lessonId)!;
   return <div className="learn-continue">
+    {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
     <p>{lesson.display}</p>
     <button className="primary-action" type="button" onClick={() => setStarted(true)}>Continue</button>
   </div>;

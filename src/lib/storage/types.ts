@@ -37,9 +37,19 @@ export interface ConceptState extends StoredRecord {
 }
 
 export interface ReviewEvent extends StoredRecord {
+  /** The reviewed concept and card are separate so multiple forms can schedule independently. */
   readonly conceptId: string;
+  readonly cardId: string;
   readonly reviewedAt: string;
   readonly rating: "again" | "hard" | "good" | "easy";
+  readonly kind: "scheduled-review" | "practice";
+  readonly sessionId?: string;
+}
+
+export interface ReviewCardState extends StoredRecord {
+  readonly conceptId: string;
+  readonly cardId: string;
+  readonly state: import("../../features/review/srs.ts").SrsState;
 }
 
 export interface PendingSyncOperation extends StoredRecord {
@@ -58,5 +68,5 @@ export interface DeviceMetadata extends StoredRecord {
   readonly registeredAt: string;
 }
 
-export const STORAGE_SCHEMA_VERSION = 1;
+export const STORAGE_SCHEMA_VERSION = 2;
 export const STORAGE_DATABASE_NAME = "learn-japanese-local";

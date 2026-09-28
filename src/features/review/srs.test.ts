@@ -3,6 +3,7 @@ import {
   createSrsState,
   recordManualPractice,
   restoreSrsState,
+  selectDueReviews,
   reviewSrsState,
   serializeSrsState,
   toFsrsRating,
@@ -98,5 +99,14 @@ describe('SRS scheduling', () => {
       kind: 'practice', conceptId: 'word:犬', occurredAt: '2026-01-01T00:00:05.000Z', affectsSchedule: false,
     })
     expect(state).toEqual(createSrsState('word:犬', start))
+  })
+
+  it('selects due cards by overdue priority and stable tie breaking', () => {
+    const dueAt = (id: string, due: number) => ({ cardId: id, conceptId: id, state: createSrsState(id, due) })
+    expect(selectDueReviews([
+      dueAt('later', start - 60_000), dueAt('same-b', start - 120_000), dueAt('same-a', start - 120_000), dueAt('future', start + 1),
+    ], start)).toMatchObject([
+      { cardId: 'same-a', overdueMs: 120_000 }, { cardId: 'same-b', overdueMs: 120_000 }, { cardId: 'later', overdueMs: 60_000 },
+    ])
   })
 })
