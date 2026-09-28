@@ -19,11 +19,18 @@ export interface UserSettings extends StoredRecord {
 export interface LessonProgress extends StoredRecord {
   readonly lessonId: string;
   readonly status: "not-started" | "in-progress" | "completed";
+  readonly currentBlockId?: string;
+  readonly currentStep?: number;
+  readonly contentVersion?: string;
+  readonly contentSchemaVersion?: number;
   readonly completedAt?: string;
 }
 
+export type ConceptLifecycle = "UNSEEN" | "INTRODUCED" | "LEARNING" | "FAMILIAR" | "MASTERED";
+
 export interface ConceptState extends StoredRecord {
   readonly conceptId: string;
+  readonly lifecycle?: ConceptLifecycle;
   readonly familiarity: number;
   readonly nextReviewAt?: string;
   readonly lastReviewedAt?: string;
