@@ -128,7 +128,26 @@ export function validateContent(input: unknown): string[] {
       else if (value.kind === "vocabulary-list") stringArray("items", ["japanese", "reading", "translation"]);
       else if (value.kind === "grammar-breakdown") { requiredString("japanese"); requiredString("translation"); stringArray("parts", ["text", "meaning"]); }
       else if (value.kind === "audio") { requiredString("reference"); requiredString("label"); }
-      else if (value.kind === "exercise-slot") requiredString("title");
+      else if (value.kind === "exercise-slot") {
+        requiredString("title");
+        if (!Array.isArray(value.exercises)) issues.push(`${blockPath}.exercises must be an array`);
+        else value.exercises.forEach((rawExercise, k) => {
+          const exercisePath = `${blockPath}.exercises[${k}]`;
+          const exercise = register(rawExercise, exercisePath);
+          if (!exercise) return;
+          for (const field of ["prompt", "type"]) if (!string(exercise[field])) issues.push(`${exercisePath}.${field} is required`);
+          const feedback = exercise.feedback;
+          if (!isRecord(feedback)) issues.push(`${exercisePath}.feedback must be an object`);
+          else for (const field of ["success", "explanation"]) if (!string(feedback[field])) issues.push(`${exercisePath}.feedback.${field} is required`);
+          if (!string(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
+          if (exercise.type === "multiple-choice" || exercise.type === "character-selection") {
+            if (!Array.isArray(exercise.options) || exercise.options.length < 2 || exercise.options.some((option) => !string(option))) issues.push(`${exercisePath}.options must contain at least two non-empty strings`);
+          } else if (exercise.type === "short-text") {
+            if (exercise.acceptedAnswers !== undefined && (!Array.isArray(exercise.acceptedAnswers) || exercise.acceptedAnswers.some((answer) => !string(answer)))) issues.push(`${exercisePath}.acceptedAnswers must contain non-empty strings`);
+            if (exercise.normalizeWhitespace !== undefined && typeof exercise.normalizeWhitespace !== "boolean") issues.push(`${exercisePath}.normalizeWhitespace must be boolean`);
+          } else issues.push(`${exercisePath}.type "${String(exercise.type)}" is unknown`);
+        });
+      }
       else if (value.kind === "checkpoint") { requiredString("title"); if (!Array.isArray(value.points) || value.points.some((point) => !string(point))) issues.push(`${blockPath}.points must be an array of non-empty strings`); }
       else if (value.kind === "concept-ref") {
         if (typeof value.conceptId !== "string" || !conceptIds.includes(value.conceptId)) issues.push(`${blockPath}.conceptId references missing concept "${String(value.conceptId ?? "")}"`);

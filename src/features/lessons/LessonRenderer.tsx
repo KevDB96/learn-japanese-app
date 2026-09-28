@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Lesson, LessonBlock } from "../../lib/content/types.ts";
+import { ExerciseSlot } from "./ExerciseEngine.tsx";
 
 type Renderer<K extends LessonBlock["kind"]> = (props: { block: Extract<LessonBlock, { kind: K }> }) => ReactNode;
 const renderers: { readonly [K in LessonBlock["kind"]]: Renderer<K> } = {
@@ -12,7 +13,7 @@ const renderers: { readonly [K in LessonBlock["kind"]]: Renderer<K> } = {
   "vocabulary-list": ({ block }) => <section>{block.title && <h3>{block.title}</h3>}<ul>{block.items.map((item, index) => <li key={`${item.japanese}-${index}`}><span lang="ja">{item.japanese}</span> <span lang="ja-Latn">{item.reading}</span> <span lang="en">{item.translation}</span></li>)}</ul></section>,
   "grammar-breakdown": ({ block }) => <section>{block.title && <h3>{block.title}</h3>}<p><span lang="ja">{block.japanese}</span>{block.reading && <> <span lang="ja-Latn">{block.reading}</span></>} <span lang="en">{block.translation}</span></p><ol>{block.parts.map((part, index) => <li key={`${part.text}-${index}`}><span lang="ja">{part.text}</span>{part.reading && <> <span lang="ja-Latn">{part.reading}</span></>} <span lang="en">{part.meaning}</span></li>)}</ol></section>,
   audio: ({ block }) => <button type="button" disabled aria-label={`${block.label}: audio not available`} data-audio-reference={block.reference}>{block.label} · Audio unavailable</button>,
-  "exercise-slot": ({ block }) => <section aria-label={block.title}><h3>{block.title}</h3><p>Coming soon</p></section>,
+  "exercise-slot": ({ block }) => <ExerciseSlot title={block.title} exercises={block.exercises} />,
   checkpoint: ({ block }) => <section><h2>{block.title}</h2><ul>{block.points.map((point, index) => <li key={`${point}-${index}`}>{point}</li>)}</ul></section>,
   text: ({ block }) => <p><span lang="ja">{block.display}</span> <span lang="en">{block.translation}</span></p>,
   "concept-ref": ({ block }) => <span data-content-reference={block.conceptId} />,

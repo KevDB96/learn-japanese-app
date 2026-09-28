@@ -26,6 +26,6 @@ describe('lesson block renderer', () => {
     const article = screen.getByRole('article', { name: 'Welcome to Japanese' })
     const ids = within(article).getAllByText(/Welcome to Japanese|Japanese uses three writing systems|こんにちは|Romaji \(Japanese written with Latin letters\)|How learning works/)
       .map((element) => element.closest('[data-block-id]')?.getAttribute('data-block-id'))
-    expect(ids).toEqual(['intro-title', 'writing-systems', 'hiragana-example', 'romaji-note', 'learning-model'])
+    expect(ids).toEqual(['intro-title', 'writing-systems', 'hiragana-example', 'romaji-note', 'learning-model', 'intro-exercises'])
   })
 })

@@ -16,7 +16,12 @@
       { "id": "writing-systems", "kind": "paragraph", "text": "Japanese uses three writing systems. Hiragana writes native words and grammar endings. Katakana writes many borrowed words and names. Kanji are characters that carry meaning." },
       { "id": "hiragana-example", "kind": "japanese-example", "japanese": "こんにちは", "reading": "konnichiwa", "translation": "Hello" },
       { "id": "romaji-note", "kind": "callout", "title": "A note about romaji", "text": "Romaji (Japanese written with Latin letters) can help at first. We will use less of it as you learn kana, so you can read Japanese directly." },
-      { "id": "learning-model", "kind": "checkpoint", "title": "How learning works", "points": ["Lessons teach new ideas.", "Exercises build understanding.", "Reviews help you remember.", "The curriculum chooses what comes next."] }
+      { "id": "learning-model", "kind": "checkpoint", "title": "How learning works", "points": ["Lessons teach new ideas.", "Exercises build understanding.", "Reviews help you remember.", "The curriculum chooses what comes next."] },
+      { "id": "intro-exercises", "kind": "exercise-slot", "title": "Quick check", "exercises": [
+        { "id": "writing-system-check", "type": "multiple-choice", "prompt": "Which script commonly writes borrowed words?", "options": ["Hiragana", "Katakana", "Kanji"], "answer": "Katakana", "feedback": { "success": "Correct.", "explanation": "Katakana commonly writes borrowed words and names." } },
+        { "id": "hello-script-check", "type": "character-selection", "prompt": "Select the Japanese greeting.", "options": ["こんにちは", "hello", "ありがとう"], "answer": "こんにちは", "feedback": { "success": "Correct.", "explanation": "こんにちは is a Japanese greeting meaning hello." } },
+        { "id": "lesson-model-check", "type": "short-text", "prompt": "What helps you remember over time?", "answer": "Reviews", "acceptedAnswers": ["reviews"], "feedback": { "success": "Correct.", "explanation": "Reviews help strengthen memory over time." } }
+      ] }
     ]
   }],
   "concepts": [],

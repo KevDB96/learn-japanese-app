@@ -56,11 +56,18 @@ export type LessonBlock =
   | { readonly id: ContentId; readonly kind: "vocabulary-list"; readonly title?: string; readonly items: readonly { readonly japanese: string; readonly reading: string; readonly translation: string }[] }
   | { readonly id: ContentId; readonly kind: "grammar-breakdown"; readonly title?: string; readonly japanese: string; readonly reading?: string; readonly translation: string; readonly parts: readonly { readonly text: string; readonly reading?: string; readonly meaning: string }[] }
   | { readonly id: ContentId; readonly kind: "audio"; readonly reference: string; readonly label: string }
-  | { readonly id: ContentId; readonly kind: "exercise-slot"; readonly title: string }
+  | { readonly id: ContentId; readonly kind: "exercise-slot"; readonly title: string; readonly exercises: readonly ExerciseDefinition[] }
   | { readonly id: ContentId; readonly kind: "checkpoint"; readonly title: string; readonly points: readonly string[] }
   | { readonly id: ContentId; readonly kind: "text"; readonly display: string; readonly translation: string }
   | { readonly id: ContentId; readonly kind: "concept-ref"; readonly conceptId: ContentId }
   | { readonly id: ContentId; readonly kind: "sentence-ref"; readonly sentenceId: ContentId };
+
+export interface ExerciseFeedback { readonly success: string; readonly explanation: string }
+interface ExerciseBase { readonly id: ContentId; readonly prompt: string; readonly feedback: ExerciseFeedback }
+export type ExerciseDefinition =
+  | (ExerciseBase & { readonly type: "multiple-choice"; readonly options: readonly string[]; readonly answer: string })
+  | (ExerciseBase & { readonly type: "character-selection"; readonly options: readonly string[]; readonly answer: string })
+  | (ExerciseBase & { readonly type: "short-text"; readonly answer: string; readonly acceptedAnswers?: readonly string[]; readonly normalizeWhitespace?: boolean });
 
 export interface ContentCatalog {
   readonly metadata: ContentMetadata;
