@@ -1,13 +1,38 @@
 import '@testing-library/jest-dom/vitest'
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { afterEach, describe, expect, it } from 'vitest'
 import { App } from './App'
 
-describe('App', () => {
-  it('renders the starter application shell', () => {
+afterEach(() => {
+  cleanup()
+  window.history.replaceState(null, '', '/')
+})
+
+describe('App navigation shell', () => {
+  it('starts on Learn with labelled destinations and semantic landmarks', () => {
     render(<App />)
 
+    expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument()
+    expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Learn Japanese' })).toBeInTheDocument()
-    expect(screen.getByText('Your learning path starts here.')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Learn' })).toHaveAttribute('aria-current', 'page')
+    for (const label of ['Practice', 'Progress', 'More']) {
+      expect(screen.getByRole('button', { name: label })).toBeInTheDocument()
+    }
+  })
+
+  it('changes active destination and restores it from the URL hash', () => {
+    render(<App />)
+
+    const navigation = within(screen.getByRole('navigation', { name: 'Main navigation' }))
+    fireEvent.click(navigation.getByRole('button', { name: 'Practice' }))
+    expect(screen.getByRole('heading', { name: 'Practice' })).toBeInTheDocument()
+    expect(navigation.getByRole('button', { name: 'Practice' })).toHaveAttribute('aria-current', 'page')
+    expect(window.location.hash).toBe('#practice')
+
+    window.history.replaceState(null, '', '#progress')
+    fireEvent(window, new HashChangeEvent('hashchange'))
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument()
+    expect(navigation.getByRole('button', { name: 'Progress' })).toHaveAttribute('aria-current', 'page')
   })
 })
