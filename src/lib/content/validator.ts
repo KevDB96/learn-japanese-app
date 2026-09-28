@@ -103,10 +103,34 @@ export function validateContent(input: unknown): string[] {
       const value = register(block, blockPath);
       if (!value) return;
       if (!string(value.kind)) { issues.push(`${blockPath}.kind is required`); return; }
+      const requiredString = (field: string) => { if (!string(value[field])) issues.push(`${blockPath}.${field} is required`); };
+      const stringArray = (field: string, requiredFields: readonly string[]) => {
+        if (!Array.isArray(value[field])) { issues.push(`${blockPath}.${field} must be an array`); return; }
+        (value[field] as unknown[]).forEach((item, index) => {
+          if (!isRecord(item)) { issues.push(`${blockPath}.${field}[${index}] must be an object`); return; }
+          for (const name of requiredFields) if (!string(item[name])) issues.push(`${blockPath}.${field}[${index}].${name} is required`);
+          if (item.reading !== undefined && !string(item.reading)) issues.push(`${blockPath}.${field}[${index}].reading must be a non-empty string`);
+        });
+      };
       if (value.kind === "text") {
         if (!string(value.display)) issues.push(`${blockPath}.display is required`);
         if (!string(value.translation)) issues.push(`${blockPath}.translation is required`);
-      } else if (value.kind === "concept-ref") {
+      } else if (value.kind === "heading") {
+        requiredString("text");
+        if (value.level !== undefined && value.level !== 2 && value.level !== 3) issues.push(`${blockPath}.level must be 2 or 3`);
+      } else if (value.kind === "paragraph") requiredString("text");
+      else if (value.kind === "japanese-example") {
+        requiredString("japanese");
+        for (const field of ["reading", "translation"]) if (value[field] !== undefined && !string(value[field])) issues.push(`${blockPath}.${field} must be a non-empty string`);
+      } else if (value.kind === "callout") requiredString("text");
+      else if (value.kind === "kana-grid") { requiredString("title"); stringArray("characters", ["kana", "reading"]); }
+      else if (value.kind === "character-comparison") { requiredString("title"); stringArray("pairs", ["hiragana", "katakana", "reading"]); }
+      else if (value.kind === "vocabulary-list") stringArray("items", ["japanese", "reading", "translation"]);
+      else if (value.kind === "grammar-breakdown") { requiredString("japanese"); requiredString("translation"); stringArray("parts", ["text", "meaning"]); }
+      else if (value.kind === "audio") { requiredString("reference"); requiredString("label"); }
+      else if (value.kind === "exercise-slot") requiredString("title");
+      else if (value.kind === "checkpoint") { requiredString("title"); if (!Array.isArray(value.points) || value.points.some((point) => !string(point))) issues.push(`${blockPath}.points must be an array of non-empty strings`); }
+      else if (value.kind === "concept-ref") {
         if (typeof value.conceptId !== "string" || !conceptIds.includes(value.conceptId)) issues.push(`${blockPath}.conceptId references missing concept "${String(value.conceptId ?? "")}"`);
       } else if (value.kind === "sentence-ref") {
         if (typeof value.sentenceId !== "string" || !sentenceIds.includes(value.sentenceId)) issues.push(`${blockPath}.sentenceId references missing sentence "${String(value.sentenceId ?? "")}"`);

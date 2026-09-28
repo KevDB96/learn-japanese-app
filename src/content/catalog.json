@@ -3,9 +3,22 @@
     "schemaVersion": 1,
     "contentVersion": "0.1.0"
   },
-  "courses": [],
-  "units": [],
-  "lessons": [],
+  "courses": [{ "id": "stage-0", "display": "Stage 0 · First steps", "unitIds": ["stage-0-introduction"], "startLessonIds": ["introduction"] }],
+  "units": [{ "id": "stage-0-introduction", "display": "Introduction", "lessonIds": ["introduction"] }],
+  "lessons": [{
+    "id": "introduction",
+    "display": "Welcome to Japanese",
+    "requires": [],
+    "introduces": [],
+    "reinforces": [],
+    "blocks": [
+      { "id": "intro-title", "kind": "heading", "text": "Welcome to Japanese" },
+      { "id": "writing-systems", "kind": "paragraph", "text": "Japanese uses three writing systems. Hiragana writes native words and grammar endings. Katakana writes many borrowed words and names. Kanji are characters that carry meaning." },
+      { "id": "hiragana-example", "kind": "japanese-example", "japanese": "こんにちは", "reading": "konnichiwa", "translation": "Hello" },
+      { "id": "romaji-note", "kind": "callout", "title": "A note about romaji", "text": "Romaji (Japanese written with Latin letters) can help at first. We will use less of it as you learn kana, so you can read Japanese directly." },
+      { "id": "learning-model", "kind": "checkpoint", "title": "How learning works", "points": ["Lessons teach new ideas.", "Exercises build understanding.", "Reviews help you remember.", "The curriculum chooses what comes next."] }
+    ]
+  }],
   "concepts": [],
   "sentences": []
 }

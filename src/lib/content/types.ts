@@ -47,6 +47,17 @@ export interface Sentence {
 }
 
 export type LessonBlock =
+  | { readonly id: ContentId; readonly kind: "heading"; readonly text: string; readonly level?: 2 | 3 }
+  | { readonly id: ContentId; readonly kind: "paragraph"; readonly text: string }
+  | { readonly id: ContentId; readonly kind: "japanese-example"; readonly japanese: string; readonly reading?: string; readonly translation?: string }
+  | { readonly id: ContentId; readonly kind: "callout"; readonly title?: string; readonly text: string }
+  | { readonly id: ContentId; readonly kind: "kana-grid"; readonly title: string; readonly characters: readonly { readonly kana: string; readonly reading: string }[] }
+  | { readonly id: ContentId; readonly kind: "character-comparison"; readonly title: string; readonly pairs: readonly { readonly hiragana: string; readonly katakana: string; readonly reading: string }[] }
+  | { readonly id: ContentId; readonly kind: "vocabulary-list"; readonly title?: string; readonly items: readonly { readonly japanese: string; readonly reading: string; readonly translation: string }[] }
+  | { readonly id: ContentId; readonly kind: "grammar-breakdown"; readonly title?: string; readonly japanese: string; readonly reading?: string; readonly translation: string; readonly parts: readonly { readonly text: string; readonly reading?: string; readonly meaning: string }[] }
+  | { readonly id: ContentId; readonly kind: "audio"; readonly reference: string; readonly label: string }
+  | { readonly id: ContentId; readonly kind: "exercise-slot"; readonly title: string }
+  | { readonly id: ContentId; readonly kind: "checkpoint"; readonly title: string; readonly points: readonly string[] }
   | { readonly id: ContentId; readonly kind: "text"; readonly display: string; readonly translation: string }
   | { readonly id: ContentId; readonly kind: "concept-ref"; readonly conceptId: ContentId }
   | { readonly id: ContentId; readonly kind: "sentence-ref"; readonly sentenceId: ContentId };
