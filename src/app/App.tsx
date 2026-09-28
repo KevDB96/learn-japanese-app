@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
-import { contentCatalog } from '../lib/content/catalog.ts'
-import { LessonSession } from '../features/lessons/LessonSession.tsx'
+import { LearnContinue } from '../features/lessons/LearnContinue.tsx'
 import './app.css'
 
 const destinations = [
@@ -41,8 +40,7 @@ export function App() {
       <main id="main-content" className="page-content" tabIndex={-1}>
         <section aria-labelledby="page-title">
           <h1 id="page-title">{current.title}</h1>
-          {active === 'learn' ? <LessonSession lesson={contentCatalog.lessons.find((lesson) => lesson.id === 'introduction')!} /> : <p className="empty-state">{current.message}</p>}
-          {active === 'learn' && <div className="continue-space" aria-hidden="true" />}
+          {active === 'learn' ? <LearnContinue /> : <p className="empty-state">{current.message}</p>}
         </section>
       </main>
       <nav className="bottom-nav" aria-label="Main navigation">

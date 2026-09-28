@@ -1,5 +1,6 @@
 import '@testing-library/jest-dom/vitest'
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import 'fake-indexeddb/auto'
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
 import { App } from './App'
 
@@ -34,5 +35,15 @@ describe('App navigation shell', () => {
     fireEvent(window, new HashChangeEvent('hashchange'))
     expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument()
     expect(navigation.getByRole('button', { name: 'Progress' })).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('offers Continue for the first eligible lesson and opens it', async () => {
+    render(<App />)
+
+    const continueButton = await screen.findByRole('button', { name: 'Continue' })
+    fireEvent.click(continueButton)
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Continue' })).toBeInTheDocument())
+    expect(screen.getByRole('heading', { name: 'Welcome to Japanese' })).toBeInTheDocument()
+    expect(screen.queryByText(/due|review count/i)).not.toBeInTheDocument()
   })
 })

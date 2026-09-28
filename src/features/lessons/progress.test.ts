@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { ContentCatalog, ContentId, Lesson } from "../../lib/content/types.ts";
 import type { ConceptState, LessonProgress } from "../../lib/storage/types.ts";
-import { completeLesson, getConceptLifecycle, getNextLesson, getUnlockedLessons, resolveLessonResume, saveLessonPosition } from "./progress.ts";
+import { completeLesson, getConceptLifecycle, getContinueLesson, getNextLesson, getUnlockedLessons, resolveLessonResume, saveLessonPosition } from "./progress.ts";
 
 const cid = (id: string) => id as ContentId;
 const block = (id: string) => ({ id: cid(id), kind: "paragraph" as const, text: id });
@@ -45,6 +45,13 @@ describe("lesson progress", () => {
     expect(getUnlockedLessons(catalog, [], []).map((item) => item.id)).toEqual(["intro"]);
     await completeLesson(db.repos, catalog, intro);
     expect(getNextLesson(catalog, await db.repos.lessonProgress.list(), await db.repos.conceptStates.list())?.id).toBe("next");
+  });
+
+  it("chooses the next eligible lesson for a new learner and resumes an interrupted lesson", async () => {
+    const db = memory();
+    expect(getContinueLesson(catalog, [], [])).toBe(intro);
+    await saveLessonPosition(db.repos, catalog, intro, 1, () => new Date(0));
+    expect(getContinueLesson(catalog, await db.repos.lessonProgress.list(), [])).toBe(intro);
   });
 
   it("preserves a stable block across content versions and reports a removed resume block", () => {

@@ -81,3 +81,11 @@ export function getNextLesson(catalog: ContentCatalog, progress: readonly Lesson
   const unlocked = new Set(getUnlockedLessons(catalog, progress, states).map((lesson) => lesson.id));
   return catalog.lessons.find((lesson) => unlocked.has(lesson.id));
 }
+
+/** Resume the canonical in-progress lesson first; otherwise choose the first unlocked lesson. */
+export function getContinueLesson(catalog: ContentCatalog, progress: readonly LessonProgress[], states: readonly ConceptState[]): Lesson | undefined {
+  for (const lesson of catalog.lessons) {
+    if (progress.some((item) => item.lessonId === lesson.id && item.status === "in-progress")) return lesson;
+  }
+  return getNextLesson(catalog, progress, states);
+}

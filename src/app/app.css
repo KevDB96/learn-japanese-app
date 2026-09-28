@@ -68,8 +68,19 @@ h1 {
   font-size: clamp(1rem, 4vw, 1.125rem);
 }
 
-.continue-space {
-  min-height: clamp(8rem, 28vh, 18rem);
+.learn-continue { display: grid; gap: 1rem; margin-top: 1.5rem; }
+.learn-continue p { margin: 0; color: #59645f; font-size: 1.125rem; }
+.primary-action {
+  width: 100%;
+  min-height: 3.5rem;
+  border: 0;
+  border-radius: 1rem;
+  background: #174f43;
+  color: #fffefa;
+  cursor: pointer;
+  font-size: 1.125rem;
+  font-weight: 750;
+  touch-action: manipulation;
 }
 
 .lesson-content { display: grid; gap: 1rem; }
