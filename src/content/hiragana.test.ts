@@ -1,5 +1,6 @@
 ﻿import { describe, expect, it } from "vitest";
 import { contentCatalog } from "../lib/content/catalog.ts";
+import { kanaFixtures } from "./kana-fixtures.ts";
 import { completeLesson, getContinueLesson } from "../features/lessons/progress.ts";
 import type { ProgressRepositories } from "../features/lessons/progress.ts";
 import type { ConceptState, LessonProgress } from "../lib/storage/types.ts";
@@ -16,6 +17,31 @@ describe("canonical basic Hiragana course", () => {
     const lessons = contentCatalog.lessons.filter((lesson) => lesson.id.startsWith("hiragana-") && lesson.id.endsWith("-row"));
     const introduced = lessons.flatMap((lesson) => lesson.introduces.map((id) => contentCatalog.concepts.find((concept) => concept.id === id)?.display));
     expect(lessons).toHaveLength(10); expect(introduced).toHaveLength(46); expect(new Set(introduced).size).toBe(46); expect(introduced.slice().sort()).toEqual(rows.flat().sort());
+  });
+  it("teaches marks, yoon, gemination, and Hiragana long-vowel spelling in sequence", () => {
+    const advanced = ["hiragana-dakuten-handakuten", "hiragana-contracted-sounds", "hiragana-small-tsu", "hiragana-long-vowels"]
+      .map((id) => contentCatalog.lessons.find((lesson) => lesson.id === id)!);
+    expect(advanced.map((lesson) => lesson.requires[0])).toEqual(["hiragana-w-row", ...advanced.slice(0, -1).map((lesson) => lesson.id)]);
+    const marks = advanced[0]!;
+    const markedGlyphs = marks.introduces.map((id) => contentCatalog.concepts.find((concept) => concept.id === id)!.display);
+    expect(markedGlyphs).toHaveLength(25);
+    expect(markedGlyphs).toContain("ぢ"); expect(markedGlyphs).toContain("づ"); expect(markedGlyphs).toContain("ぽ");
+    expect(advanced[1]!.introduces.filter((id) => contentCatalog.concepts.find((concept) => concept.id === id)!.display.length === 2)).toHaveLength(17);
+    expect(advanced[1]!.introduces).toContain("kana-hira-small-ya");
+    expect(advanced[2]!.introduces.map((id) => contentCatalog.concepts.find((concept) => concept.id === id)!.display)).toEqual(["っ"]);
+    const longLessonText = advanced[3]!.blocks.filter((block) => block.kind === "paragraph").map((block) => block.text).join(" ");
+    expect(longLessonText).toContain("おう"); expect(longLessonText).toContain("おお");
+    expect(longLessonText).toContain("えい"); expect(longLessonText).toContain("ええ");
+    expect(longLessonText).toContain("not the Katakana mark ー");
+    for (const lesson of advanced) {
+      const paragraphIndex = lesson.blocks.findIndex((block) => block.kind === "paragraph");
+      const exerciseIndex = lesson.blocks.findIndex((block) => block.kind === "exercise-slot");
+      expect(paragraphIndex).toBeGreaterThanOrEqual(0); expect(exerciseIndex).toBeGreaterThan(paragraphIndex);
+    }
+    for (const kana of kanaFixtures) {
+      expect(contentCatalog.concepts.find((concept) => concept.id === kana.id)?.display).toBe(kana.glyph);
+      for (const componentId of kana.componentIds) expect(contentCatalog.concepts.some((concept) => concept.id === componentId)).toBe(true);
+    }
   });
   it("adds the final six lessons in order and uses only learned kana in its examples", () => {
     const lessons = contentCatalog.lessons.filter((lesson) => lesson.id.startsWith("hiragana-") && lesson.id.endsWith("-row"));

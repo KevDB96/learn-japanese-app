@@ -10,7 +10,8 @@
       "unitIds": [
         "stage-0-introduction",
         "hiragana-foundations",
-        "hiragana-n-through-n"
+        "hiragana-n-through-n",
+        "hiragana-marks-and-combinations"
       ],
       "startLessonIds": [
         "introduction"
@@ -45,6 +46,16 @@
         "hiragana-y-row",
         "hiragana-r-row",
         "hiragana-w-row"
+      ]
+    },
+    {
+      "id": "hiragana-marks-and-combinations",
+      "display": "Hiragana marks and combinations",
+      "lessonIds": [
+        "hiragana-dakuten-handakuten",
+        "hiragana-contracted-sounds",
+        "hiragana-small-tsu",
+        "hiragana-long-vowels"
       ]
     }
   ],
@@ -1808,6 +1819,622 @@
           ]
         }
       ]
+    },
+    {
+      "id": "hiragana-dakuten-handakuten",
+      "display": "Dakuten and handakuten",
+      "requires": [
+        "hiragana-w-row"
+      ],
+      "introduces": [
+        "kana-hira-304c",
+        "kana-hira-304e",
+        "kana-hira-3050",
+        "kana-hira-3052",
+        "kana-hira-3054",
+        "kana-hira-3056",
+        "kana-hira-3058",
+        "kana-hira-305a",
+        "kana-hira-305c",
+        "kana-hira-305e",
+        "kana-hira-3060",
+        "kana-hira-3062",
+        "kana-hira-3065",
+        "kana-hira-3067",
+        "kana-hira-3069",
+        "kana-hira-3070",
+        "kana-hira-3073",
+        "kana-hira-3076",
+        "kana-hira-3079",
+        "kana-hira-307c",
+        "kana-hira-3071",
+        "kana-hira-3074",
+        "kana-hira-3077",
+        "kana-hira-307a",
+        "kana-hira-307d"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-dakuten-handakuten-teach",
+          "kind": "paragraph",
+          "text": "Two small marks change consonant sounds: dakuten voices the k, s, t, and h rows; handakuten changes only the h row to p. ぢ and づ are usually read ji and zu in modern standard Japanese. They are uncommon outside established spellings and sound changes; じ and ず are much more common."
+        },
+        {
+          "id": "hiragana-dakuten-handakuten-grid",
+          "kind": "kana-grid",
+          "title": "Marked Hiragana",
+          "characters": [
+            {
+              "kana": "が",
+              "reading": "ga"
+            },
+            {
+              "kana": "ぎ",
+              "reading": "gi"
+            },
+            {
+              "kana": "ぐ",
+              "reading": "gu"
+            },
+            {
+              "kana": "げ",
+              "reading": "ge"
+            },
+            {
+              "kana": "ご",
+              "reading": "go"
+            },
+            {
+              "kana": "ざ",
+              "reading": "za"
+            },
+            {
+              "kana": "じ",
+              "reading": "ji"
+            },
+            {
+              "kana": "ず",
+              "reading": "zu"
+            },
+            {
+              "kana": "ぜ",
+              "reading": "ze"
+            },
+            {
+              "kana": "ぞ",
+              "reading": "zo"
+            },
+            {
+              "kana": "だ",
+              "reading": "da"
+            },
+            {
+              "kana": "ぢ",
+              "reading": "ji"
+            },
+            {
+              "kana": "づ",
+              "reading": "zu"
+            },
+            {
+              "kana": "で",
+              "reading": "de"
+            },
+            {
+              "kana": "ど",
+              "reading": "do"
+            },
+            {
+              "kana": "ば",
+              "reading": "ba"
+            },
+            {
+              "kana": "び",
+              "reading": "bi"
+            },
+            {
+              "kana": "ぶ",
+              "reading": "bu"
+            },
+            {
+              "kana": "べ",
+              "reading": "be"
+            },
+            {
+              "kana": "ぼ",
+              "reading": "bo"
+            },
+            {
+              "kana": "ぱ",
+              "reading": "pa"
+            },
+            {
+              "kana": "ぴ",
+              "reading": "pi"
+            },
+            {
+              "kana": "ぷ",
+              "reading": "pu"
+            },
+            {
+              "kana": "ぺ",
+              "reading": "pe"
+            },
+            {
+              "kana": "ぽ",
+              "reading": "po"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-dakuten-handakuten-guided",
+          "kind": "exercise-slot",
+          "title": "Read the marks",
+          "exercises": [
+            {
+              "id": "hiragana-dakuten-handakuten-q1",
+              "type": "multiple-choice",
+              "prompt": "Which sound is ぴ?",
+              "options": [
+                "bi",
+                "pi",
+                "hi"
+              ],
+              "answer": "pi",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "The small circle marks the h row with p sounds."
+              }
+            },
+            {
+              "id": "hiragana-dakuten-handakuten-q2",
+              "type": "multiple-choice",
+              "prompt": "Which sound is ぢ?",
+              "options": [
+                "ji",
+                "chi",
+                "di"
+              ],
+              "answer": "ji",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ぢ is normally read ji in modern standard Japanese."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-dakuten-handakuten-readings",
+          "kind": "vocabulary-list",
+          "title": "Read in kana",
+          "items": [
+            {
+              "japanese": "かばん",
+              "reading": "kaban",
+              "translation": "bag"
+            },
+            {
+              "japanese": "みず",
+              "reading": "mizu",
+              "translation": "water"
+            },
+            {
+              "japanese": "ぱんだ",
+              "reading": "panda",
+              "translation": "panda"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-contracted-sounds",
+      "display": "Contracted sounds",
+      "requires": [
+        "hiragana-dakuten-handakuten"
+      ],
+      "introduces": [
+        "kana-hira-yoon-304d-3083",
+        "kana-hira-yoon-304d-3085",
+        "kana-hira-yoon-304d-3087",
+        "kana-hira-yoon-3057-3083",
+        "kana-hira-yoon-3057-3085",
+        "kana-hira-yoon-3057-3087",
+        "kana-hira-yoon-3061-3083",
+        "kana-hira-yoon-3061-3085",
+        "kana-hira-yoon-3061-3087",
+        "kana-hira-yoon-304e-3083",
+        "kana-hira-yoon-304e-3085",
+        "kana-hira-yoon-304e-3087",
+        "kana-hira-yoon-3058-3083",
+        "kana-hira-yoon-3058-3085",
+        "kana-hira-yoon-3058-3087",
+        "kana-hira-yoon-3073-3087",
+        "kana-hira-yoon-3074-3087",
+        "kana-hira-small-ya",
+        "kana-hira-small-yu",
+        "kana-hira-small-yo"
+      ],
+      "reinforces": [
+        "kana-hira-yoon-306b-3083",
+        "kana-hira-yoon-306b-3085",
+        "kana-hira-yoon-306b-3087",
+        "kana-hira-yoon-3072-3083",
+        "kana-hira-yoon-3072-3085",
+        "kana-hira-yoon-3072-3087",
+        "kana-hira-yoon-307f-3083",
+        "kana-hira-yoon-307f-3085",
+        "kana-hira-yoon-307f-3087",
+        "kana-hira-yoon-308a-3083",
+        "kana-hira-yoon-308a-3085",
+        "kana-hira-yoon-308a-3087",
+        "kana-hira-yoon-3073-3083",
+        "kana-hira-yoon-3073-3085",
+        "kana-hira-yoon-3074-3083",
+        "kana-hira-yoon-3074-3085"
+      ],
+      "blocks": [
+        {
+          "id": "hiragana-contracted-sounds-teach",
+          "kind": "paragraph",
+          "text": "A full-size kana ending in i combines with small ゃ, ゅ, or ょ. Read the pair as one blended mora: ki + small ya becomes kya. The second kana is small; a full-size や, ゆ, or よ is read separately."
+        },
+        {
+          "id": "hiragana-contracted-sounds-small-forms",
+          "kind": "kana-grid",
+          "title": "Small y kana",
+          "characters": [
+            {
+              "kana": "ゃ",
+              "reading": "ya"
+            },
+            {
+              "kana": "ゅ",
+              "reading": "yu"
+            },
+            {
+              "kana": "ょ",
+              "reading": "yo"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-contracted-sounds-grid",
+          "kind": "kana-grid",
+          "title": "Common contracted sounds",
+          "characters": [
+            {
+              "kana": "きゃ",
+              "reading": "kya"
+            },
+            {
+              "kana": "きゅ",
+              "reading": "kyu"
+            },
+            {
+              "kana": "きょ",
+              "reading": "kyo"
+            },
+            {
+              "kana": "しゃ",
+              "reading": "sha"
+            },
+            {
+              "kana": "しゅ",
+              "reading": "shu"
+            },
+            {
+              "kana": "しょ",
+              "reading": "sho"
+            },
+            {
+              "kana": "ちゃ",
+              "reading": "cha"
+            },
+            {
+              "kana": "ちゅ",
+              "reading": "chu"
+            },
+            {
+              "kana": "ちょ",
+              "reading": "cho"
+            },
+            {
+              "kana": "にゃ",
+              "reading": "nya"
+            },
+            {
+              "kana": "にゅ",
+              "reading": "nyu"
+            },
+            {
+              "kana": "にょ",
+              "reading": "nyo"
+            },
+            {
+              "kana": "ひゃ",
+              "reading": "hya"
+            },
+            {
+              "kana": "ひゅ",
+              "reading": "hyu"
+            },
+            {
+              "kana": "ひょ",
+              "reading": "hyo"
+            },
+            {
+              "kana": "みゃ",
+              "reading": "mya"
+            },
+            {
+              "kana": "みゅ",
+              "reading": "myu"
+            },
+            {
+              "kana": "みょ",
+              "reading": "myo"
+            },
+            {
+              "kana": "りゃ",
+              "reading": "rya"
+            },
+            {
+              "kana": "りゅ",
+              "reading": "ryu"
+            },
+            {
+              "kana": "りょ",
+              "reading": "ryo"
+            },
+            {
+              "kana": "ぎゃ",
+              "reading": "gya"
+            },
+            {
+              "kana": "ぎゅ",
+              "reading": "gyu"
+            },
+            {
+              "kana": "ぎょ",
+              "reading": "gyo"
+            },
+            {
+              "kana": "じゃ",
+              "reading": "ja"
+            },
+            {
+              "kana": "じゅ",
+              "reading": "ju"
+            },
+            {
+              "kana": "じょ",
+              "reading": "jo"
+            },
+            {
+              "kana": "びゃ",
+              "reading": "bya"
+            },
+            {
+              "kana": "びゅ",
+              "reading": "byu"
+            },
+            {
+              "kana": "びょ",
+              "reading": "byo"
+            },
+            {
+              "kana": "ぴゃ",
+              "reading": "pya"
+            },
+            {
+              "kana": "ぴゅ",
+              "reading": "pyu"
+            },
+            {
+              "kana": "ぴょ",
+              "reading": "pyo"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-contracted-sounds-guided",
+          "kind": "exercise-slot",
+          "title": "Blend the sounds",
+          "exercises": [
+            {
+              "id": "hiragana-contracted-sounds-q1",
+              "type": "multiple-choice",
+              "prompt": "Read きゃ.",
+              "options": [
+                "kiya",
+                "kya",
+                "ka"
+              ],
+              "answer": "kya",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "Small ゃ blends with the kana before it."
+              }
+            },
+            {
+              "id": "hiragana-contracted-sounds-q2",
+              "type": "multiple-choice",
+              "prompt": "Read しゅ.",
+              "options": [
+                "shuyu",
+                "shu",
+                "shi"
+              ],
+              "answer": "shu",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "Small ゅ blends with the kana before it."
+              }
+            },
+            {
+              "id": "hiragana-contracted-sounds-q3",
+              "type": "multiple-choice",
+              "prompt": "Read ちょ.",
+              "options": [
+                "cho",
+                "chiyo",
+                "to"
+              ],
+              "answer": "cho",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "Small ょ blends with the kana before it."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-contracted-sounds-reading",
+          "kind": "vocabulary-list",
+          "title": "Read in kana",
+          "items": [
+            {
+              "japanese": "かんきゃく",
+              "reading": "kankyaku",
+              "translation": "audience"
+            },
+            {
+              "japanese": "びょういん",
+              "reading": "byouin",
+              "translation": "hospital"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-small-tsu",
+      "display": "Small ? and doubled consonants",
+      "requires": [
+        "hiragana-contracted-sounds"
+      ],
+      "introduces": [
+        "kana-hira-small-tsu"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-small-tsu-teach",
+          "kind": "paragraph",
+          "text": "Small っ takes one beat and signals a brief stop before the next consonant. In romaji that consonant is often doubled: きって is kitte. Do not pronounce small っ as tsu."
+        },
+        {
+          "id": "hiragana-small-tsu-examples",
+          "kind": "vocabulary-list",
+          "title": "Read the pause",
+          "items": [
+            {
+              "japanese": "きって",
+              "reading": "kitte",
+              "translation": "stamp"
+            },
+            {
+              "japanese": "がっこう",
+              "reading": "gakkou",
+              "translation": "school"
+            },
+            {
+              "japanese": "ざっし",
+              "reading": "zasshi",
+              "translation": "magazine"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-small-tsu-guided",
+          "kind": "exercise-slot",
+          "title": "Hear the beat",
+          "exercises": [
+            {
+              "id": "hiragana-small-tsu-q1",
+              "type": "multiple-choice",
+              "prompt": "How is きって read?",
+              "options": [
+                "kite",
+                "kitte",
+                "kitsute"
+              ],
+              "answer": "kitte",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "Small っ adds a beat and doubles the following consonant."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-long-vowels",
+      "display": "Long vowels in Hiragana",
+      "requires": [
+        "hiragana-small-tsu"
+      ],
+      "introduces": [],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-long-vowels-teach",
+          "kind": "paragraph",
+          "text": "Hiragana writes long vowels with kana, not the Katakana mark ー. おう and おお commonly make a long o sound; えい commonly makes a long e sound, while ええ also occurs. Learn each word spelling because patterns are not interchangeable in every word."
+        },
+        {
+          "id": "hiragana-long-vowels-examples",
+          "kind": "vocabulary-list",
+          "title": "Long vowel spellings",
+          "items": [
+            {
+              "japanese": "がっこう",
+              "reading": "gakkou",
+              "translation": "school"
+            },
+            {
+              "japanese": "おおきい",
+              "reading": "ookii",
+              "translation": "big"
+            },
+            {
+              "japanese": "せんせい",
+              "reading": "sensei",
+              "translation": "teacher"
+            },
+            {
+              "japanese": "おねえさん",
+              "reading": "oneesan",
+              "translation": "older sister"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-long-vowels-guided",
+          "kind": "exercise-slot",
+          "title": "Choose the spelling",
+          "exercises": [
+            {
+              "id": "hiragana-long-vowels-q1",
+              "type": "multiple-choice",
+              "prompt": "Which is a Hiragana long-vowel spelling?",
+              "options": [
+                "おう",
+                "おお",
+                "おー"
+              ],
+              "answer": "おう",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "おう is a common Hiragana spelling for a long o sound."
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "concepts": [
@@ -2086,6 +2713,378 @@
       "display": "ん",
       "reading": "n",
       "translation": "Hiragana ん"
+    },
+    {
+      "id": "kana-hira-304c",
+      "display": "が",
+      "reading": "ga",
+      "translation": "Hiragana が"
+    },
+    {
+      "id": "kana-hira-304e",
+      "display": "ぎ",
+      "reading": "gi",
+      "translation": "Hiragana ぎ"
+    },
+    {
+      "id": "kana-hira-3050",
+      "display": "ぐ",
+      "reading": "gu",
+      "translation": "Hiragana ぐ"
+    },
+    {
+      "id": "kana-hira-3052",
+      "display": "げ",
+      "reading": "ge",
+      "translation": "Hiragana げ"
+    },
+    {
+      "id": "kana-hira-3054",
+      "display": "ご",
+      "reading": "go",
+      "translation": "Hiragana ご"
+    },
+    {
+      "id": "kana-hira-3056",
+      "display": "ざ",
+      "reading": "za",
+      "translation": "Hiragana ざ"
+    },
+    {
+      "id": "kana-hira-3058",
+      "display": "じ",
+      "reading": "ji",
+      "translation": "Hiragana じ"
+    },
+    {
+      "id": "kana-hira-305a",
+      "display": "ず",
+      "reading": "zu",
+      "translation": "Hiragana ず"
+    },
+    {
+      "id": "kana-hira-305c",
+      "display": "ぜ",
+      "reading": "ze",
+      "translation": "Hiragana ぜ"
+    },
+    {
+      "id": "kana-hira-305e",
+      "display": "ぞ",
+      "reading": "zo",
+      "translation": "Hiragana ぞ"
+    },
+    {
+      "id": "kana-hira-3060",
+      "display": "だ",
+      "reading": "da",
+      "translation": "Hiragana だ"
+    },
+    {
+      "id": "kana-hira-3062",
+      "display": "ぢ",
+      "reading": "ji",
+      "translation": "Hiragana ぢ"
+    },
+    {
+      "id": "kana-hira-3065",
+      "display": "づ",
+      "reading": "zu",
+      "translation": "Hiragana づ"
+    },
+    {
+      "id": "kana-hira-3067",
+      "display": "で",
+      "reading": "de",
+      "translation": "Hiragana で"
+    },
+    {
+      "id": "kana-hira-3069",
+      "display": "ど",
+      "reading": "do",
+      "translation": "Hiragana ど"
+    },
+    {
+      "id": "kana-hira-3070",
+      "display": "ば",
+      "reading": "ba",
+      "translation": "Hiragana ば"
+    },
+    {
+      "id": "kana-hira-3073",
+      "display": "び",
+      "reading": "bi",
+      "translation": "Hiragana び"
+    },
+    {
+      "id": "kana-hira-3076",
+      "display": "ぶ",
+      "reading": "bu",
+      "translation": "Hiragana ぶ"
+    },
+    {
+      "id": "kana-hira-3079",
+      "display": "べ",
+      "reading": "be",
+      "translation": "Hiragana べ"
+    },
+    {
+      "id": "kana-hira-307c",
+      "display": "ぼ",
+      "reading": "bo",
+      "translation": "Hiragana ぼ"
+    },
+    {
+      "id": "kana-hira-3071",
+      "display": "ぱ",
+      "reading": "pa",
+      "translation": "Hiragana ぱ"
+    },
+    {
+      "id": "kana-hira-3074",
+      "display": "ぴ",
+      "reading": "pi",
+      "translation": "Hiragana ぴ"
+    },
+    {
+      "id": "kana-hira-3077",
+      "display": "ぷ",
+      "reading": "pu",
+      "translation": "Hiragana ぷ"
+    },
+    {
+      "id": "kana-hira-307a",
+      "display": "ぺ",
+      "reading": "pe",
+      "translation": "Hiragana ぺ"
+    },
+    {
+      "id": "kana-hira-307d",
+      "display": "ぽ",
+      "reading": "po",
+      "translation": "Hiragana ぽ"
+    },
+    {
+      "id": "kana-hira-small-tsu",
+      "display": "っ",
+      "reading": "small tsu",
+      "translation": "Hiragana っ"
+    },
+    {
+      "id": "kana-hira-yoon-304d-3083",
+      "display": "きゃ",
+      "reading": "kya",
+      "translation": "Hiragana きゃ"
+    },
+    {
+      "id": "kana-hira-yoon-304d-3085",
+      "display": "きゅ",
+      "reading": "kyu",
+      "translation": "Hiragana きゅ"
+    },
+    {
+      "id": "kana-hira-yoon-304d-3087",
+      "display": "きょ",
+      "reading": "kyo",
+      "translation": "Hiragana きょ"
+    },
+    {
+      "id": "kana-hira-yoon-3057-3083",
+      "display": "しゃ",
+      "reading": "shya",
+      "translation": "Hiragana しゃ"
+    },
+    {
+      "id": "kana-hira-yoon-3057-3085",
+      "display": "しゅ",
+      "reading": "shyu",
+      "translation": "Hiragana しゅ"
+    },
+    {
+      "id": "kana-hira-yoon-3057-3087",
+      "display": "しょ",
+      "reading": "shyo",
+      "translation": "Hiragana しょ"
+    },
+    {
+      "id": "kana-hira-yoon-3061-3083",
+      "display": "ちゃ",
+      "reading": "chya",
+      "translation": "Hiragana ちゃ"
+    },
+    {
+      "id": "kana-hira-yoon-3061-3085",
+      "display": "ちゅ",
+      "reading": "chyu",
+      "translation": "Hiragana ちゅ"
+    },
+    {
+      "id": "kana-hira-yoon-3061-3087",
+      "display": "ちょ",
+      "reading": "chyo",
+      "translation": "Hiragana ちょ"
+    },
+    {
+      "id": "kana-hira-yoon-306b-3083",
+      "display": "にゃ",
+      "reading": "nya",
+      "translation": "Hiragana にゃ"
+    },
+    {
+      "id": "kana-hira-yoon-306b-3085",
+      "display": "にゅ",
+      "reading": "nyu",
+      "translation": "Hiragana にゅ"
+    },
+    {
+      "id": "kana-hira-yoon-306b-3087",
+      "display": "にょ",
+      "reading": "nyo",
+      "translation": "Hiragana にょ"
+    },
+    {
+      "id": "kana-hira-yoon-3072-3083",
+      "display": "ひゃ",
+      "reading": "hya",
+      "translation": "Hiragana ひゃ"
+    },
+    {
+      "id": "kana-hira-yoon-3072-3085",
+      "display": "ひゅ",
+      "reading": "hyu",
+      "translation": "Hiragana ひゅ"
+    },
+    {
+      "id": "kana-hira-yoon-3072-3087",
+      "display": "ひょ",
+      "reading": "hyo",
+      "translation": "Hiragana ひょ"
+    },
+    {
+      "id": "kana-hira-yoon-307f-3083",
+      "display": "みゃ",
+      "reading": "mya",
+      "translation": "Hiragana みゃ"
+    },
+    {
+      "id": "kana-hira-yoon-307f-3085",
+      "display": "みゅ",
+      "reading": "myu",
+      "translation": "Hiragana みゅ"
+    },
+    {
+      "id": "kana-hira-yoon-307f-3087",
+      "display": "みょ",
+      "reading": "myo",
+      "translation": "Hiragana みょ"
+    },
+    {
+      "id": "kana-hira-yoon-308a-3083",
+      "display": "りゃ",
+      "reading": "rya",
+      "translation": "Hiragana りゃ"
+    },
+    {
+      "id": "kana-hira-yoon-308a-3085",
+      "display": "りゅ",
+      "reading": "ryu",
+      "translation": "Hiragana りゅ"
+    },
+    {
+      "id": "kana-hira-yoon-308a-3087",
+      "display": "りょ",
+      "reading": "ryo",
+      "translation": "Hiragana りょ"
+    },
+    {
+      "id": "kana-hira-yoon-304e-3083",
+      "display": "ぎゃ",
+      "reading": "gya",
+      "translation": "Hiragana ぎゃ"
+    },
+    {
+      "id": "kana-hira-yoon-304e-3085",
+      "display": "ぎゅ",
+      "reading": "gyu",
+      "translation": "Hiragana ぎゅ"
+    },
+    {
+      "id": "kana-hira-yoon-304e-3087",
+      "display": "ぎょ",
+      "reading": "gyo",
+      "translation": "Hiragana ぎょ"
+    },
+    {
+      "id": "kana-hira-yoon-3058-3083",
+      "display": "じゃ",
+      "reading": "jya",
+      "translation": "Hiragana じゃ"
+    },
+    {
+      "id": "kana-hira-yoon-3058-3085",
+      "display": "じゅ",
+      "reading": "jyu",
+      "translation": "Hiragana じゅ"
+    },
+    {
+      "id": "kana-hira-yoon-3058-3087",
+      "display": "じょ",
+      "reading": "jyo",
+      "translation": "Hiragana じょ"
+    },
+    {
+      "id": "kana-hira-yoon-3073-3083",
+      "display": "びゃ",
+      "reading": "bya",
+      "translation": "Hiragana びゃ"
+    },
+    {
+      "id": "kana-hira-yoon-3073-3085",
+      "display": "びゅ",
+      "reading": "byu",
+      "translation": "Hiragana びゅ"
+    },
+    {
+      "id": "kana-hira-yoon-3073-3087",
+      "display": "びょ",
+      "reading": "byo",
+      "translation": "Hiragana びょ"
+    },
+    {
+      "id": "kana-hira-yoon-3074-3083",
+      "display": "ぴゃ",
+      "reading": "pya",
+      "translation": "Hiragana ぴゃ"
+    },
+    {
+      "id": "kana-hira-yoon-3074-3085",
+      "display": "ぴゅ",
+      "reading": "pyu",
+      "translation": "Hiragana ぴゅ"
+    },
+    {
+      "id": "kana-hira-yoon-3074-3087",
+      "display": "ぴょ",
+      "reading": "pyo",
+      "translation": "Hiragana ぴょ"
+    },
+    {
+      "id": "kana-hira-small-ya",
+      "display": "ゃ",
+      "reading": "ya",
+      "translation": "Small ゃ"
+    },
+    {
+      "id": "kana-hira-small-yu",
+      "display": "ゅ",
+      "reading": "yu",
+      "translation": "Small ゅ"
+    },
+    {
+      "id": "kana-hira-small-yo",
+      "display": "ょ",
+      "reading": "yo",
+      "translation": "Small ょ"
     }
   ],
   "sentences": []

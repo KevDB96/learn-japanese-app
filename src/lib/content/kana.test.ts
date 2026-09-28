@@ -12,13 +12,13 @@ describe("kana content model", () => {
   it("generates stable concept-scoped review cards and omits unavailable audio", () => {
     const forms = generateKanaReviewCards(kanaFixtures);
     expect(forms).toEqual(generateKanaReviewCards(kanaFixtures));
-    expect(forms).toHaveLength(kanaFixtures.length * 2);
+    expect(forms).toHaveLength(kanaFixtures.filter((concept) => concept.reviewEligible !== false).length * 2);
     expect(new Set(forms.map((card) => card.id)).size).toBe(forms.length);
     expect(forms.every((card) => card.id === `${card.conceptId}--${card.formId}`)).toBe(true);
   });
 
   it("reports missing pronunciation coverage and tolerates unavailable providers", async () => {
-    expect(kanaAudioCoverage(kanaFixtures, kanaAudioManifest)).toEqual({ total: 5, covered: 0, missingConceptIds: kanaFixtures.map(({ id }) => id) });
+    expect(kanaAudioCoverage(kanaFixtures, kanaAudioManifest)).toEqual({ total: kanaFixtures.length, covered: 0, missingConceptIds: kanaFixtures.map(({ id }) => id) });
     await expect(playPronunciation("kana-a", kanaAudioManifest, [])).resolves.toBe(false);
     const manifest = { version: 1, entries: [{ id: "kana-ka", provider: "test" }] } as const;
     const provider: PronunciationProvider = { id: "test", canPlay: () => true, play: async () => undefined };
@@ -38,9 +38,28 @@ describe("kana content model", () => {
   it("rejects duplicate kana IDs and broken manifest asset/provider references", () => {
     const entries = [{ id: "audio-ka", provider: "bundled", asset: "audio/ka.ogg" }, { id: "audio-ka", provider: "unknown" }];
     const issues = validateKanaContent([kanaFixtures[0], kanaFixtures[0]], KANA_REVIEW_FORMS, { version: 1, entries }, { bundledAssets: [], providerIds: ["bundled"] }).join("\n");
-    expect(issues).toContain('duplicates kana ID "kana-hiragana-ka"');
+    expect(issues).toContain('duplicates kana ID "kana-hira-ka"');
     expect(issues).toContain('duplicates audio ID "audio-ka"');
     expect(issues).toContain('asset references missing bundled asset "audio/ka.ogg"');
     expect(issues).toContain('provider references unavailable provider "unknown"');
+  });
+
+  it("models all marked rows and legal yoon through component relationships without scheduling every combination", () => {
+    expect(kanaFixtures.filter(({ form }) => form === "marked")).toHaveLength(25);
+    expect(kanaFixtures.filter(({ form }) => form === "contracted")).toHaveLength(33);
+    expect(kanaFixtures.filter(({ form }) => form === "contracted").every(({ componentIds, reviewEligible }) => componentIds.length === 2 && reviewEligible === false)).toBe(true);
+    expect(validateKanaContent(kanaFixtures, KANA_REVIEW_FORMS, kanaAudioManifest)).toEqual([]);
+  });
+
+  it("rejects illegal marked bases, small kana, and contracted relationships", () => {
+    const invalid = [
+      { ...kanaFixtures.find(({ form }) => form === "marked")!, componentIds: [kanaFixtures[0]!.id] },
+      { ...kanaFixtures.find(({ form }) => form === "small")!, glyph: "あ" },
+      { ...kanaFixtures.find(({ form }) => form === "contracted")!, componentIds: [kanaFixtures[0]!.id] },
+    ];
+    const issues = validateKanaContent(invalid, KANA_REVIEW_FORMS, kanaAudioManifest).join("\n");
+    expect(issues).toContain("marked kana must link to its legal unmarked base");
+    expect(issues).toContain("small kana must be ゃ, ゅ, ょ, or っ");
+    expect(issues).toContain("contracted kana must link a valid yoon base and small ゃ, ゅ, or ょ");
   });
 });
