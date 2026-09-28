@@ -15,7 +15,8 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.117.2",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "ts-fsrs": "5.4.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
