@@ -39,6 +39,32 @@ export interface Concept {
   readonly translation: string;
 }
 
+/** A canonical kana identity. Review cards are generated from this concept, never stored as new concepts. */
+export interface KanaConcept {
+  readonly id: ContentId;
+  readonly script: "hiragana" | "katakana";
+  readonly glyph: string;
+  readonly romanization: string;
+  readonly row: string;
+  readonly order: number;
+  readonly form: "base" | "marked" | "contracted" | "small";
+  readonly componentIds: readonly ContentId[];
+  readonly audioId?: string;
+}
+
+export type KanaReviewFormKind = "glyph-to-sound" | "sound-to-glyph" | "audio-to-glyph";
+export interface KanaReviewForm {
+  readonly id: string;
+  readonly kind: KanaReviewFormKind;
+  readonly prompt: "glyph" | "sound" | "audio";
+  readonly answer: "sound" | "glyph";
+}
+
+export interface PronunciationManifest {
+  readonly version: number;
+  readonly entries: readonly { readonly id: string; readonly provider: string; readonly asset?: string; readonly text?: string }[];
+}
+
 export interface Sentence {
   readonly id: ContentId;
   readonly display: string;
