@@ -9,7 +9,8 @@
       "display": "Stage 0 · First steps",
       "unitIds": [
         "stage-0-introduction",
-        "hiragana-foundations"
+        "hiragana-foundations",
+        "hiragana-n-through-n"
       ],
       "startLessonIds": [
         "introduction"
@@ -32,6 +33,18 @@
         "hiragana-k-row",
         "hiragana-s-row",
         "hiragana-t-row"
+      ]
+    },
+    {
+      "id": "hiragana-n-through-n",
+      "display": "Hiragana: n through n",
+      "lessonIds": [
+        "hiragana-n-row",
+        "hiragana-h-row",
+        "hiragana-m-row",
+        "hiragana-y-row",
+        "hiragana-r-row",
+        "hiragana-w-row"
       ]
     }
   ],
@@ -684,6 +697,1117 @@
           ]
         }
       ]
+    },
+    {
+      "id": "hiragana-n-row",
+      "display": "Hiragana N row",
+      "requires": [
+        "hiragana-t-row"
+      ],
+      "introduces": [
+        "kana-hira-na",
+        "kana-hira-ni",
+        "kana-hira-nu",
+        "kana-hira-ne",
+        "kana-hira-no"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-n-row-title",
+          "kind": "heading",
+          "text": "Hiragana: N row"
+        },
+        {
+          "id": "hiragana-n-row-teach",
+          "kind": "paragraph",
+          "text": "Add n before each vowel to make na, ni, nu, ne, no."
+        },
+        {
+          "id": "hiragana-n-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "な",
+              "reading": "na"
+            },
+            {
+              "kana": "に",
+              "reading": "ni"
+            },
+            {
+              "kana": "ぬ",
+              "reading": "nu"
+            },
+            {
+              "kana": "ね",
+              "reading": "ne"
+            },
+            {
+              "kana": "の",
+              "reading": "no"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-n-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "hiragana-n-row-select-1",
+              "type": "character-selection",
+              "prompt": "Choose な (na).",
+              "options": [
+                "な",
+                "に",
+                "ぬ"
+              ],
+              "answer": "な",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "な is read na."
+              }
+            },
+            {
+              "id": "hiragana-n-row-select-2",
+              "type": "character-selection",
+              "prompt": "Choose に (ni).",
+              "options": [
+                "に",
+                "ぬ",
+                "ね"
+              ],
+              "answer": "に",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "に is read ni."
+              }
+            },
+            {
+              "id": "hiragana-n-row-select-3",
+              "type": "character-selection",
+              "prompt": "Choose ぬ (nu).",
+              "options": [
+                "ぬ",
+                "ね",
+                "の"
+              ],
+              "answer": "ぬ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ぬ is read nu."
+              }
+            },
+            {
+              "id": "hiragana-n-row-select-4",
+              "type": "character-selection",
+              "prompt": "Choose ね (ne).",
+              "options": [
+                "ね",
+                "の",
+                "な"
+              ],
+              "answer": "ね",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ね is read ne."
+              }
+            },
+            {
+              "id": "hiragana-n-row-select-5",
+              "type": "character-selection",
+              "prompt": "Choose の (no).",
+              "options": [
+                "の",
+                "な",
+                "に"
+              ],
+              "answer": "の",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "の is read no."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-n-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "なに",
+          "reading": "nani",
+          "translation": "what?"
+        },
+        {
+          "id": "hiragana-n-row-example-2",
+          "kind": "japanese-example",
+          "japanese": "いぬ",
+          "reading": "inu",
+          "translation": "dog"
+        },
+        {
+          "id": "hiragana-n-row-example-3",
+          "kind": "japanese-example",
+          "japanese": "ねこ",
+          "reading": "neko",
+          "translation": "cat"
+        },
+        {
+          "id": "hiragana-n-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the hiragana alone."
+        },
+        {
+          "id": "hiragana-n-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "hiragana-n-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for な.",
+              "answer": "na",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "な is read na."
+              }
+            },
+            {
+              "id": "hiragana-n-row-recall-last",
+              "type": "short-text",
+              "prompt": "Type the sound for の.",
+              "answer": "no",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "の is read no."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-h-row",
+      "display": "Hiragana H row",
+      "requires": [
+        "hiragana-n-row"
+      ],
+      "introduces": [
+        "kana-hira-ha",
+        "kana-hira-hi",
+        "kana-hira-fu",
+        "kana-hira-he",
+        "kana-hira-ho"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-h-row-title",
+          "kind": "heading",
+          "text": "Hiragana: H row"
+        },
+        {
+          "id": "hiragana-h-row-teach",
+          "kind": "paragraph",
+          "text": "Most sounds add h before the vowel. ? is conventionally romanized fu; its sound uses light friction between the lips, not a strong English f."
+        },
+        {
+          "id": "hiragana-h-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "は",
+              "reading": "ha"
+            },
+            {
+              "kana": "ひ",
+              "reading": "hi"
+            },
+            {
+              "kana": "ふ",
+              "reading": "fu"
+            },
+            {
+              "kana": "へ",
+              "reading": "he"
+            },
+            {
+              "kana": "ほ",
+              "reading": "ho"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-h-row-topic",
+          "kind": "callout",
+          "title": "A common particle",
+          "text": "When ? marks the topic of a sentence, it is pronounced wa. The kana remains ?."
+        },
+        {
+          "id": "hiragana-h-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "hiragana-h-row-select-1",
+              "type": "character-selection",
+              "prompt": "Choose は (ha).",
+              "options": [
+                "は",
+                "ひ",
+                "ふ"
+              ],
+              "answer": "は",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "は is read ha."
+              }
+            },
+            {
+              "id": "hiragana-h-row-select-2",
+              "type": "character-selection",
+              "prompt": "Choose ひ (hi).",
+              "options": [
+                "ひ",
+                "ふ",
+                "へ"
+              ],
+              "answer": "ひ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ひ is read hi."
+              }
+            },
+            {
+              "id": "hiragana-h-row-select-3",
+              "type": "character-selection",
+              "prompt": "Choose ふ (fu).",
+              "options": [
+                "ふ",
+                "へ",
+                "ほ"
+              ],
+              "answer": "ふ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ふ is read fu."
+              }
+            },
+            {
+              "id": "hiragana-h-row-select-4",
+              "type": "character-selection",
+              "prompt": "Choose へ (he).",
+              "options": [
+                "へ",
+                "ほ",
+                "は"
+              ],
+              "answer": "へ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "へ is read he."
+              }
+            },
+            {
+              "id": "hiragana-h-row-select-5",
+              "type": "character-selection",
+              "prompt": "Choose ほ (ho).",
+              "options": [
+                "ほ",
+                "は",
+                "ひ"
+              ],
+              "answer": "ほ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ほ is read ho."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-h-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "はな",
+          "reading": "hana",
+          "translation": "flower"
+        },
+        {
+          "id": "hiragana-h-row-example-2",
+          "kind": "japanese-example",
+          "japanese": "ひと",
+          "reading": "hito",
+          "translation": "person"
+        },
+        {
+          "id": "hiragana-h-row-example-3",
+          "kind": "japanese-example",
+          "japanese": "ふね",
+          "reading": "fune",
+          "translation": "boat"
+        },
+        {
+          "id": "hiragana-h-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the hiragana alone."
+        },
+        {
+          "id": "hiragana-h-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "hiragana-h-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for は.",
+              "answer": "ha",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "は is read ha."
+              }
+            },
+            {
+              "id": "hiragana-h-row-recall-last",
+              "type": "short-text",
+              "prompt": "Type the sound for ほ.",
+              "answer": "ho",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ほ is read ho."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-m-row",
+      "display": "Hiragana M row",
+      "requires": [
+        "hiragana-h-row"
+      ],
+      "introduces": [
+        "kana-hira-ma",
+        "kana-hira-mi",
+        "kana-hira-mu",
+        "kana-hira-me",
+        "kana-hira-mo"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-m-row-title",
+          "kind": "heading",
+          "text": "Hiragana: M row"
+        },
+        {
+          "id": "hiragana-m-row-teach",
+          "kind": "paragraph",
+          "text": "Add m before each vowel: ma, mi, mu, me, mo."
+        },
+        {
+          "id": "hiragana-m-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ま",
+              "reading": "ma"
+            },
+            {
+              "kana": "み",
+              "reading": "mi"
+            },
+            {
+              "kana": "む",
+              "reading": "mu"
+            },
+            {
+              "kana": "め",
+              "reading": "me"
+            },
+            {
+              "kana": "も",
+              "reading": "mo"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-m-row-visual",
+          "kind": "callout",
+          "title": "Similar shapes",
+          "text": "Compare ? and ?: ? has a looped tail, while ? crosses its loop."
+        },
+        {
+          "id": "hiragana-m-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "hiragana-m-row-select-1",
+              "type": "character-selection",
+              "prompt": "Choose ま (ma).",
+              "options": [
+                "ま",
+                "み",
+                "む"
+              ],
+              "answer": "ま",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ま is read ma."
+              }
+            },
+            {
+              "id": "hiragana-m-row-select-2",
+              "type": "character-selection",
+              "prompt": "Choose み (mi).",
+              "options": [
+                "み",
+                "む",
+                "め"
+              ],
+              "answer": "み",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "み is read mi."
+              }
+            },
+            {
+              "id": "hiragana-m-row-select-3",
+              "type": "character-selection",
+              "prompt": "Choose む (mu).",
+              "options": [
+                "む",
+                "め",
+                "も"
+              ],
+              "answer": "む",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "む is read mu."
+              }
+            },
+            {
+              "id": "hiragana-m-row-select-4",
+              "type": "character-selection",
+              "prompt": "Choose め (me).",
+              "options": [
+                "め",
+                "も",
+                "ま"
+              ],
+              "answer": "め",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "め is read me."
+              }
+            },
+            {
+              "id": "hiragana-m-row-select-5",
+              "type": "character-selection",
+              "prompt": "Choose も (mo).",
+              "options": [
+                "も",
+                "ま",
+                "み"
+              ],
+              "answer": "も",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "も is read mo."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-m-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "うみ",
+          "reading": "umi",
+          "translation": "sea"
+        },
+        {
+          "id": "hiragana-m-row-example-2",
+          "kind": "japanese-example",
+          "japanese": "まめ",
+          "reading": "mame",
+          "translation": "beans"
+        },
+        {
+          "id": "hiragana-m-row-example-3",
+          "kind": "japanese-example",
+          "japanese": "みみ",
+          "reading": "mimi",
+          "translation": "ear"
+        },
+        {
+          "id": "hiragana-m-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the hiragana alone."
+        },
+        {
+          "id": "hiragana-m-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "hiragana-m-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ま.",
+              "answer": "ma",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ま is read ma."
+              }
+            },
+            {
+              "id": "hiragana-m-row-recall-last",
+              "type": "short-text",
+              "prompt": "Type the sound for も.",
+              "answer": "mo",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "も is read mo."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-y-row",
+      "display": "Hiragana Y row",
+      "requires": [
+        "hiragana-m-row"
+      ],
+      "introduces": [
+        "kana-hira-ya",
+        "kana-hira-yu",
+        "kana-hira-yo"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-y-row-title",
+          "kind": "heading",
+          "text": "Hiragana: Y row"
+        },
+        {
+          "id": "hiragana-y-row-teach",
+          "kind": "paragraph",
+          "text": "The y row has three kana: ya, yu, yo. There is no yi or ye in the basic Hiragana set."
+        },
+        {
+          "id": "hiragana-y-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "や",
+              "reading": "ya"
+            },
+            {
+              "kana": "ゆ",
+              "reading": "yu"
+            },
+            {
+              "kana": "よ",
+              "reading": "yo"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-y-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "hiragana-y-row-select-1",
+              "type": "character-selection",
+              "prompt": "Choose や (ya).",
+              "options": [
+                "や",
+                "ゆ",
+                "よ"
+              ],
+              "answer": "や",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "や is read ya."
+              }
+            },
+            {
+              "id": "hiragana-y-row-select-2",
+              "type": "character-selection",
+              "prompt": "Choose ゆ (yu).",
+              "options": [
+                "ゆ",
+                "よ",
+                "や"
+              ],
+              "answer": "ゆ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ゆ is read yu."
+              }
+            },
+            {
+              "id": "hiragana-y-row-select-3",
+              "type": "character-selection",
+              "prompt": "Choose よ (yo).",
+              "options": [
+                "よ",
+                "や",
+                "ゆ"
+              ],
+              "answer": "よ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "よ is read yo."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-y-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "やま",
+          "reading": "yama",
+          "translation": "mountain"
+        },
+        {
+          "id": "hiragana-y-row-example-2",
+          "kind": "japanese-example",
+          "japanese": "ゆめ",
+          "reading": "yume",
+          "translation": "dream"
+        },
+        {
+          "id": "hiragana-y-row-example-3",
+          "kind": "japanese-example",
+          "japanese": "ゆき",
+          "reading": "yuki",
+          "translation": "snow"
+        },
+        {
+          "id": "hiragana-y-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the hiragana alone."
+        },
+        {
+          "id": "hiragana-y-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "hiragana-y-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for や.",
+              "answer": "ya",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "や is read ya."
+              }
+            },
+            {
+              "id": "hiragana-y-row-recall-last",
+              "type": "short-text",
+              "prompt": "Type the sound for よ.",
+              "answer": "yo",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "よ is read yo."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-r-row",
+      "display": "Hiragana R row",
+      "requires": [
+        "hiragana-y-row"
+      ],
+      "introduces": [
+        "kana-hira-ra",
+        "kana-hira-ri",
+        "kana-hira-ru",
+        "kana-hira-re",
+        "kana-hira-ro"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-r-row-title",
+          "kind": "heading",
+          "text": "Hiragana: R row"
+        },
+        {
+          "id": "hiragana-r-row-teach",
+          "kind": "paragraph",
+          "text": "The Japanese r is a brief tongue tap, unlike a strong English r or l."
+        },
+        {
+          "id": "hiragana-r-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ら",
+              "reading": "ra"
+            },
+            {
+              "kana": "り",
+              "reading": "ri"
+            },
+            {
+              "kana": "る",
+              "reading": "ru"
+            },
+            {
+              "kana": "れ",
+              "reading": "re"
+            },
+            {
+              "kana": "ろ",
+              "reading": "ro"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-r-row-visual",
+          "kind": "callout",
+          "title": "Similar shapes",
+          "text": "Compare ? and ?: ? ends open; ? curls back."
+        },
+        {
+          "id": "hiragana-r-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "hiragana-r-row-select-1",
+              "type": "character-selection",
+              "prompt": "Choose ら (ra).",
+              "options": [
+                "ら",
+                "り",
+                "る"
+              ],
+              "answer": "ら",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ら is read ra."
+              }
+            },
+            {
+              "id": "hiragana-r-row-select-2",
+              "type": "character-selection",
+              "prompt": "Choose り (ri).",
+              "options": [
+                "り",
+                "る",
+                "れ"
+              ],
+              "answer": "り",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "り is read ri."
+              }
+            },
+            {
+              "id": "hiragana-r-row-select-3",
+              "type": "character-selection",
+              "prompt": "Choose る (ru).",
+              "options": [
+                "る",
+                "れ",
+                "ろ"
+              ],
+              "answer": "る",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "る is read ru."
+              }
+            },
+            {
+              "id": "hiragana-r-row-select-4",
+              "type": "character-selection",
+              "prompt": "Choose れ (re).",
+              "options": [
+                "れ",
+                "ろ",
+                "ら"
+              ],
+              "answer": "れ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "れ is read re."
+              }
+            },
+            {
+              "id": "hiragana-r-row-select-5",
+              "type": "character-selection",
+              "prompt": "Choose ろ (ro).",
+              "options": [
+                "ろ",
+                "ら",
+                "り"
+              ],
+              "answer": "ろ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ろ is read ro."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-r-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "とり",
+          "reading": "tori",
+          "translation": "bird"
+        },
+        {
+          "id": "hiragana-r-row-example-2",
+          "kind": "japanese-example",
+          "japanese": "さる",
+          "reading": "saru",
+          "translation": "monkey"
+        },
+        {
+          "id": "hiragana-r-row-example-3",
+          "kind": "japanese-example",
+          "japanese": "これ",
+          "reading": "kore",
+          "translation": "this"
+        },
+        {
+          "id": "hiragana-r-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the hiragana alone."
+        },
+        {
+          "id": "hiragana-r-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "hiragana-r-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ら.",
+              "answer": "ra",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ら is read ra."
+              }
+            },
+            {
+              "id": "hiragana-r-row-recall-last",
+              "type": "short-text",
+              "prompt": "Type the sound for ろ.",
+              "answer": "ro",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ろ is read ro."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hiragana-w-row",
+      "display": "Hiragana W row",
+      "requires": [
+        "hiragana-r-row"
+      ],
+      "introduces": [
+        "kana-hira-wa",
+        "kana-hira-wo",
+        "kana-hira-n"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "hiragana-w-row-title",
+          "kind": "heading",
+          "text": "Hiragana: W row"
+        },
+        {
+          "id": "hiragana-w-row-teach",
+          "kind": "paragraph",
+          "text": "The w row has ? and ?, followed in the basic chart by ?. ? is conventionally romanized wo, but as a particle in modern standard Japanese it is normally pronounced o."
+        },
+        {
+          "id": "hiragana-w-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "わ",
+              "reading": "wa"
+            },
+            {
+              "kana": "を",
+              "reading": "wo"
+            },
+            {
+              "kana": "ん",
+              "reading": "n"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-w-row-pronunciation",
+          "kind": "callout",
+          "title": "Pronunciation",
+          "text": "? remains the kana ? and is normally pronounced o when used as the object particle in modern standard Japanese. ? is a moraic nasal, takes one beat, and changes articulation with its sound context; it is not always pronounced like an English n."
+        },
+        {
+          "id": "hiragana-w-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "hiragana-w-row-select-1",
+              "type": "character-selection",
+              "prompt": "Choose わ (wa).",
+              "options": [
+                "わ",
+                "を",
+                "ん"
+              ],
+              "answer": "わ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "わ is read wa."
+              }
+            },
+            {
+              "id": "hiragana-w-row-select-2",
+              "type": "character-selection",
+              "prompt": "Choose を (wo).",
+              "options": [
+                "を",
+                "ん",
+                "わ"
+              ],
+              "answer": "を",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "を is read wo."
+              }
+            },
+            {
+              "id": "hiragana-w-row-select-3",
+              "type": "character-selection",
+              "prompt": "Choose ん (n).",
+              "options": [
+                "ん",
+                "わ",
+                "を"
+              ],
+              "answer": "ん",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ん is read n."
+              }
+            }
+          ]
+        },
+        {
+          "id": "hiragana-w-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "わに",
+          "reading": "wani",
+          "translation": "crocodile"
+        },
+        {
+          "id": "hiragana-w-row-example-2",
+          "kind": "japanese-example",
+          "japanese": "かわ",
+          "reading": "kawa",
+          "translation": "river"
+        },
+        {
+          "id": "hiragana-w-row-example-3",
+          "kind": "japanese-example",
+          "japanese": "ほん",
+          "reading": "hon",
+          "translation": "book"
+        },
+        {
+          "id": "hiragana-w-row-example-4",
+          "kind": "japanese-example",
+          "japanese": "ねこをみる",
+          "reading": "neko o miru",
+          "translation": "see a cat"
+        },
+        {
+          "id": "hiragana-w-row-particle-example",
+          "kind": "grammar-breakdown",
+          "title": "Object particle",
+          "japanese": "ほんを",
+          "reading": "hon o",
+          "translation": "book (object marker)",
+          "parts": [
+            {
+              "text": "ほん",
+              "reading": "hon",
+              "meaning": "book"
+            },
+            {
+              "text": "を",
+              "reading": "o",
+              "meaning": "object particle"
+            }
+          ]
+        },
+        {
+          "id": "hiragana-w-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the hiragana alone."
+        },
+        {
+          "id": "hiragana-w-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "hiragana-w-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for わ.",
+              "answer": "wa",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "わ is read wa."
+              }
+            },
+            {
+              "id": "hiragana-w-row-recall-last",
+              "type": "short-text",
+              "prompt": "Type the sound for ん.",
+              "answer": "n",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ん is read n."
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "concepts": [
@@ -806,6 +1930,162 @@
       "display": "と",
       "reading": "to",
       "translation": "Hiragana と"
+    },
+    {
+      "id": "kana-hira-na",
+      "display": "な",
+      "reading": "na",
+      "translation": "Hiragana な"
+    },
+    {
+      "id": "kana-hira-ni",
+      "display": "に",
+      "reading": "ni",
+      "translation": "Hiragana に"
+    },
+    {
+      "id": "kana-hira-nu",
+      "display": "ぬ",
+      "reading": "nu",
+      "translation": "Hiragana ぬ"
+    },
+    {
+      "id": "kana-hira-ne",
+      "display": "ね",
+      "reading": "ne",
+      "translation": "Hiragana ね"
+    },
+    {
+      "id": "kana-hira-no",
+      "display": "の",
+      "reading": "no",
+      "translation": "Hiragana の"
+    },
+    {
+      "id": "kana-hira-ha",
+      "display": "は",
+      "reading": "ha",
+      "translation": "Hiragana は"
+    },
+    {
+      "id": "kana-hira-hi",
+      "display": "ひ",
+      "reading": "hi",
+      "translation": "Hiragana ひ"
+    },
+    {
+      "id": "kana-hira-fu",
+      "display": "ふ",
+      "reading": "fu",
+      "translation": "Hiragana ふ"
+    },
+    {
+      "id": "kana-hira-he",
+      "display": "へ",
+      "reading": "he",
+      "translation": "Hiragana へ"
+    },
+    {
+      "id": "kana-hira-ho",
+      "display": "ほ",
+      "reading": "ho",
+      "translation": "Hiragana ほ"
+    },
+    {
+      "id": "kana-hira-ma",
+      "display": "ま",
+      "reading": "ma",
+      "translation": "Hiragana ま"
+    },
+    {
+      "id": "kana-hira-mi",
+      "display": "み",
+      "reading": "mi",
+      "translation": "Hiragana み"
+    },
+    {
+      "id": "kana-hira-mu",
+      "display": "む",
+      "reading": "mu",
+      "translation": "Hiragana む"
+    },
+    {
+      "id": "kana-hira-me",
+      "display": "め",
+      "reading": "me",
+      "translation": "Hiragana め"
+    },
+    {
+      "id": "kana-hira-mo",
+      "display": "も",
+      "reading": "mo",
+      "translation": "Hiragana も"
+    },
+    {
+      "id": "kana-hira-ya",
+      "display": "や",
+      "reading": "ya",
+      "translation": "Hiragana や"
+    },
+    {
+      "id": "kana-hira-yu",
+      "display": "ゆ",
+      "reading": "yu",
+      "translation": "Hiragana ゆ"
+    },
+    {
+      "id": "kana-hira-yo",
+      "display": "よ",
+      "reading": "yo",
+      "translation": "Hiragana よ"
+    },
+    {
+      "id": "kana-hira-ra",
+      "display": "ら",
+      "reading": "ra",
+      "translation": "Hiragana ら"
+    },
+    {
+      "id": "kana-hira-ri",
+      "display": "り",
+      "reading": "ri",
+      "translation": "Hiragana り"
+    },
+    {
+      "id": "kana-hira-ru",
+      "display": "る",
+      "reading": "ru",
+      "translation": "Hiragana る"
+    },
+    {
+      "id": "kana-hira-re",
+      "display": "れ",
+      "reading": "re",
+      "translation": "Hiragana れ"
+    },
+    {
+      "id": "kana-hira-ro",
+      "display": "ろ",
+      "reading": "ro",
+      "translation": "Hiragana ろ"
+    },
+    {
+      "id": "kana-hira-wa",
+      "display": "わ",
+      "reading": "wa",
+      "translation": "Hiragana わ"
+    },
+    {
+      "id": "kana-hira-wo",
+      "display": "を",
+      "reading": "wo",
+      "translation": "Hiragana を"
+    },
+    {
+      "id": "kana-hira-n",
+      "display": "ん",
+      "reading": "n",
+      "translation": "Hiragana ん"
     }
   ],
   "sentences": []
