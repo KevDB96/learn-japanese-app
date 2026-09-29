@@ -5,6 +5,7 @@ import type { LearnerProfileId } from '../lib/storage/types.ts'
 import './app.css'
 import { HiraganaProgress } from '../features/progress/HiraganaProgress.tsx'
 import { CloudSavePanel } from '../features/sync/CloudSavePanel.tsx'
+import { ProfileTransferPanel } from '../features/sync/ProfileTransferPanel.tsx'
 
 const destinations = [
   { id: 'learn', label: 'Learn', title: 'Learn Japanese' },
@@ -115,6 +116,7 @@ function MoreHome({ profileId, onProgress }: { profileId: LearnerProfileId; onPr
     <section className="more-profile-card"><img src={asset(`avatars/${profileId}.webp`)} alt="" /><div><span className="course-kicker">LEARNER PROFILE</span><h2>{profileId === 'kevin' ? 'Kevin' : 'Janne'}</h2><p>Progress is saved on this device.</p></div></section>
     <button className="more-link" type="button" onClick={onProgress}><span className="more-link-icon" aria-hidden="true">▥</span><span><strong>Your progress</strong><small>Review the hiragana you’ve learned</small></span><span aria-hidden="true">→</span></button>
     <CloudSavePanel profileId={profileId} />
+    <ProfileTransferPanel profileId={profileId} />
     <img className="garden-motif more-motif" src={asset(profileId === 'kevin' ? 'motifs/joyful-cat.webp' : 'motifs/faerie.webp')} alt="" />
   </div>
 }
