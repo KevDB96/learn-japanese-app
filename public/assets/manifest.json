@@ -1,0 +1,1020 @@
+{
+  "schema_version": 1,
+  "purpose": "Owner-approved dual-theme production derivatives. UI labels are rendered as HTML.",
+  "source_manifest": {
+    "schema_version": 2,
+    "zip_sha256": "d57352b48310801e94fc89e2fbcacbe50019bfe9b4cafe6d3a80b353a3e0d911"
+  },
+  "slots": {
+    "profile.avatar.kevin": "avatars/kevin.webp",
+    "profile.avatar.janne": "avatars/janne.webp",
+    "pwa.icon.shared.512": "icons/app-icon-shared-512.png",
+    "pwa.icon.shared.192": "icons/app-icon-shared-192.png",
+    "pwa.icon.shared.180": "icons/app-icon-shared-180.png",
+    "pwa.icon.shared.32": "icons/app-icon-shared-32.png",
+    "pwa.icon.shared.16": "icons/app-icon-shared-16.png",
+    "pwa.icon.kevin.512": "icons/app-icon-kevin-512.png",
+    "pwa.icon.kevin.192": "icons/app-icon-kevin-192.png",
+    "pwa.icon.kevin.180": "icons/app-icon-kevin-180.png",
+    "pwa.icon.kevin.32": "icons/app-icon-kevin-32.png",
+    "pwa.icon.kevin.16": "icons/app-icon-kevin-16.png",
+    "pwa.icon.janne.512": "icons/app-icon-janne-512.png",
+    "pwa.icon.janne.192": "icons/app-icon-janne-192.png",
+    "pwa.icon.janne.180": "icons/app-icon-janne-180.png",
+    "pwa.icon.janne.32": "icons/app-icon-janne-32.png",
+    "pwa.icon.janne.16": "icons/app-icon-janne-16.png",
+    "splash.kevin": "splash/kevin.webp",
+    "splash.janne": "splash/janne.webp",
+    "course.banner.kevin.hiragana": "courses/kevin/hiragana.webp",
+    "course.banner.kevin.katakana": "courses/kevin/katakana.webp",
+    "course.banner.kevin.kana-fluency": "courses/kevin/kana-fluency.webp",
+    "course.banner.kevin.vocabulary": "courses/kevin/vocabulary.webp",
+    "course.banner.kevin.grammar": "courses/kevin/grammar.webp",
+    "course.banner.kevin.phrases": "courses/kevin/phrases.webp",
+    "course.banner.kevin.practice": "courses/kevin/practice.webp",
+    "course.banner.janne.hiragana": "courses/janne/hiragana.webp",
+    "course.banner.janne.katakana": "courses/janne/katakana.webp",
+    "course.banner.janne.kana-fluency": "courses/janne/kana-fluency.webp",
+    "course.banner.janne.vocabulary": "courses/janne/vocabulary.webp",
+    "course.banner.janne.grammar": "courses/janne/grammar.webp",
+    "course.banner.janne.phrases": "courses/janne/phrases.webp",
+    "course.banner.janne.practice": "courses/janne/practice.webp",
+    "status.learning.kevin": "status/learning-kevin.webp",
+    "status.learning.janne": "status/learning-janne.webp",
+    "status.mastered.kevin": "status/mastered-kevin.webp",
+    "status.mastered.janne": "status/mastered-janne.webp",
+    "status.struggling.kevin": "status/struggling-kevin.webp",
+    "status.struggling.janne": "status/struggling-janne.webp",
+    "status.locked.kevin": "status/locked-kevin.webp",
+    "status.locked.janne": "status/locked-janne.webp",
+    "status.lesson-complete.kevin": "status/lesson-complete-kevin.webp",
+    "status.lesson-complete.janne": "status/lesson-complete-janne.webp",
+    "status.course-complete.kevin": "status/course-complete-kevin.webp",
+    "status.course-complete.janne": "status/course-complete-janne.webp",
+    "state.no-reviews-due.kevin": "states/no-reviews-due-kevin.webp",
+    "state.no-reviews-due.janne": "states/no-reviews-due-janne.webp",
+    "state.all-caught-up.kevin": "states/all-caught-up-kevin.webp",
+    "state.all-caught-up.janne": "states/all-caught-up-janne.webp",
+    "state.offline.kevin": "states/offline-kevin.webp",
+    "state.offline.janne": "states/offline-janne.webp",
+    "state.syncing.kevin": "states/syncing-kevin.webp",
+    "state.syncing.janne": "states/syncing-janne.webp",
+    "state.saved.kevin": "states/saved-kevin.webp",
+    "state.saved.janne": "states/saved-janne.webp",
+    "activity.listening.kevin": "activities/listening-kevin.webp",
+    "activity.listening.janne": "activities/listening-janne.webp",
+    "activity.practice.kevin": "activities/practice-kevin.webp",
+    "activity.practice.janne": "activities/practice-janne.webp",
+    "motif.spirit-cat": "motifs/spirit-cat.webp",
+    "motif.faerie": "motifs/faerie.webp",
+    "motif.joyful-cat": "motifs/joyful-cat.webp",
+    "motif.sakura-book": "motifs/sakura-book.webp"
+  },
+  "files": {
+    "avatars/kevin.webp": {
+      "sha256": "17c8d4c53a08c91e6001d53402ea49b104314691b1844e60f72fdc4c17704c3f",
+      "bytes": 109850,
+      "width": 720,
+      "height": 720,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "glowing_purple_spirit_cat_icon.webp",
+          "original_png": "glowing_purple_spirit_cat_icon.png",
+          "original_png_sha256": "bbba3440ab45d13d96edf61c54a25605e2401a64a2dbf0289821b1a2be9cb8d4",
+          "transfer_sha256": "6c48de97efa79cfc50d7398ffa61f22b879e2ad8c723160810ba89acd3d94fb5"
+        }
+      ]
+    },
+    "avatars/janne.webp": {
+      "sha256": "73e3319e26c3d5f3b03e09f5dd092bf32dc6766ef46ee0383802c4c51547be5d",
+      "bytes": 133492,
+      "width": 720,
+      "height": 720,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "icons/app-icon-shared-512.png": {
+      "sha256": "ffe916c9505eade8a353fc4b0579ffe32edf41f1ffd8771c2fd2bd9f3e6d7a49",
+      "bytes": 312420,
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-shared-192.png": {
+      "sha256": "6fac6e2197b162cd37096d1588d06bce4c8ec6fefd1cb2a8e32473a94ff251d6",
+      "bytes": 63656,
+      "width": 192,
+      "height": 192,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-shared-180.png": {
+      "sha256": "acb3bc6a9a49636d2789012b2c224aeb96e1ce6df5df8d8562a2921f540263b3",
+      "bytes": 57086,
+      "width": 180,
+      "height": 180,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-shared-32.png": {
+      "sha256": "e9f661480a0b95459d5aae49ec9d7c270cd82dd9a6f31b611535a6fce8c1f745",
+      "bytes": 2811,
+      "width": 32,
+      "height": 32,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-shared-16.png": {
+      "sha256": "4cb8eac6c7f93958eb2b0fc5be0849c96119aa371b7424bc9ca0266020082e38",
+      "bytes": 839,
+      "width": 16,
+      "height": 16,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-kevin-512.png": {
+      "sha256": "ffe916c9505eade8a353fc4b0579ffe32edf41f1ffd8771c2fd2bd9f3e6d7a49",
+      "bytes": 312420,
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-kevin-192.png": {
+      "sha256": "6fac6e2197b162cd37096d1588d06bce4c8ec6fefd1cb2a8e32473a94ff251d6",
+      "bytes": 63656,
+      "width": 192,
+      "height": 192,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-kevin-180.png": {
+      "sha256": "acb3bc6a9a49636d2789012b2c224aeb96e1ce6df5df8d8562a2921f540263b3",
+      "bytes": 57086,
+      "width": 180,
+      "height": 180,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-kevin-32.png": {
+      "sha256": "e9f661480a0b95459d5aae49ec9d7c270cd82dd9a6f31b611535a6fce8c1f745",
+      "bytes": 2811,
+      "width": 32,
+      "height": 32,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-kevin-16.png": {
+      "sha256": "4cb8eac6c7f93958eb2b0fc5be0849c96119aa371b7424bc9ca0266020082e38",
+      "bytes": 839,
+      "width": 16,
+      "height": 16,
+      "format": "png",
+      "sources": [
+        {
+          "file": "dreamy_sakura_moonlit_\u3042_icon.webp",
+          "original_png": "dreamy_sakura_moonlit_\u3042_icon.png",
+          "original_png_sha256": "f6629d9109ec112350eebdaaebcfc4bbe41533d2e36da2662ed3ef60509815e6",
+          "transfer_sha256": "95a4ddde6d415c87813d04c95a935f38125ef777c00d4835965c8603de42bfe2"
+        }
+      ]
+    },
+    "icons/app-icon-janne-512.png": {
+      "sha256": "e3a7857011d8ca021f17c20758f27f987f057daa12c159fdf2f59ec698702046",
+      "bytes": 334565,
+      "width": 512,
+      "height": 512,
+      "format": "png",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "icons/app-icon-janne-192.png": {
+      "sha256": "4d0ab3599b411dc6a3ee71f082154da86bcb595a59c53db80a4196541c99273b",
+      "bytes": 57599,
+      "width": 192,
+      "height": 192,
+      "format": "png",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "icons/app-icon-janne-180.png": {
+      "sha256": "29e162f24c0d376c78b4957969206c4fe302d291f234d456fb57cd1142a4b9c3",
+      "bytes": 51313,
+      "width": 180,
+      "height": 180,
+      "format": "png",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "icons/app-icon-janne-32.png": {
+      "sha256": "ac861321eb8d82f1219bf5d1478716f88fafaa469c2abb78af402136ae994db8",
+      "bytes": 2316,
+      "width": 32,
+      "height": 32,
+      "format": "png",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "icons/app-icon-janne-16.png": {
+      "sha256": "d549136c75fd45cd2f3dea5e424f5a04e3bb7b164a1794d24963e86a82f72f3b",
+      "bytes": 704,
+      "width": 16,
+      "height": 16,
+      "format": "png",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "splash/kevin.webp": {
+      "sha256": "b380e0dda45cfb0c70adef2207f61c5be6486d8e9f6d93316138d5b179729e19",
+      "bytes": 59838,
+      "width": 900,
+      "height": 1600,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "moonlit_fuji_and_torii_reflections.webp",
+          "original_png": "moonlit_fuji_and_torii_reflections.png",
+          "original_png_sha256": "c4099d867af18293ac8f0fe5b378f09cd8751c17e4548911632225f9c7ab6689",
+          "transfer_sha256": "6d842f1d965be8943c580781fa5facc1379f27685e49e3611b4f9a464bee431f"
+        }
+      ]
+    },
+    "splash/janne.webp": {
+      "sha256": "dde201e2bf8c008a8461c3e933b05647478eda430c531f43695b001ea302c51f",
+      "bytes": 28900,
+      "width": 900,
+      "height": 1600,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_sakura_garden_fairy.webp",
+          "original_png": "pastel_sakura_garden_fairy.png",
+          "original_png_sha256": "4a01248503eca79964876e3ca6e5fbc77dda1535a9038fa5aa874764a0402c4f",
+          "transfer_sha256": "b75779e9a87ce8cd5d0246c64a353d9a4a47d14244a036d569df7163ea60c0ab"
+        }
+      ]
+    },
+    "courses/kevin/hiragana.webp": {
+      "sha256": "f862a2366e1557329b6de0f8b88f931f72d1045410eb955083fc5cc60cf032a1",
+      "bytes": 50762,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystical_sakura_night_over_mount_fuji.webp",
+          "original_png": "mystical_sakura_night_over_mount_fuji.png",
+          "original_png_sha256": "50e2e3388d383a3a4932f76913c6fbaadc56c2f1ff0a3e49d1ea27cbe9996731",
+          "transfer_sha256": "9dd95db3b005febf04195ba90c424f5ca6068d2fedd42c506968eede8af95a7f"
+        }
+      ]
+    },
+    "courses/kevin/katakana.webp": {
+      "sha256": "712b3d3c6ee55628948124fe2e41cbdd23032d1de7e547fd22e9c434581d48c2",
+      "bytes": 61070,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "moonlit_fuji_and_torii_reflections.webp",
+          "original_png": "moonlit_fuji_and_torii_reflections.png",
+          "original_png_sha256": "c4099d867af18293ac8f0fe5b378f09cd8751c17e4548911632225f9c7ab6689",
+          "transfer_sha256": "6d842f1d965be8943c580781fa5facc1379f27685e49e3611b4f9a464bee431f"
+        }
+      ]
+    },
+    "courses/kevin/kana-fluency.webp": {
+      "sha256": "f862a2366e1557329b6de0f8b88f931f72d1045410eb955083fc5cc60cf032a1",
+      "bytes": 50762,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystical_sakura_night_over_mount_fuji.webp",
+          "original_png": "mystical_sakura_night_over_mount_fuji.png",
+          "original_png_sha256": "50e2e3388d383a3a4932f76913c6fbaadc56c2f1ff0a3e49d1ea27cbe9996731",
+          "transfer_sha256": "9dd95db3b005febf04195ba90c424f5ca6068d2fedd42c506968eede8af95a7f"
+        }
+      ]
+    },
+    "courses/kevin/vocabulary.webp": {
+      "sha256": "712b3d3c6ee55628948124fe2e41cbdd23032d1de7e547fd22e9c434581d48c2",
+      "bytes": 61070,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "moonlit_fuji_and_torii_reflections.webp",
+          "original_png": "moonlit_fuji_and_torii_reflections.png",
+          "original_png_sha256": "c4099d867af18293ac8f0fe5b378f09cd8751c17e4548911632225f9c7ab6689",
+          "transfer_sha256": "6d842f1d965be8943c580781fa5facc1379f27685e49e3611b4f9a464bee431f"
+        }
+      ]
+    },
+    "courses/kevin/grammar.webp": {
+      "sha256": "f862a2366e1557329b6de0f8b88f931f72d1045410eb955083fc5cc60cf032a1",
+      "bytes": 50762,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystical_sakura_night_over_mount_fuji.webp",
+          "original_png": "mystical_sakura_night_over_mount_fuji.png",
+          "original_png_sha256": "50e2e3388d383a3a4932f76913c6fbaadc56c2f1ff0a3e49d1ea27cbe9996731",
+          "transfer_sha256": "9dd95db3b005febf04195ba90c424f5ca6068d2fedd42c506968eede8af95a7f"
+        }
+      ]
+    },
+    "courses/kevin/phrases.webp": {
+      "sha256": "712b3d3c6ee55628948124fe2e41cbdd23032d1de7e547fd22e9c434581d48c2",
+      "bytes": 61070,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "moonlit_fuji_and_torii_reflections.webp",
+          "original_png": "moonlit_fuji_and_torii_reflections.png",
+          "original_png_sha256": "c4099d867af18293ac8f0fe5b378f09cd8751c17e4548911632225f9c7ab6689",
+          "transfer_sha256": "6d842f1d965be8943c580781fa5facc1379f27685e49e3611b4f9a464bee431f"
+        }
+      ]
+    },
+    "courses/kevin/practice.webp": {
+      "sha256": "f862a2366e1557329b6de0f8b88f931f72d1045410eb955083fc5cc60cf032a1",
+      "bytes": 50762,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystical_sakura_night_over_mount_fuji.webp",
+          "original_png": "mystical_sakura_night_over_mount_fuji.png",
+          "original_png_sha256": "50e2e3388d383a3a4932f76913c6fbaadc56c2f1ff0a3e49d1ea27cbe9996731",
+          "transfer_sha256": "9dd95db3b005febf04195ba90c424f5ca6068d2fedd42c506968eede8af95a7f"
+        }
+      ]
+    },
+    "courses/janne/hiragana.webp": {
+      "sha256": "1b979c836606b73f4ce54f55ffc594117675a26185988f63a79e1ad3a9376609",
+      "bytes": 107126,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "dreamy_sakura_fairy_garden.webp",
+          "original_png": "dreamy_sakura_fairy_garden.png",
+          "original_png_sha256": "faafbd96c1fde3ffff7e570418f1dfdea3cd897232f32958bfbd5c3ee20352d4",
+          "transfer_sha256": "6a6b184f11e02e8bcb43884bb6871707690984263c3603e98d70e02c077f68d8"
+        }
+      ]
+    },
+    "courses/janne/katakana.webp": {
+      "sha256": "b00261e6aaccd3ebd98cc50ddcc97d37b9ee99cf8e4ac280612d20fbbe0c9baa",
+      "bytes": 48756,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_sakura_garden_fairy.webp",
+          "original_png": "pastel_sakura_garden_fairy.png",
+          "original_png_sha256": "4a01248503eca79964876e3ca6e5fbc77dda1535a9038fa5aa874764a0402c4f",
+          "transfer_sha256": "b75779e9a87ce8cd5d0246c64a353d9a4a47d14244a036d569df7163ea60c0ab"
+        }
+      ]
+    },
+    "courses/janne/kana-fluency.webp": {
+      "sha256": "1b979c836606b73f4ce54f55ffc594117675a26185988f63a79e1ad3a9376609",
+      "bytes": 107126,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "dreamy_sakura_fairy_garden.webp",
+          "original_png": "dreamy_sakura_fairy_garden.png",
+          "original_png_sha256": "faafbd96c1fde3ffff7e570418f1dfdea3cd897232f32958bfbd5c3ee20352d4",
+          "transfer_sha256": "6a6b184f11e02e8bcb43884bb6871707690984263c3603e98d70e02c077f68d8"
+        }
+      ]
+    },
+    "courses/janne/vocabulary.webp": {
+      "sha256": "b00261e6aaccd3ebd98cc50ddcc97d37b9ee99cf8e4ac280612d20fbbe0c9baa",
+      "bytes": 48756,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_sakura_garden_fairy.webp",
+          "original_png": "pastel_sakura_garden_fairy.png",
+          "original_png_sha256": "4a01248503eca79964876e3ca6e5fbc77dda1535a9038fa5aa874764a0402c4f",
+          "transfer_sha256": "b75779e9a87ce8cd5d0246c64a353d9a4a47d14244a036d569df7163ea60c0ab"
+        }
+      ]
+    },
+    "courses/janne/grammar.webp": {
+      "sha256": "1b979c836606b73f4ce54f55ffc594117675a26185988f63a79e1ad3a9376609",
+      "bytes": 107126,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "dreamy_sakura_fairy_garden.webp",
+          "original_png": "dreamy_sakura_fairy_garden.png",
+          "original_png_sha256": "faafbd96c1fde3ffff7e570418f1dfdea3cd897232f32958bfbd5c3ee20352d4",
+          "transfer_sha256": "6a6b184f11e02e8bcb43884bb6871707690984263c3603e98d70e02c077f68d8"
+        }
+      ]
+    },
+    "courses/janne/phrases.webp": {
+      "sha256": "b00261e6aaccd3ebd98cc50ddcc97d37b9ee99cf8e4ac280612d20fbbe0c9baa",
+      "bytes": 48756,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_sakura_garden_fairy.webp",
+          "original_png": "pastel_sakura_garden_fairy.png",
+          "original_png_sha256": "4a01248503eca79964876e3ca6e5fbc77dda1535a9038fa5aa874764a0402c4f",
+          "transfer_sha256": "b75779e9a87ce8cd5d0246c64a353d9a4a47d14244a036d569df7163ea60c0ab"
+        }
+      ]
+    },
+    "courses/janne/practice.webp": {
+      "sha256": "1b979c836606b73f4ce54f55ffc594117675a26185988f63a79e1ad3a9376609",
+      "bytes": 107126,
+      "width": 1200,
+      "height": 480,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "dreamy_sakura_fairy_garden.webp",
+          "original_png": "dreamy_sakura_fairy_garden.png",
+          "original_png_sha256": "faafbd96c1fde3ffff7e570418f1dfdea3cd897232f32958bfbd5c3ee20352d4",
+          "transfer_sha256": "6a6b184f11e02e8bcb43884bb6871707690984263c3603e98d70e02c077f68d8"
+        }
+      ]
+    },
+    "status/learning-kevin.webp": {
+      "sha256": "c216e8dc3991f83a2f16359ff832bd6f98834f2ca12c57731bcf8d562029b359",
+      "bytes": 116340,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystic_cat_studying_a_spellbook.webp",
+          "original_png": "mystic_cat_studying_a_spellbook.png",
+          "original_png_sha256": "4316c6a047b3c1b4c7d2a5272ccb74e4ea022b8ea3a430e3254b66fdba82b5c6",
+          "transfer_sha256": "7c90531fb9602a02dade3bf42548da35ea796a86d6f6e56cc746dd1e708aa1ed"
+        }
+      ]
+    },
+    "status/learning-janne.webp": {
+      "sha256": "de94f43c137b097aac11f72e5af2737e42c4244ef16eda9e55a51026ed457952",
+      "bytes": 117758,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "fairy_girl_studying_an_enchanted_book.webp",
+          "original_png": "fairy_girl_studying_an_enchanted_book.png",
+          "original_png_sha256": "b8e5d657e23ff8840726edc93532aded42f3479e7f2a58e79c88a2bffd23cf27",
+          "transfer_sha256": "2af119c6d3bfe2a38b741becfb616917048d471d9125244559b9fcc95795ec66"
+        }
+      ]
+    },
+    "status/mastered-kevin.webp": {
+      "sha256": "03d3e9c62d839acbae71b9a6e53f7821b9dd607d75c39a0496a057e9793e9f20",
+      "bytes": 109110,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "joyful_sakura_spirit_cat.webp",
+          "original_png": "joyful_sakura_spirit_cat.png",
+          "original_png_sha256": "3771a76e7e1beb0f0c161764a9cf4dd3a6e54d54e18d8e5d4bd1a4984bc2dd19",
+          "transfer_sha256": "5e44959a116baf18a0c2f691086cd0e836eac8ace9b30c99b372dbc3c978eec4"
+        }
+      ]
+    },
+    "status/mastered-janne.webp": {
+      "sha256": "d4f23bf6c42e1f44464c252686ab98297a66bd06c18e7ca2e4293cb721b54f7b",
+      "bytes": 132456,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "joyful_sakura_fairy_sticker.webp",
+          "original_png": "joyful_sakura_fairy_sticker.png",
+          "original_png_sha256": "07a754b52cc809985a7dc84ed4dec566313e5dada14fbaf9700ac3bd691e17ef",
+          "transfer_sha256": "8ca8c931ea1e3a6c2f205dfac971e220e3b1148fa13dc4324c603b5e4d554169"
+        }
+      ]
+    },
+    "status/struggling-kevin.webp": {
+      "sha256": "3e0cdc45a2e7296a5650cda757c3c07afdb40c7bc28e3a535d1c24cda1e2dac2",
+      "bytes": 96162,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "tired_magic_cat_studying.webp",
+          "original_png": "tired_magic_cat_studying.png",
+          "original_png_sha256": "e29fd18993cce2f11de2e6391eb55e5f2abf926fa515f5be3d11ca4c1206aff3",
+          "transfer_sha256": "2f5add7a3d0576627b67d1767a01acf10503b35bd40f6debe46ee9c8f63d088a"
+        }
+      ]
+    },
+    "status/struggling-janne.webp": {
+      "sha256": "8065dcce2c0f841622f6e39fe6d76d2ac9e341d0b713791cbb729d74547a1392",
+      "bytes": 115890,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "tired_fairy_girl_among_books.webp",
+          "original_png": "tired_fairy_girl_among_books.png",
+          "original_png_sha256": "84a4e49bf37a33dbe5d02a2c2b480a66f9ed248648c5306344ccd60541d9ae84",
+          "transfer_sha256": "836fab473d08cebe9ad67401a64f0d0616da118ee2983e66cd1da039f6d259ab"
+        }
+      ]
+    },
+    "status/locked-kevin.webp": {
+      "sha256": "38d69c1055b2e2d5adb95f725b087c312e450d254fcb7f1654dfa273c552894f",
+      "bytes": 104982,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystical_chained_sakura_cat_spirit.webp",
+          "original_png": "mystical_chained_sakura_cat_spirit.png",
+          "original_png_sha256": "06334aab319cdda477c8de0a588de2c4116e0a7d49701b06f06299aa06bc0102",
+          "transfer_sha256": "48a688536d6bc8cf8222f2c03bba24834744a7178e77c9237a050ffe50cd8900"
+        }
+      ]
+    },
+    "status/locked-janne.webp": {
+      "sha256": "365cc6d58de90644598adc2144ff13c99fb1ca37c5e7f7ac84e52188d34b0c29",
+      "bytes": 127640,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "whimsical_fairy_lock_sticker.webp",
+          "original_png": "whimsical_fairy_lock_sticker.png",
+          "original_png_sha256": "aaa93b8f722a99dc426be0077e3edb6fe18cf425b4a1b71a322f2403c4772184",
+          "transfer_sha256": "507630cc31faffab4d0b12f1966a05c3cfc2514bf82cd83e135c44907802e60e"
+        }
+      ]
+    },
+    "status/lesson-complete-kevin.webp": {
+      "sha256": "03d3e9c62d839acbae71b9a6e53f7821b9dd607d75c39a0496a057e9793e9f20",
+      "bytes": 109110,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "joyful_sakura_spirit_cat.webp",
+          "original_png": "joyful_sakura_spirit_cat.png",
+          "original_png_sha256": "3771a76e7e1beb0f0c161764a9cf4dd3a6e54d54e18d8e5d4bd1a4984bc2dd19",
+          "transfer_sha256": "5e44959a116baf18a0c2f691086cd0e836eac8ace9b30c99b372dbc3c978eec4"
+        }
+      ]
+    },
+    "status/lesson-complete-janne.webp": {
+      "sha256": "d4f23bf6c42e1f44464c252686ab98297a66bd06c18e7ca2e4293cb721b54f7b",
+      "bytes": 132456,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "joyful_sakura_fairy_sticker.webp",
+          "original_png": "joyful_sakura_fairy_sticker.png",
+          "original_png_sha256": "07a754b52cc809985a7dc84ed4dec566313e5dada14fbaf9700ac3bd691e17ef",
+          "transfer_sha256": "8ca8c931ea1e3a6c2f205dfac971e220e3b1148fa13dc4324c603b5e4d554169"
+        }
+      ]
+    },
+    "status/course-complete-kevin.webp": {
+      "sha256": "e8c4ab8431454b81df607c3032a7fa626fe1444b67d42e3eba8040ed70ecf90e",
+      "bytes": 105432,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystical_cat_guardian_and_enchanted_book.webp",
+          "original_png": "mystical_cat_guardian_and_enchanted_book.png",
+          "original_png_sha256": "e2e3da533d125589e7f94ad5d940d2bad8c0d6d2f6890b9ba866799f1f575df6",
+          "transfer_sha256": "5d4a589f2dde3869ba1128a23cf5192f9212c4271a9e4073837481ccfcd47d16"
+        }
+      ]
+    },
+    "status/course-complete-janne.webp": {
+      "sha256": "f051a98fb42d4156ea9efa45b35657717d3b5ca8377b3a41ca4f3d8081841b43",
+      "bytes": 117634,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_fairy_scholar_with_enchanted_book.webp",
+          "original_png": "pastel_fairy_scholar_with_enchanted_book.png",
+          "original_png_sha256": "d87d0f7274dce513a8556b15e0009926d2ada5a28a397853120558cbc1ef84bd",
+          "transfer_sha256": "4304fa5c4cae164a51e8d688afcd8bb09a541babefd393b7e0f124159730901e"
+        }
+      ]
+    },
+    "states/no-reviews-due-kevin.webp": {
+      "sha256": "f81c45b0ab7c935126249a6758a7ea1734eacfe50fd22ff9f9ee1e6d89ec50c0",
+      "bytes": 77750,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "tired_magic_cat_studying.webp",
+          "original_png": "tired_magic_cat_studying.png",
+          "original_png_sha256": "e29fd18993cce2f11de2e6391eb55e5f2abf926fa515f5be3d11ca4c1206aff3",
+          "transfer_sha256": "2f5add7a3d0576627b67d1767a01acf10503b35bd40f6debe46ee9c8f63d088a"
+        }
+      ]
+    },
+    "states/no-reviews-due-janne.webp": {
+      "sha256": "1bdaab8989b83a0706bf5d1c4c8368710c80ea167748e3eaed542c477ff677b5",
+      "bytes": 92534,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "tired_fairy_girl_among_books.webp",
+          "original_png": "tired_fairy_girl_among_books.png",
+          "original_png_sha256": "84a4e49bf37a33dbe5d02a2c2b480a66f9ed248648c5306344ccd60541d9ae84",
+          "transfer_sha256": "836fab473d08cebe9ad67401a64f0d0616da118ee2983e66cd1da039f6d259ab"
+        }
+      ]
+    },
+    "states/all-caught-up-kevin.webp": {
+      "sha256": "befc2956482bba8e27fcbb0258d1ac848a4fc691177912b9fdfbd00d58efc08c",
+      "bytes": 88498,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "joyful_sakura_spirit_cat.webp",
+          "original_png": "joyful_sakura_spirit_cat.png",
+          "original_png_sha256": "3771a76e7e1beb0f0c161764a9cf4dd3a6e54d54e18d8e5d4bd1a4984bc2dd19",
+          "transfer_sha256": "5e44959a116baf18a0c2f691086cd0e836eac8ace9b30c99b372dbc3c978eec4"
+        }
+      ]
+    },
+    "states/all-caught-up-janne.webp": {
+      "sha256": "4c1c69b43146e47697c5ccd6e088168b61b346e2943529282822e5458100e8bd",
+      "bytes": 106352,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "joyful_sakura_fairy_sticker.webp",
+          "original_png": "joyful_sakura_fairy_sticker.png",
+          "original_png_sha256": "07a754b52cc809985a7dc84ed4dec566313e5dada14fbaf9700ac3bd691e17ef",
+          "transfer_sha256": "8ca8c931ea1e3a6c2f205dfac971e220e3b1148fa13dc4324c603b5e4d554169"
+        }
+      ]
+    },
+    "states/offline-kevin.webp": {
+      "sha256": "78575d26e9922271e4e89e94f30f36241803ac73e5bbfb4dc4b235ae6b53bf49",
+      "bytes": 45160,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "moonlit_fuji_and_torii_reflections.webp",
+          "original_png": "moonlit_fuji_and_torii_reflections.png",
+          "original_png_sha256": "c4099d867af18293ac8f0fe5b378f09cd8751c17e4548911632225f9c7ab6689",
+          "transfer_sha256": "6d842f1d965be8943c580781fa5facc1379f27685e49e3611b4f9a464bee431f"
+        }
+      ]
+    },
+    "states/offline-janne.webp": {
+      "sha256": "b65219b9fdf982aa94ecc82eb3037c7480abc18e89bf75d54cd4a860ec13ee9a",
+      "bytes": 72168,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "dreamy_sakura_fairy_garden.webp",
+          "original_png": "dreamy_sakura_fairy_garden.png",
+          "original_png_sha256": "faafbd96c1fde3ffff7e570418f1dfdea3cd897232f32958bfbd5c3ee20352d4",
+          "transfer_sha256": "6a6b184f11e02e8bcb43884bb6871707690984263c3603e98d70e02c077f68d8"
+        }
+      ]
+    },
+    "states/syncing-kevin.webp": {
+      "sha256": "c3c2bbc29300b38938c0e259558fb586202886b514648e239da31ef4a69ef3ad",
+      "bytes": 93510,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystic_cat_studying_a_spellbook.webp",
+          "original_png": "mystic_cat_studying_a_spellbook.png",
+          "original_png_sha256": "4316c6a047b3c1b4c7d2a5272ccb74e4ea022b8ea3a430e3254b66fdba82b5c6",
+          "transfer_sha256": "7c90531fb9602a02dade3bf42548da35ea796a86d6f6e56cc746dd1e708aa1ed"
+        }
+      ]
+    },
+    "states/syncing-janne.webp": {
+      "sha256": "bb284389a1643765ae23642a8627e6095ed61387d3606b21d61bc6fe492cab54",
+      "bytes": 94798,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "fairy_girl_studying_an_enchanted_book.webp",
+          "original_png": "fairy_girl_studying_an_enchanted_book.png",
+          "original_png_sha256": "b8e5d657e23ff8840726edc93532aded42f3479e7f2a58e79c88a2bffd23cf27",
+          "transfer_sha256": "2af119c6d3bfe2a38b741becfb616917048d471d9125244559b9fcc95795ec66"
+        }
+      ]
+    },
+    "states/saved-kevin.webp": {
+      "sha256": "5caf3e406e90f4ae09dce503e12359c11f9dbe15ab9ae7c8e27b40658ea9c0ad",
+      "bytes": 73210,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "glowing_purple_spirit_cat_icon.webp",
+          "original_png": "glowing_purple_spirit_cat_icon.png",
+          "original_png_sha256": "bbba3440ab45d13d96edf61c54a25605e2401a64a2dbf0289821b1a2be9cb8d4",
+          "transfer_sha256": "6c48de97efa79cfc50d7398ffa61f22b879e2ad8c723160810ba89acd3d94fb5"
+        }
+      ]
+    },
+    "states/saved-janne.webp": {
+      "sha256": "70aca2ff00a06abcbb5ceec69248d0fc564f11c46c8fe98fc622208a2b5b23aa",
+      "bytes": 86322,
+      "width": 560,
+      "height": 560,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "activities/listening-kevin.webp": {
+      "sha256": "a956e40de03453d8c6008007d67b46e745216cd2d392ae869c787f6ec4748751",
+      "bytes": 56146,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "japanese_night_study_icon.webp",
+          "original_png": "japanese_night_study_icon.png",
+          "original_png_sha256": "5486c2fa1053f7cf13aed8ba01c3832345927bd268aa5841f27b9e06b99def4d",
+          "transfer_sha256": "1e24fd100d41c6a0ccad02732e20631cb4eddb841a293e231b2584d3ff25c656"
+        }
+      ]
+    },
+    "activities/listening-janne.webp": {
+      "sha256": "f051a98fb42d4156ea9efa45b35657717d3b5ca8377b3a41ca4f3d8081841b43",
+      "bytes": 117634,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_fairy_scholar_with_enchanted_book.webp",
+          "original_png": "pastel_fairy_scholar_with_enchanted_book.png",
+          "original_png_sha256": "d87d0f7274dce513a8556b15e0009926d2ada5a28a397853120558cbc1ef84bd",
+          "transfer_sha256": "4304fa5c4cae164a51e8d688afcd8bb09a541babefd393b7e0f124159730901e"
+        }
+      ]
+    },
+    "activities/practice-kevin.webp": {
+      "sha256": "c216e8dc3991f83a2f16359ff832bd6f98834f2ca12c57731bcf8d562029b359",
+      "bytes": 116340,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "mystic_cat_studying_a_spellbook.webp",
+          "original_png": "mystic_cat_studying_a_spellbook.png",
+          "original_png_sha256": "4316c6a047b3c1b4c7d2a5272ccb74e4ea022b8ea3a430e3254b66fdba82b5c6",
+          "transfer_sha256": "7c90531fb9602a02dade3bf42548da35ea796a86d6f6e56cc746dd1e708aa1ed"
+        }
+      ]
+    },
+    "activities/practice-janne.webp": {
+      "sha256": "de94f43c137b097aac11f72e5af2737e42c4244ef16eda9e55a51026ed457952",
+      "bytes": 117758,
+      "width": 640,
+      "height": 640,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "fairy_girl_studying_an_enchanted_book.webp",
+          "original_png": "fairy_girl_studying_an_enchanted_book.png",
+          "original_png_sha256": "b8e5d657e23ff8840726edc93532aded42f3479e7f2a58e79c88a2bffd23cf27",
+          "transfer_sha256": "2af119c6d3bfe2a38b741becfb616917048d471d9125244559b9fcc95795ec66"
+        }
+      ]
+    },
+    "motifs/spirit-cat.webp": {
+      "sha256": "4af42233bc06013aa98a8bb13d191d705db09a269177a802dee84349af85854f",
+      "bytes": 61574,
+      "width": 500,
+      "height": 500,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "glowing_purple_spirit_cat_icon.webp",
+          "original_png": "glowing_purple_spirit_cat_icon.png",
+          "original_png_sha256": "bbba3440ab45d13d96edf61c54a25605e2401a64a2dbf0289821b1a2be9cb8d4",
+          "transfer_sha256": "6c48de97efa79cfc50d7398ffa61f22b879e2ad8c723160810ba89acd3d94fb5"
+        }
+      ]
+    },
+    "motifs/faerie.webp": {
+      "sha256": "b8d67ec0c43fd4b53bc2575ae9c8910f3a2d3af53c07ddd01069a84cbafd6e7d",
+      "bytes": 72192,
+      "width": 500,
+      "height": 500,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "pastel_sakura_fairy_portrait.webp",
+          "original_png": "pastel_sakura_fairy_portrait.png",
+          "original_png_sha256": "7e521aa8d9f50e40ecf27a9f9e8fefb380ee167728a7cc78bbcd9ba145656041",
+          "transfer_sha256": "f2701a8e47ad77e91a494f172ee7b7bd50570394b859d8aa5414315803f3fea5"
+        }
+      ]
+    },
+    "motifs/joyful-cat.webp": {
+      "sha256": "8e33ce69d1baf574bae0f0ecfec8e625a9d642264aca8622da9c9548317300e7",
+      "bytes": 74002,
+      "width": 500,
+      "height": 500,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "joyful_sakura_spirit_cat.webp",
+          "original_png": "joyful_sakura_spirit_cat.png",
+          "original_png_sha256": "3771a76e7e1beb0f0c161764a9cf4dd3a6e54d54e18d8e5d4bd1a4984bc2dd19",
+          "transfer_sha256": "5e44959a116baf18a0c2f691086cd0e836eac8ace9b30c99b372dbc3c978eec4"
+        }
+      ]
+    },
+    "motifs/sakura-book.webp": {
+      "sha256": "a8cc2096babd87749affefdcf4a52e465e49c3eeafe5f7585f2bfa904ef01f9d",
+      "bytes": 68140,
+      "width": 500,
+      "height": 500,
+      "format": "webp",
+      "sources": [
+        {
+          "file": "enchanted_hiragana_book_emblem.webp",
+          "original_png": "enchanted_hiragana_book_emblem.png",
+          "original_png_sha256": "2ae1fd8b705bec223085b899a660ccb4706659c9900f67386a8b1236b8205040",
+          "transfer_sha256": "d5d051ace42baacd455f6ca2e125eaff144299f979d3dda08cbe70ec11f74b26"
+        }
+      ]
+    }
+  }
+}

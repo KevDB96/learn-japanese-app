@@ -10,3 +10,5 @@ coverage/
 .playwright-browsers/
 test-results/
 playwright-report/
+
+Plans/
