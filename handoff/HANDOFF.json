@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "purpose": "temporary private Orchestra asset transport",
+  "parts": [
+    {
+      "name": "jla-transfer-part-000.zip",
+      "sha": "f1397a2c17bab22c922410447c47bc88466f0ae1"
+    },
+    {
+      "name": "jla-transfer-part-001.zip",
+      "sha": "95e2c98c6df6b6ae3e67e3b12dd00d92cc45f2e0"
+    },
+    {
+      "name": "jla-transfer-part-002.zip",
+      "sha": "c806e3a40ed51181342b3dde3090a3d11e59ac48"
+    },
+    {
+      "name": "jla-transfer-part-003.zip",
+      "sha": "526c128dbde0ce6b415328750f914aaff9d02bfc"
+    },
+    {
+      "name": "jla-transfer-part-004.zip",
+      "sha": "cde50c9328f327616148b9a22c57c84f5d001d83"
+    }
+  ],
+  "reconstructed_zip_sha256": "d57352b48310801e94fc89e2fbcacbe50019bfe9b4cafe6d3a80b353a3e0d911",
+  "reconstructed_name": "learn-japanese-ui-assets-transfer.zip"
+}
