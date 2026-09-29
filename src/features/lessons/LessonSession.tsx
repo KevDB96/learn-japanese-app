@@ -7,10 +7,11 @@ import { completeLesson, resolveLessonResume, saveLessonPosition } from "./progr
 import { LessonRenderer } from "./LessonRenderer.tsx";
 import { kanaFixtures } from "../../content/kana-fixtures.ts";
 import { kanaIdForAnswer } from "../progress/hiragana.ts";
+import type { LearnerProfileId } from "../../lib/storage/types.ts";
 
 type SessionState = { readonly repos: ProgressRepositories; readonly index: number; readonly mismatch: boolean; readonly completed: boolean };
 
-export function LessonSession({ lesson }: { lesson: Lesson }) {
+export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId: LearnerProfileId }) {
   const [session, setSession] = useState<SessionState>();
   const [storageError, setStorageError] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -18,7 +19,7 @@ export function LessonSession({ lesson }: { lesson: Lesson }) {
   useEffect(() => {
     let cancelled = false;
     let close: (() => void) | undefined;
-    void openLocalRepositories().then(async (opened) => {
+    void openLocalRepositories(undefined, profileId).then(async (opened) => {
       close = opened.close;
       const progress = await opened.lessonProgress.get(lesson.id);
       const resume = resolveLessonResume(progress, contentCatalog, lesson);
@@ -27,7 +28,7 @@ export function LessonSession({ lesson }: { lesson: Lesson }) {
       else opened.close();
     }).catch(() => { if (!cancelled) setStorageError(true); });
     return () => { cancelled = true; close?.(); };
-  }, [lesson]);
+  }, [lesson, profileId]);
 
   if (storageError) return <p role="status">Lesson progress is unavailable.</p>;
   if (!session) return <p role="status">Loading lesson…</p>;

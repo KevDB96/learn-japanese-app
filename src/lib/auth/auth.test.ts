@@ -49,7 +49,7 @@ describe('auth boundary', () => {
       await repos.lessonProgress.put(progress)
       await expect(auth.signIn('learner@example.test', 'wrong')).rejects.toThrow('Invalid credentials')
       expect(auth.current()).toEqual({ kind: 'guest', id: 'guest-fixed' })
-      expect(await repos.lessonProgress.get('lesson-kept')).toEqual(progress)
+      expect(await repos.lessonProgress.get('lesson-kept')).toEqual({ ...progress, profileId: 'kevin' })
     } finally { repos.close() }
   })
 

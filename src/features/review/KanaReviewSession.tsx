@@ -3,10 +3,11 @@ import { kanaFixtures } from "../../content/kana-fixtures.ts";
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { ReviewRating } from "./srs.ts";
 import type { SessionItem } from "../../lib/session/session.ts";
+import type { LearnerProfileId } from "../../lib/storage/types.ts";
 
 const ratings: readonly ReviewRating[] = ["Forgot", "Hard", "Got It", "Easy"];
 
-export function KanaReviewSession({ item, nextLabel, onRated }: { item: Extract<SessionItem, { kind: "review" }>; nextLabel?: string; onRated: () => void }) {
+export function KanaReviewSession({ item, nextLabel, onRated, profileId }: { item: Extract<SessionItem, { kind: "review" }>; nextLabel?: string; onRated: () => void; profileId: LearnerProfileId }) {
   const concept = kanaFixtures.find((kana) => kana.id === item.conceptId);
   const form = item.formId;
   const choices = useMemo(() => {
@@ -27,7 +28,7 @@ export function KanaReviewSession({ item, nextLabel, onRated }: { item: Extract<
   const correct = answer === correctAnswer;
   const rate = async (rating: ReviewRating) => {
     setSaving(true); setError(false);
-    const repos = await openLocalRepositories().catch(() => undefined);
+    const repos = await openLocalRepositories(undefined, profileId).catch(() => undefined);
     if (!repos) { setSaving(false); setError(true); return; }
     try {
       await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: item.conceptId, cardId: item.cardId, rating, reviewedAt: new Date().toISOString() });

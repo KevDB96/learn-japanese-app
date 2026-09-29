@@ -1,23 +1,32 @@
 import '@testing-library/jest-dom/vitest'
 import 'fake-indexeddb/auto'
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { App } from './App'
 
 afterEach(() => {
   cleanup()
   window.history.replaceState(null, '', '/')
+  localStorage.clear()
 })
 
-describe('App navigation shell', () => {
-  it('starts on Learn with labelled destinations and semantic landmarks', () => {
-    render(<App />)
+beforeEach(() => localStorage.setItem('learn-japanese.last-profile', 'kevin'))
 
+describe('App navigation shell', () => {
+  it('opens the two-profile picker and starts Learn for the selected profile', () => {
+    localStorage.clear()
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Choose a profile' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button').map((button) => button.textContent)).toEqual(['Kevin', 'Janne'])
+    fireEvent.click(screen.getByRole('button', { name: 'Janne' }))
+    expect(screen.getByRole('heading', { name: 'Learn Japanese' })).toBeInTheDocument()
+    expect(document.querySelector('.app-shell')).toHaveAttribute('data-theme', 'janne')
+    expect(localStorage.getItem('learn-japanese.last-profile')).toBe('janne')
     expect(screen.getByRole('navigation', { name: 'Main navigation' })).toBeInTheDocument()
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Learn Japanese' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Learn' })).toHaveAttribute('aria-current', 'page')
-    for (const label of ['Practice', 'Progress', 'More']) {
+    for (const label of ['Practice', 'Progress']) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument()
     }
   })
@@ -47,11 +56,13 @@ describe('App navigation shell', () => {
     expect(screen.queryByText(/due|review count/i)).not.toBeInTheDocument()
   })
 
-  it('keeps guest mode available in More without Supabase credentials', () => {
+  it('restores the last selected profile and switches themes immediately', () => {
+    localStorage.setItem('learn-japanese.last-profile', 'kevin')
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: 'More' }))
-    expect(screen.getByText('Guest mode')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Continue as Guest' })).toBeInTheDocument()
-    expect(screen.queryByLabelText('Email')).not.toBeInTheDocument()
+    expect(document.querySelector('.app-shell')).toHaveAttribute('data-theme', 'kevin')
+    fireEvent.click(screen.getByRole('button', { name: /Switch profile/ }))
+    expect(screen.getByRole('heading', { name: 'Choose a profile' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Janne' }))
+    expect(document.querySelector('.app-shell')).toHaveAttribute('data-theme', 'janne')
   })
 })

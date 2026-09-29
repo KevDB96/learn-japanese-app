@@ -1,4 +1,4 @@
-import type { AppMetadata, DeviceMetadata } from "./types";
+import type { AppMetadata, DeviceMetadata, LearnerProfileId } from "./types";
 import { STORAGE_DATABASE_NAME, STORAGE_SCHEMA_VERSION } from "./types";
 
 export const STORE_NAMES = [
@@ -23,6 +23,27 @@ export const migrations: Readonly<Record<number, Migration>> = {
   },
   2(db) {
     if (!db.objectStoreNames.contains("reviewStates")) db.createObjectStore("reviewStates", { keyPath: "id" });
+  },
+  3(_db, transaction) {
+    const now = new Date().toISOString();
+    const profiles = transaction.objectStore("profiles");
+    profiles.put({ id: "kevin", profileId: "kevin", displayName: "Kevin", recordVersion: 1, updatedAt: now });
+    profiles.put({ id: "janne", profileId: "janne", displayName: "Janne", recordVersion: 1, updatedAt: now });
+    const learnerStores = ["settings", "lessonProgress", "conceptStates", "reviewEvents", "reviewStates", "pendingSync"];
+    for (const name of learnerStores) {
+      const store = transaction.objectStore(name);
+      const cursorRequest = store.openCursor();
+      cursorRequest.onsuccess = () => {
+        const cursor = cursorRequest.result;
+        if (!cursor) return;
+        const value = cursor.value as { id: string; profileId?: LearnerProfileId };
+        if (!value.profileId) {
+          cursor.delete();
+          store.put({ ...value, id: `kevin::${value.id}`, profileId: "kevin" });
+        }
+        cursor.continue();
+      };
+    }
   },
 };
 

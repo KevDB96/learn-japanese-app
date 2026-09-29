@@ -9,11 +9,12 @@ import { targetedContrastGroups } from "../progress/hiragana.ts";
 import { kanaFixtures } from "../../content/kana-fixtures.ts";
 import { generateKanaReviewCards, KANA_REVIEW_FORMS } from "../../lib/content/kana.ts";
 import { KanaReviewSession } from "../review/KanaReviewSession.tsx";
+import type { LearnerProfileId } from "../../lib/storage/types.ts";
 
 type LearnState = { readonly plan: SessionPlan; readonly lessonId?: string; readonly contrast?: Extract<SessionPlan["items"][number], { kind: "contrast" }> };
 const NEW_MATERIAL_CAP = 5;
 
-export function LearnContinue() {
+export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   const [state, setState] = useState<LearnState>();
   const [started, setStarted] = useState(false);
   const [contrastStarted, setContrastStarted] = useState(false);
@@ -21,7 +22,7 @@ export function LearnContinue() {
 
   useEffect(() => {
     let cancelled = false;
-    void openLocalRepositories().then(async (repos) => {
+    void openLocalRepositories(undefined, profileId).then(async (repos) => {
       try {
         const [progress, concepts, due, events] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(Date.now()), repos.reviews.list()]);
         const lesson = getContinueLesson(contentCatalog, progress, concepts);
@@ -44,7 +45,7 @@ export function LearnContinue() {
       }
     }).catch(() => { if (!cancelled) setError(true); });
     return () => { cancelled = true; };
-  }, []);
+  }, [profileId]);
 
   if (error) return <p role="status">Learning progress is unavailable.</p>;
   if (!state) return <p role="status">Loading…</p>;
@@ -52,11 +53,11 @@ export function LearnContinue() {
   const firstReview = reviews[0];
   const nextLessonItem = state.plan.items.find((item): item is Extract<typeof item, { kind: "lesson" }> => item.kind === "lesson");
   const nextLessonLabel = nextLessonItem ? contentCatalog.lessons.find((item) => item.id === nextLessonItem.lessonId)?.display : undefined;
-  if (firstReview) return <KanaReviewSession key={firstReview.cardId} item={firstReview} nextLabel={nextLessonLabel ? `${reviews.length} reviews due · Next: ${nextLessonLabel}` : reviews.length > 1 ? `${reviews.length - 1} more reviews` : undefined} onRated={() => setState((current) => current ? ({ ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "review" || item.cardId !== firstReview.cardId), summary: { ...current.plan.summary, reviewCount: Math.max(0, current.plan.summary.reviewCount - 1) } } }) : current)} />;
+  if (firstReview) return <KanaReviewSession key={`${profileId}:${firstReview.cardId}`} profileId={profileId} item={firstReview} nextLabel={nextLessonLabel ? `${reviews.length} reviews due · Next: ${nextLessonLabel}` : reviews.length > 1 ? `${reviews.length - 1} more reviews` : undefined} onRated={() => setState((current) => current ? ({ ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "review" || item.cardId !== firstReview.cardId), summary: { ...current.plan.summary, reviewCount: Math.max(0, current.plan.summary.reviewCount - 1) } } }) : current)} />;
   if (contrastStarted && state.contrast) return <KanaContrastPractice glyphs={state.contrast.glyphs} onDone={() => setContrastStarted(false)} />;
   if (started && state.lessonId) {
     const lesson = contentCatalog.lessons.find((item) => item.id === state.lessonId)!;
-    return <LessonSession lesson={lesson} />;
+    return <LessonSession lesson={lesson} profileId={profileId} />;
   }
   const nextItem = state.plan.items.find((item) => item.kind === "lesson");
   if (!nextItem) return <div className="learn-continue">

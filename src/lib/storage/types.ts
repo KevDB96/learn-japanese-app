@@ -5,18 +5,22 @@ export interface StoredRecord {
   readonly updatedAt: string;
 }
 
+export type LearnerProfileId = "kevin" | "janne";
+/** Repositories always persist this field; optional here keeps pure-domain fixtures lightweight. */
+export interface ProfileScopedRecord extends StoredRecord { readonly profileId?: LearnerProfileId }
+
 export interface LocalProfile extends StoredRecord {
   readonly displayName?: string;
   readonly identityProvider?: string;
   readonly identitySubject?: string;
 }
 
-export interface UserSettings extends StoredRecord {
+export interface UserSettings extends ProfileScopedRecord {
   readonly dailyGoal: number;
   readonly preferredReading: "kana" | "romaji";
 }
 
-export interface LessonProgress extends StoredRecord {
+export interface LessonProgress extends ProfileScopedRecord {
   readonly lessonId: string;
   readonly status: "not-started" | "in-progress" | "completed";
   readonly currentBlockId?: string;
@@ -28,7 +32,7 @@ export interface LessonProgress extends StoredRecord {
 
 export type ConceptLifecycle = "UNSEEN" | "INTRODUCED" | "LEARNING" | "FAMILIAR" | "MASTERED";
 
-export interface ConceptState extends StoredRecord {
+export interface ConceptState extends ProfileScopedRecord {
   readonly conceptId: string;
   readonly lifecycle?: ConceptLifecycle;
   readonly familiarity: number;
@@ -36,7 +40,7 @@ export interface ConceptState extends StoredRecord {
   readonly lastReviewedAt?: string;
 }
 
-export interface ReviewEvent extends StoredRecord {
+export interface ReviewEvent extends ProfileScopedRecord {
   /** The reviewed concept and card are separate so multiple forms can schedule independently. */
   readonly conceptId: string;
   readonly cardId: string;
@@ -48,13 +52,13 @@ export interface ReviewEvent extends StoredRecord {
   readonly confusedConceptId?: string;
 }
 
-export interface ReviewCardState extends StoredRecord {
+export interface ReviewCardState extends ProfileScopedRecord {
   readonly conceptId: string;
   readonly cardId: string;
   readonly state: import("../../features/review/srs.ts").SrsState;
 }
 
-export interface PendingSyncOperation extends StoredRecord {
+export interface PendingSyncOperation extends ProfileScopedRecord {
   readonly operation: string;
   readonly entityId: string;
   readonly payload: Readonly<Record<string, unknown>>;
@@ -70,5 +74,5 @@ export interface DeviceMetadata extends StoredRecord {
   readonly registeredAt: string;
 }
 
-export const STORAGE_SCHEMA_VERSION = 2;
+export const STORAGE_SCHEMA_VERSION = 3;
 export const STORAGE_DATABASE_NAME = "learn-japanese-local";
