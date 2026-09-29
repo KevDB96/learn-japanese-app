@@ -4,7 +4,7 @@ import type { ConceptLifecycle, ConceptState, LessonProgress, StoredRecord } fro
 export type ProgressRepositories = {
   lessonProgress: { get(id: string): Promise<LessonProgress | undefined>; put(value: LessonProgress): Promise<void>; list(): Promise<LessonProgress[]> };
   conceptStates: { get(id: string): Promise<ConceptState | undefined>; put(value: ConceptState): Promise<void>; list(): Promise<ConceptState[]> };
-  reviews?: { introduce(conceptId: string, at: number): Promise<void> };
+  reviews?: { introduce(conceptId: string, at: number): Promise<void>; record?(input: { id: string; conceptId: string; cardId: string; rating: import("../review/srs.ts").ReviewRating; reviewedAt: string; kind: "practice"; confusedConceptId?: string }): Promise<void> };
 };
 
 export type ResumeResult = { readonly kind: "resume"; readonly blockIndex: number } | { readonly kind: "content-changed"; readonly blockIndex: 0 };

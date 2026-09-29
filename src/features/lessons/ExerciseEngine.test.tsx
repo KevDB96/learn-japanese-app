@@ -1,8 +1,10 @@
 import '@testing-library/jest-dom/vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ExerciseDefinition } from '../../lib/content/types.ts'
 import { evaluateExerciseAnswer, ExerciseRendererView, ExerciseSlot, normalizeExerciseAnswer } from './ExerciseEngine.tsx'
+
+afterEach(cleanup)
 
 const feedback = { success: 'Good.', explanation: 'Katakana is used for borrowed words.' }
 const choice: ExerciseDefinition = { id: 'choice-check' as ExerciseDefinition['id'], type: 'multiple-choice', prompt: 'Choose the script', options: ['Hiragana', 'Katakana'], answer: 'Katakana', feedback }
@@ -39,10 +41,18 @@ describe('lesson exercises', () => {
     expect(evaluateExerciseAnswer({ ...text, acceptedAnswers: undefined, normalizeWhitespace: false }, ' こんにちは ')).toBe(true)
   })
 
+  it('reports a wrong chosen option with the exercise identity for confusion tracking', () => {
+    const onIncorrect = vi.fn()
+    render(<ExerciseRendererView exercise={choice} onIncorrect={onIncorrect} />)
+    fireEvent.click(screen.getByRole('button', { name: 'Hiragana' }))
+    expect(onIncorrect).toHaveBeenCalledWith(choice, 'Hiragana')
+    cleanup()
+  })
+
   it('renders the three Introduction exercise definitions through the slot registry', () => {
     render(<ExerciseSlot title="Quick check" exercises={[choice, kana, text]} />)
     expect(screen.getByRole('button', { name: 'Hiragana' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'あ' })).toBeInTheDocument()
-    expect(screen.getAllByRole('textbox')).toHaveLength(2)
+    expect(screen.getAllByRole('textbox')).toHaveLength(1)
   })
 })

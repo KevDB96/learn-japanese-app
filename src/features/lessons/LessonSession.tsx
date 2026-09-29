@@ -5,6 +5,8 @@ import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { ProgressRepositories } from "./progress.ts";
 import { completeLesson, resolveLessonResume, saveLessonPosition } from "./progress.ts";
 import { LessonRenderer } from "./LessonRenderer.tsx";
+import { kanaFixtures } from "../../content/kana-fixtures.ts";
+import { kanaIdForAnswer } from "../progress/hiragana.ts";
 
 type SessionState = { readonly repos: ProgressRepositories; readonly index: number; readonly mismatch: boolean; readonly completed: boolean };
 
@@ -30,6 +32,14 @@ export function LessonSession({ lesson }: { lesson: Lesson }) {
   if (storageError) return <p role="status">Lesson progress is unavailable.</p>;
   if (!session) return <p role="status">Loading lesson…</p>;
   const progress = session.repos;
+  const recordConfusion = async (exercise: import("../../lib/content/types.ts").ExerciseDefinition, answer: string) => {
+    const target = kanaFixtures.find((item) => item.script === "hiragana" && (exercise.prompt.includes(item.glyph) || new RegExp(`\\b${item.romanization}\\b`, "i").test(exercise.prompt)));
+    const targetId = target?.id;
+    const chosenId = kanaIdForAnswer(kanaFixtures, answer);
+    if (!targetId || !chosenId || targetId === chosenId) return;
+    const reviewedAt = new Date().toISOString();
+    await progress.reviews?.record?.({ id: `confusion-${crypto.randomUUID()}`, conceptId: targetId, confusedConceptId: chosenId, cardId: targetId, rating: "Forgot", reviewedAt, kind: "practice" });
+  };
   const finishOrContinue = async () => {
     setBusy(true);
     try {
@@ -47,7 +57,7 @@ export function LessonSession({ lesson }: { lesson: Lesson }) {
   return <section className="lesson-session" aria-label={lesson.display}>
     {session.mismatch && <p role="status">This lesson changed. Resume from the beginning.</p>}
     {session.completed ? <p role="status">Lesson complete</p> : <>
-      <LessonRenderer lesson={{ ...lesson, blocks: [lesson.blocks[session.index]!] }} />
+      <LessonRenderer lesson={{ ...lesson, blocks: [lesson.blocks[session.index]!] }} onIncorrect={(exercise, answer) => { void recordConfusion(exercise, answer); }} />
       <button type="button" disabled={busy} onClick={() => void finishOrContinue()}>{busy ? "Saving…" : session.index >= lesson.blocks.length - 1 ? "Complete lesson" : "Continue"}</button>
     </>}
   </section>;

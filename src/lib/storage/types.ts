@@ -44,6 +44,8 @@ export interface ReviewEvent extends StoredRecord {
   readonly rating: "again" | "hard" | "good" | "easy";
   readonly kind: "scheduled-review" | "practice";
   readonly sessionId?: string;
+  /** The kana selected instead of the reviewed/asked kana, when identifiable. */
+  readonly confusedConceptId?: string;
 }
 
 export interface ReviewCardState extends StoredRecord {

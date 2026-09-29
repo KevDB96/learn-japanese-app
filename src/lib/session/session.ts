@@ -3,6 +3,7 @@ import type { ContentId, Lesson } from "../content/types.ts";
 export type SessionItem =
   | { readonly kind: "review"; readonly conceptId: ContentId }
   | { readonly kind: "remediation"; readonly conceptId: ContentId }
+  | { readonly kind: "contrast"; readonly conceptIds: readonly ContentId[]; readonly glyphs: readonly string[] }
   | { readonly kind: "lesson"; readonly lessonId: ContentId; readonly mode: "resume" | "new"; readonly conceptIds: readonly ContentId[] }
   | { readonly kind: "practice"; readonly lessonId: ContentId; readonly conceptIds: readonly ContentId[] };
 
@@ -22,6 +23,7 @@ export interface ComposeSessionInput {
   /** Candidates are derived by the caller; this module performs no scheduling. */
   readonly dueReviewIds: readonly ContentId[];
   readonly weakConceptIds: readonly ContentId[];
+  readonly contrastGroups?: readonly { readonly conceptIds: readonly ContentId[]; readonly glyphs: readonly string[] }[];
   readonly currentLesson?: Lesson;
   readonly lessonMode?: "resume" | "new";
   /** Maximum number of new concepts allowed in this session's lesson. */
@@ -42,6 +44,10 @@ export function composeSession(input: ComposeSessionInput): SessionPlan {
     seenConcepts.add(conceptId);
     items.push({ kind: "remediation", conceptId });
   }
+  for (const group of input.contrastGroups ?? []) {
+    const conceptIds = [...new Set(group.conceptIds)];
+    if (conceptIds.length > 1) items.push({ kind: "contrast", conceptIds, glyphs: group.glyphs });
+  }
 
   const lesson = input.currentLesson;
   const newConcepts = lesson ? [...new Set(lesson.introduces)] : [];
@@ -54,7 +60,7 @@ export function composeSession(input: ComposeSessionInput): SessionPlan {
   }
 
   const reviewCount = items.filter((item) => item.kind === "review").length;
-  const remediationCount = items.filter((item) => item.kind === "remediation").length;
+  const remediationCount = items.filter((item) => item.kind === "remediation" || item.kind === "contrast").length;
   return {
     version: 1,
     items,

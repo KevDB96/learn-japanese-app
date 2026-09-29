@@ -8,14 +8,18 @@ const baseRows = [
   { codes: [0x3055, 0x3057, 0x3059, 0x305b, 0x305d], roma: ["sa", "shi", "su", "se", "so"] },
   { codes: [0x305f, 0x3061, 0x3064, 0x3066, 0x3068], roma: ["ta", "chi", "tsu", "te", "to"] },
   { codes: [0x306f, 0x3072, 0x3075, 0x3078, 0x307b], roma: ["ha", "hi", "fu", "he", "ho"] },
+  { codes: [0x3042, 0x3044, 0x3046, 0x3048, 0x304a], roma: ["a", "i", "u", "e", "o"] },
+  { codes: [0x306a, 0x306b, 0x306c, 0x306d, 0x306e], roma: ["na", "ni", "nu", "ne", "no"] },
+  { codes: [0x307e, 0x307f, 0x3080, 0x3081, 0x3082], roma: ["ma", "mi", "mu", "me", "mo"] },
+  { codes: [0x3084, 0, 0x3086, 0, 0x3088], roma: ["ya", "", "yu", "", "yo"] },
+  { codes: [0x3089, 0x308a, 0x308b, 0x308c, 0x308d], roma: ["ra", "ri", "ru", "re", "ro"] },
+  { codes: [0x308f, 0, 0, 0, 0x3092], roma: ["wa", "", "", "", "wo"] },
+  { codes: [0x3093, 0, 0, 0, 0], roma: ["n", "", "", "", ""] },
 ] as const;
-const bases: KanaConcept[] = [...baseRows.flatMap(({ codes, roma }) => roma.map((romanization, order) => ({
+const bases: KanaConcept[] = [...baseRows.flatMap(({ codes, roma }) => roma.flatMap((romanization, order) => romanization ? [{
   id: id(baseId(romanization)), script: "hiragana" as const, glyph: kana(codes[order]!), romanization,
   row: `${romanization[0]}-row`, order, form: "base" as const, componentIds: [],
-}))), ...[["ni", 0x306b], ["mi", 0x307f], ["ri", 0x308a]].map(([roman, code], order) => ({
-  id: id(baseId(roman as string)), script: "hiragana" as const, glyph: kana(code as number), romanization: roman as string,
-  row: `${(roman as string)[0]}-row`, order, form: "base" as const, componentIds: [],
-}))];
+}] : []))];
 const marks = [
   { row: 0, codes: [0x304c, 0x304e, 0x3050, 0x3052, 0x3054], sound: "g" },
   { row: 1, codes: [0x3056, 0x3058, 0x305a, 0x305c, 0x305e], sound: "z" },

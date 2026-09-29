@@ -12,10 +12,10 @@ export function evaluateExerciseAnswer(exercise: ExerciseDefinition, answer: str
   return expected.some((value) => normalize(value) === normalize(answer));
 }
 
-type ExerciseRendererProps = { exercise: ExerciseDefinition; onComplete?: (id: string) => void };
+type ExerciseRendererProps = { exercise: ExerciseDefinition; onComplete?: (id: string) => void; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void };
 type ExerciseRenderer = (props: ExerciseRendererProps) => ReactNode;
 
-function ChoiceExercise({ exercise, onComplete }: ExerciseRendererProps) {
+function ChoiceExercise({ exercise, onComplete, onIncorrect }: ExerciseRendererProps) {
   if (exercise.type === "short-text") throw new Error("Short-text exercise dispatched to choice renderer");
   const [result, setResult] = useState<boolean | null>(null);
   const completed = useRef(false);
@@ -23,6 +23,7 @@ function ChoiceExercise({ exercise, onComplete }: ExerciseRendererProps) {
     if (result === true) return;
     const correct = evaluateExerciseAnswer(exercise, answer);
     setResult(correct);
+    if (!correct) onIncorrect?.(exercise, answer);
     if (correct && !completed.current) { completed.current = true; onComplete?.(exercise.id); }
   };
   return <section aria-label={exercise.prompt}>
@@ -33,7 +34,7 @@ function ChoiceExercise({ exercise, onComplete }: ExerciseRendererProps) {
   </section>;
 }
 
-function TextExercise({ exercise, onComplete }: ExerciseRendererProps) {
+function TextExercise({ exercise, onComplete, onIncorrect }: ExerciseRendererProps) {
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<boolean | null>(null);
   const completed = useRef(false);
@@ -42,6 +43,7 @@ function TextExercise({ exercise, onComplete }: ExerciseRendererProps) {
     if (result === true) return;
     const correct = evaluateExerciseAnswer(exercise, answer);
     setResult(correct);
+    if (!correct) onIncorrect?.(exercise, answer);
     if (correct && !completed.current) { completed.current = true; onComplete?.(exercise.id); }
   };
   return <section aria-label={exercise.prompt}>
@@ -63,10 +65,10 @@ export function ExerciseRendererView(props: ExerciseRendererProps) {
   return <Renderer {...props} />;
 }
 
-export function ExerciseSlot({ title, exercises }: { title: string; exercises: readonly ExerciseDefinition[] }) {
+export function ExerciseSlot({ title, exercises, onIncorrect }: { title: string; exercises: readonly ExerciseDefinition[]; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void }) {
   const [completed, setCompleted] = useState<ReadonlySet<string>>(() => new Set());
   const complete = (id: string) => setCompleted((current) => current.has(id) ? current : new Set(current).add(id));
   return <section aria-label={title}><h3>{title}</h3>{exercises.map((exercise) => <div key={exercise.id} data-exercise-id={exercise.id}>
-    <ExerciseRendererView exercise={exercise} onComplete={complete} />{completed.has(exercise.id) && <span className="sr-only" aria-label="Exercise completed">Completed</span>}
+    <ExerciseRendererView exercise={exercise} onComplete={complete} onIncorrect={onIncorrect} />{completed.has(exercise.id) && <span className="sr-only" aria-label="Exercise completed">Completed</span>}
   </div>)}</section>;
 }

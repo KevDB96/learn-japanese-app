@@ -22,6 +22,12 @@ describe("session composer", () => {
     expect(plan.summary).toEqual({ reviewCount: 2, remediationCount: 1, includesLesson: true, includesPractice: true, newConceptCount: 1 });
   });
 
+  it("adds a specific contrast exercise containing both confused kana glyphs", () => {
+    const plan = composeSession({ dueReviewIds: [], weakConceptIds: [], contrastGroups: [{ conceptIds: [cid("kana-hira-nu"), cid("kana-hira-me")], glyphs: ["ぬ", "め"] }], newMaterialCap: 0 });
+    expect(plan.items).toContainEqual({ kind: "contrast", conceptIds: [cid("kana-hira-nu"), cid("kana-hira-me")], glyphs: ["ぬ", "め"] });
+    expect(plan.summary.remediationCount).toBe(1);
+  });
+
   it("suppresses duplicate concepts across due and weak slots and within lesson practice", () => {
     const plan = composeSession({ dueReviewIds: [cid("same"), cid("same")], weakConceptIds: [cid("same"), cid("weak")], currentLesson: lesson, newMaterialCap: 1 });
     expect(plan.items.slice(0, 3)).toEqual([{ kind: "review", conceptId: cid("same") }, { kind: "remediation", conceptId: cid("weak") }, { kind: "lesson", lessonId: lesson.id, mode: "new", conceptIds: [cid("new-a")] }]);

@@ -39,13 +39,13 @@ export function createRepositories(db: IDBDatabase) {
         const existing = await withStore<ReviewCardState | undefined>(db, "reviewStates", "readonly", (s) => s.get(cardId));
         if (!existing) await withStore(db, "reviewStates", "readwrite", (s) => s.add({ id: cardId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId, state } satisfies ReviewCardState));
       },
-      async record(input: { id: string; conceptId: string; cardId: string; rating: ReviewRating; reviewedAt: string; sessionId?: string; kind?: "scheduled-review" | "practice" }) {
+      async record(input: { id: string; conceptId: string; cardId: string; rating: ReviewRating; reviewedAt: string; sessionId?: string; kind?: "scheduled-review" | "practice"; confusedConceptId?: string }) {
         const kind = input.kind ?? "scheduled-review";
         const event: ReviewEvent = {
           id: input.id, recordVersion: 1, updatedAt: input.reviewedAt, conceptId: input.conceptId,
           cardId: input.cardId, reviewedAt: input.reviewedAt,
           rating: ({ Forgot: "again", Hard: "hard", "Got It": "good", Easy: "easy" } as const)[input.rating],
-          kind, ...(input.sessionId ? { sessionId: input.sessionId } : {}),
+          kind, ...(input.sessionId ? { sessionId: input.sessionId } : {}), ...(input.confusedConceptId ? { confusedConceptId: input.confusedConceptId } : {}),
         };
         const scheduled: SchedulingReviewEvent = { ...input, kind };
         const tx = db.transaction(["reviewEvents", "reviewStates"], "readwrite");
