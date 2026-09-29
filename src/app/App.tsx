@@ -6,12 +6,14 @@ import './app.css'
 import { HiraganaProgress } from '../features/progress/HiraganaProgress.tsx'
 
 const destinations = [
-  { id: 'learn', label: 'Learn', title: 'Learn Japanese', message: 'Your next lesson will appear here.' },
-  { id: 'practice', label: 'Practice', title: 'Practice', message: 'Practice is coming soon.' },
-  { id: 'progress', label: 'Progress', title: 'Progress', message: 'Your progress will appear here.' },
+  { id: 'learn', label: 'Learn', title: 'Learn Japanese' },
+  { id: 'practice', label: 'Practice', title: 'Practice' },
+  { id: 'progress', label: 'Progress', title: 'Progress' },
+  { id: 'more', label: 'More', title: 'More' },
 ] as const
 
 type Destination = (typeof destinations)[number]['id']
+const asset = (path: string) => `/assets/${path}`
 
 function destinationFromHash(): Destination {
   const id = window.location.hash.slice(1)
@@ -34,38 +36,84 @@ export function App() {
   }
 
   const current = destinations.find((item) => item.id === active)!
+  const profile = PROFILES.find((item) => item.id === profileId)
 
   return (
     <div className="app-shell" data-theme={profileId ? profileTheme(profileId) : 'kevin'}>
       <header className="app-header">
-        <p className="eyebrow">Japanese, one step at a time</p>
-        {profileId && <button className="profile-switch" type="button" onClick={() => setProfileId(undefined)}>{PROFILES.find((profile) => profile.id === profileId)?.name} · Switch profile</button>}
+        <a className="brand-mark" href="#learn" onClick={() => navigate('learn')} aria-label="Japanese Garden home">
+          <span aria-hidden="true">あ</span><span>Japanese Garden</span>
+        </a>
+        {profile && <button className="profile-switch" type="button" aria-label={`Switch profile from ${profile.name}`} onClick={() => setProfileId(undefined)}>
+          <img src={asset(`avatars/${profile.id}.webp`)} alt="" />{profile.name}<span aria-hidden="true">⌄</span>
+        </button>}
       </header>
       {!profileId ? <main id="main-content" className="page-content profile-picker" tabIndex={-1}>
-        <section aria-labelledby="page-title"><h1 id="page-title">Choose a profile</h1><div className="profile-options">{PROFILES.map((profile) => <button key={profile.id} type="button" onClick={() => { rememberProfile(profile.id); setProfileId(profile.id) }}>{profile.name}</button>)}</div></section>
-      </main> : <>
-      <main id="main-content" className="page-content" tabIndex={-1}>
-        <section aria-labelledby="page-title">
-          <h1 id="page-title">{current.title}</h1>
-          {active === 'learn' ? <LearnContinue profileId={profileId} /> : active === 'progress' ? <HiraganaProgress profileId={profileId} /> : <p className="empty-state">{current.message}</p>}
+        <section aria-labelledby="page-title" className="picker-content">
+          <p className="eyebrow">A little Japanese, every day</p>
+          <h1 id="page-title">Choose a profile</h1>
+          <p className="picker-intro">Choose your garden to continue.</p>
+          <div className="profile-options">{PROFILES.map((item) => <button className={`profile-card profile-card-${item.id}`} key={item.id} type="button" onClick={() => { rememberProfile(item.id); setProfileId(item.id) }}>
+            <img src={asset(`avatars/${item.id}.webp`)} alt="" />
+            <span className="profile-card-copy"><strong>{item.name}</strong><span>{item.id === 'kevin' ? 'Moonlit sakura garden' : 'Faerie blossom garden'}</span></span>
+            <span className="profile-arrow" aria-hidden="true">→</span>
+          </button>)}</div>
         </section>
-      </main>
-      <nav className="bottom-nav" aria-label="Main navigation">
-        {destinations.map((item) => (
-          <button
-            className="nav-button"
-            key={item.id}
-            type="button"
-            aria-label={item.label}
-            aria-current={active === item.id ? 'page' : undefined}
-            onClick={() => navigate(item.id)}
-          >
-            <span className="nav-indicator" aria-hidden="true">{active === item.id ? '●' : '○'}</span>
-            <span>{item.label}</span>
-          </button>
-        ))}
-      </nav>
+      </main> : <>
+        <main id="main-content" className={`page-content page-${active}`} tabIndex={-1}>
+          <section aria-labelledby="page-title">
+            <p className="eyebrow page-eyebrow">{active === 'learn' ? 'Your learning path' : profile?.name + '’s garden'}</p>
+            <h1 id="page-title">{current.title}</h1>
+            {active === 'learn' && <LearnHome profileId={profileId} />}
+            {active === 'practice' && <PracticeHome profileId={profileId} onProgress={() => navigate('progress')} />}
+            {active === 'progress' && <HiraganaProgress profileId={profileId} />}
+            {active === 'more' && <MoreHome profileId={profileId} onProgress={() => navigate('progress')} />}
+          </section>
+        </main>
+        <nav className="bottom-nav" aria-label="Main navigation">
+          {destinations.map((item, index) => (
+            <button className="nav-button" key={item.id} type="button" aria-label={item.label} aria-current={active === item.id ? 'page' : undefined} onClick={() => navigate(item.id)}>
+              <span className="nav-icon" aria-hidden="true">{['◒', '✳', '▥', '⋯'][index]}</span><span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
       </>}
     </div>
   )
+}
+
+function LearnHome({ profileId }: { profileId: LearnerProfileId }) {
+  return <div className="home-stack">
+    <section className="course-card featured-course" aria-label="Hiragana course">
+      <img className="course-art" src={asset(`courses/${profileId}/hiragana.webp`)} alt="" />
+      <div className="course-content"><span className="course-kicker">YOUR FIRST COURSE</span><h2>Hiragana</h2><p>Read the sounds and symbols of Japanese.</p><span className="course-status"><span className="status-dot" /> Ready to learn</span></div>
+      <img className="course-status-art" src={asset(`status/learning-${profileId}.webp`)} alt="" />
+    </section>
+    <LearnContinue profileId={profileId} />
+    <img className="garden-motif learn-motif" src={asset(profileId === 'kevin' ? 'motifs/spirit-cat.webp' : 'motifs/faerie.webp')} alt="" />
+  </div>
+}
+
+function PracticeHome({ profileId, onProgress }: { profileId: LearnerProfileId; onProgress: () => void }) {
+  return <div className="practice-stack">
+    <p className="section-lead">Strengthen what you’ve already learned.</p>
+    <section className="activity-card">
+      <img src={asset(`activities/practice-${profileId}.webp`)} alt="" />
+      <div><span className="course-kicker">HIRAGANA</span><h2>Kana practice</h2><p>Choose a character from your progress to practise it again.</p><button className="secondary-action" type="button" onClick={onProgress}>Choose characters</button></div>
+    </section>
+    <section className="activity-card activity-card-listening">
+      <img src={asset(`activities/listening-${profileId}.webp`)} alt="" />
+      <div><span className="course-kicker">LISTENING</span><h2>Sound practice</h2><p>Listening activities will appear as they’re added to your course.</p><span className="coming-soon">Coming soon</span></div>
+    </section>
+    <img className="garden-motif practice-motif" src={asset(profileId === 'kevin' ? 'motifs/sakura-book.webp' : 'motifs/joyful-cat.webp')} alt="" />
+  </div>
+}
+
+function MoreHome({ profileId, onProgress }: { profileId: LearnerProfileId; onProgress: () => void }) {
+  return <div className="more-stack">
+    <section className="more-profile-card"><img src={asset(`avatars/${profileId}.webp`)} alt="" /><div><span className="course-kicker">LEARNER PROFILE</span><h2>{profileId === 'kevin' ? 'Kevin' : 'Janne'}</h2><p>Progress is saved on this device.</p></div></section>
+    <button className="more-link" type="button" onClick={onProgress}><span className="more-link-icon" aria-hidden="true">▥</span><span><strong>Your progress</strong><small>Review the hiragana you’ve learned</small></span><span aria-hidden="true">→</span></button>
+    <section className="save-status"><img src={asset(`states/saved-${profileId}.webp`)} alt="" /><div><strong>Saved on this device</strong><p>Your learning is available offline.</p></div></section>
+    <img className="garden-motif more-motif" src={asset(profileId === 'kevin' ? 'motifs/joyful-cat.webp' : 'motifs/faerie.webp')} alt="" />
+  </div>
 }

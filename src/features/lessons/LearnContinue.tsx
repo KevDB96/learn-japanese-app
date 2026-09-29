@@ -63,6 +63,7 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   if (!nextItem) return <div className="learn-continue">
     {state.contrast && <section aria-label="Hiragana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
     {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
+    {!state.contrast && state.plan.summary.reviewCount === 0 && <section className="learning-empty"><img src={`/assets/states/all-caught-up-${profileId}.webp`} alt="" /><p>All caught up</p></section>}
   </div>;
   const lesson = contentCatalog.lessons.find((item) => item.id === nextItem.lessonId)!;
   return <div className="learn-continue">
