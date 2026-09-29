@@ -61,7 +61,7 @@ describe('App navigation shell', () => {
     expect(document.querySelector('.activity-card img')).toHaveAttribute('src', '/assets/activities/practice-kevin.webp')
     fireEvent.click(screen.getByRole('button', { name: 'More' }))
     expect(screen.getByRole('heading', { name: 'More' })).toBeInTheDocument()
-    expect(screen.getByText('Saved on this device')).toBeInTheDocument()
+    expect(screen.getByText('Device only')).toBeInTheDocument()
   })
 
   it('offers Continue for the first eligible lesson and opens it', async () => {

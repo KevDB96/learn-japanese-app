@@ -93,6 +93,8 @@ h2, h3, p { margin-top: 0; }
 .more-link small { color: var(--text-muted); }
 .save-status > img { width: 3.5rem; height: 3.5rem; object-fit: contain; }
 .save-status strong { font-size: .95rem; }
+.save-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .5rem; }
+.save-actions button { min-height: 2.75rem; padding: .4rem .75rem; border: 1px solid var(--card-border); border-radius: .65rem; background: var(--surface-card); color: var(--text); cursor: pointer; touch-action: manipulation; }
 .bottom-nav { position: fixed; inset-inline: 0; bottom: 0; z-index: 5; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: min(100%, 58rem); margin-inline: auto; padding: .35rem max(.35rem, env(safe-area-inset-left, 0px)) max(.35rem, env(safe-area-inset-bottom, 0px)); border: 1px solid var(--card-border); border-bottom: 0; border-radius: 1rem 1rem 0 0; background: var(--navigation-surface); box-shadow: 0 -.6rem 1.5rem #0002; }
 .nav-button { display: flex; min-width: 0; min-height: 3.55rem; flex-direction: column; align-items: center; justify-content: center; gap: .05rem; padding: .2rem; border: 0; border-radius: .75rem; background: transparent; color: var(--text-muted); font-size: .75rem; font-weight: 650; cursor: pointer; touch-action: manipulation; }
 .nav-button[aria-current="page"] { background: var(--navigation-active); color: var(--accent); font-weight: 800; }

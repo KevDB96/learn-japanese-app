@@ -11,12 +11,13 @@ export interface Repository<T extends { readonly id: string }> {
 
 const PROFILE_STORES = new Set<StoreName>(["settings", "lessonProgress", "conceptStates", "reviewEvents", "reviewStates", "pendingSync"]);
 const storageId = (profileId: LearnerProfileId, id: string) => `${profileId}::${id}`;
+function changed(profileId: LearnerProfileId) { if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("learn-japanese:state-changed", { detail: { profileId } })); }
 
 function repository<T extends { readonly id: string; readonly profileId?: LearnerProfileId }>(db: IDBDatabase, store: StoreName, profileId: LearnerProfileId): Repository<T> {
   const scoped = PROFILE_STORES.has(store);
   return {
     async get(id) { const value = await withStore<T | undefined>(db, store, "readonly", (s) => s.get(scoped ? storageId(profileId, id) : id)); return value ? { ...value, id, ...(scoped ? { profileId } : {}) } : undefined; },
-    async put(value) { await withStore(db, store, "readwrite", (s) => s.put(scoped ? { ...value, id: storageId(profileId, value.id), profileId } : value)); },
+    async put(value) { await withStore(db, store, "readwrite", (s) => s.put(scoped ? { ...value, id: storageId(profileId, value.id), profileId } : value)); if (scoped) changed(profileId); },
     async list() { const values = await withStore<T[]>(db, store, "readonly", (s) => s.getAll()); return (scoped ? values.filter((value) => value.profileId === profileId) : values).map((value) => scoped ? { ...value, id: value.id.slice(profileId.length + 2) } : value); },
   };
 }
@@ -34,14 +35,14 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
       async get(id: string) { const event = await withStore<ReviewEvent | undefined>(db, "reviewEvents", "readonly", (s) => s.get(storageId(profileId, id))); return event ? { ...event, id } : undefined; },
       async list() { return (await withStore<ReviewEvent[]>(db, "reviewEvents", "readonly", (s) => s.getAll())).filter((event) => event.profileId === profileId).map((event) => ({ ...event, id: event.id.slice(profileId.length + 2) })); },
       /** add() is intentionally used instead of put(): duplicate event IDs reject and never overwrite. */
-      async append(event: ReviewEvent) { await withStore(db, "reviewEvents", "readwrite", (s) => s.add({ ...event, id: storageId(profileId, event.id), profileId })); },
+      async append(event: ReviewEvent) { await withStore(db, "reviewEvents", "readwrite", (s) => s.add({ ...event, id: storageId(profileId, event.id), profileId })); changed(profileId); },
       async getStates() { return (await withStore<ReviewCardState[]>(db, "reviewStates", "readonly", (s) => s.getAll())).filter((state) => state.profileId === profileId).map((state) => ({ ...state, id: state.id.slice(profileId.length + 2) })); },
       async due(now: number) { return selectDueReviews(await this.getStates(), now); },
       async introduce(conceptId: string, at: number, cardId = conceptId) {
         const state = createSrsState(conceptId, at);
         const scopedCardId = storageId(profileId, cardId);
         const existing = await withStore<ReviewCardState | undefined>(db, "reviewStates", "readonly", (s) => s.get(scopedCardId));
-        if (!existing) await withStore(db, "reviewStates", "readwrite", (s) => s.add({ id: scopedCardId, profileId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId, state } satisfies ReviewCardState));
+        if (!existing) { await withStore(db, "reviewStates", "readwrite", (s) => s.add({ id: scopedCardId, profileId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId, state } satisfies ReviewCardState)); changed(profileId); }
       },
       async record(input: { id: string; conceptId: string; cardId: string; rating: ReviewRating; reviewedAt: string; sessionId?: string; kind?: "scheduled-review" | "practice"; confusedConceptId?: string }) {
         const kind = input.kind ?? "scheduled-review";
@@ -66,7 +67,7 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
           };
         };
         await new Promise<void>((resolve, reject) => {
-          tx.oncomplete = () => resolve();
+          tx.oncomplete = () => { changed(profileId); resolve(); };
           tx.onerror = () => reject(tx.error ?? new Error("Review transaction failed"));
           tx.onabort = () => reject(tx.error ?? new Error("Review transaction aborted"));
         });
@@ -93,7 +94,7 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
         for (const old of existingStates) if (old.profileId === profileId) store.delete(old.id);
         for (const state of rebuilt) store.put(state);
         await new Promise<void>((resolve, reject) => {
-          tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error);
+          tx.oncomplete = () => { changed(profileId); resolve(); }; tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error);
         });
         return rebuilt.map((state) => ({ ...state, id: state.cardId }));
       },
