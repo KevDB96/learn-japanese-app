@@ -7,6 +7,8 @@ import { getContinueLesson } from "./progress.ts";
 import { LessonSession } from "./LessonSession.tsx";
 import { targetedContrastGroups } from "../progress/hiragana.ts";
 import { kanaFixtures } from "../../content/kana-fixtures.ts";
+import { generateKanaReviewCards, KANA_REVIEW_FORMS } from "../../lib/content/kana.ts";
+import { KanaReviewSession } from "../review/KanaReviewSession.tsx";
 
 type LearnState = { readonly plan: SessionPlan; readonly lessonId?: string; readonly contrast?: Extract<SessionPlan["items"][number], { kind: "contrast" }> };
 const NEW_MATERIAL_CAP = 5;
@@ -24,7 +26,16 @@ export function LearnContinue() {
         const [progress, concepts, due, events] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(Date.now()), repos.reviews.list()]);
         const lesson = getContinueLesson(contentCatalog, progress, concepts);
         const lessonMode = progress.some((item) => item.lessonId === lesson?.id && item.status === "in-progress") ? "resume" : "new";
-        const plan = composeSession({ dueReviewIds: due.map((candidate) => candidate.conceptId as ContentId), weakConceptIds: [], contrastGroups: targetedContrastGroups(events, kanaFixtures).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP });
+        const cards = generateKanaReviewCards(kanaFixtures, KANA_REVIEW_FORMS);
+        const cardForms = new Map(cards.map((card) => [card.id, card.formId]));
+        const dueReviews = due.flatMap((candidate) => {
+          const exactFormId = cardForms.get(candidate.cardId);
+          if (exactFormId) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: exactFormId }];
+          // Preserve cards created by earlier concept-level releases as glyph-to-sound reviews.
+          if (kanaFixtures.some((item) => item.id === candidate.conceptId)) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: "kana-glyph-to-sound" }];
+          return [];
+        });
+        const plan = composeSession({ dueReviews, reviewLimit: 10, weakConceptIds: [], contrastGroups: targetedContrastGroups(events, kanaFixtures).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP, allowOversizedLesson: true });
         if (!cancelled) setState({ plan, lessonId: lesson?.id, contrast: plan.items.find((item): item is Extract<typeof item, { kind: "contrast" }> => item.kind === "contrast") });
       } catch {
         if (!cancelled) setError(true);
@@ -37,6 +48,11 @@ export function LearnContinue() {
 
   if (error) return <p role="status">Learning progress is unavailable.</p>;
   if (!state) return <p role="status">Loading…</p>;
+  const reviews = state.plan.items.filter((item): item is Extract<typeof item, { kind: "review" }> => item.kind === "review");
+  const firstReview = reviews[0];
+  const nextLessonItem = state.plan.items.find((item): item is Extract<typeof item, { kind: "lesson" }> => item.kind === "lesson");
+  const nextLessonLabel = nextLessonItem ? contentCatalog.lessons.find((item) => item.id === nextLessonItem.lessonId)?.display : undefined;
+  if (firstReview) return <KanaReviewSession key={firstReview.cardId} item={firstReview} nextLabel={nextLessonLabel ? `${reviews.length} reviews due · Next: ${nextLessonLabel}` : reviews.length > 1 ? `${reviews.length - 1} more reviews` : undefined} onRated={() => setState((current) => current ? ({ ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "review" || item.cardId !== firstReview.cardId), summary: { ...current.plan.summary, reviewCount: Math.max(0, current.plan.summary.reviewCount - 1) } } }) : current)} />;
   if (contrastStarted && state.contrast) return <KanaContrastPractice glyphs={state.contrast.glyphs} onDone={() => setContrastStarted(false)} />;
   if (started && state.lessonId) {
     const lesson = contentCatalog.lessons.find((item) => item.id === state.lessonId)!;
@@ -45,7 +61,7 @@ export function LearnContinue() {
   const nextItem = state.plan.items.find((item) => item.kind === "lesson");
   if (!nextItem) return <div className="learn-continue">
     {state.contrast && <section aria-label="Hiragana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
-    {state.plan.summary.reviewCount > 0 ? <p>{state.plan.summary.reviewCount} reviews due</p> : !state.contrast && <p className="empty-state">No lesson is ready yet.</p>}
+    {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
   </div>;
   const lesson = contentCatalog.lessons.find((item) => item.id === nextItem.lessonId)!;
   return <div className="learn-continue">

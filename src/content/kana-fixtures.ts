@@ -49,7 +49,7 @@ const yoon: KanaConcept[] = yoonBase.flatMap((roman) => [
 ].map(({ suffix, glyph }) => {
   const base = [...bases, ...marked].find((item) => item.romanization === roman)!;
   return { id: id(`kana-hira-yoon-${base.glyph.codePointAt(0)!.toString(16)}-${glyph.toString(16)}`), script: "hiragana" as const,
-    glyph: `${base.glyph}${kana(glyph)}`, romanization: `${roman[0]}${suffix}`, row: `yoon-${roman}`, order: glyph,
+    glyph: `${base.glyph}${kana(glyph)}`, romanization: `${roman === "shi" ? "sh" : roman === "chi" ? "ch" : roman === "ji" ? "j" : roman[0]}${["shi", "chi", "ji"].includes(roman) ? suffix.slice(1) : suffix}`, row: `yoon-${roman}`, order: glyph,
     form: "contracted" as const, componentIds: [base.id, id(`kana-hira-small-${suffix}`)], reviewEligible: false };
 }));
 export const kanaFixtures: readonly KanaConcept[] = [...bases, ...marked, ...small, ...yoon];

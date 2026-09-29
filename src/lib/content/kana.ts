@@ -23,6 +23,10 @@ export function generateKanaReviewCards(concepts: readonly KanaConcept[], forms:
   return cards.sort((a, b) => a.conceptId.localeCompare(b.conceptId) || a.formId.localeCompare(b.formId));
 }
 
+export function reviewCardsForConcept(concept: KanaConcept, forms: readonly KanaReviewForm[] = KANA_REVIEW_FORMS, manifest?: PronunciationManifest): KanaReviewCard[] {
+  return generateKanaReviewCards([concept], forms, manifest)
+}
+
 export interface KanaValidationOptions {
   readonly bundledAssets?: readonly string[];
   readonly providerIds?: readonly string[];

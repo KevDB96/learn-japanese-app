@@ -18,6 +18,20 @@ describe("canonical basic Hiragana course", () => {
     const introduced = lessons.flatMap((lesson) => lesson.introduces.map((id) => contentCatalog.concepts.find((concept) => concept.id === id)?.display));
     expect(lessons).toHaveLength(10); expect(introduced).toHaveLength(46); expect(new Set(introduced).size).toBe(46); expect(introduced.slice().sort()).toEqual(rows.flat().sort());
   });
+  it("keeps every canonical Hiragana display and reading aligned with its Hepburn fixture", () => {
+    for (const kana of kanaFixtures) {
+      const concept = contentCatalog.concepts.find((item) => item.id === kana.id);
+      expect(concept, kana.id).toBeDefined();
+      expect(concept?.display, kana.id).toBe(kana.glyph);
+      expect(concept?.reading, kana.id).toBe(kana.romanization);
+    }
+  });
+  it("introduces every kana fixture exactly once in a reachable curriculum lesson", () => {
+    const counts = new Map<string, number>();
+    for (const lesson of contentCatalog.lessons) for (const id of lesson.introduces) counts.set(id, (counts.get(id) ?? 0) + 1);
+    for (const kana of kanaFixtures) expect(counts.get(kana.id), kana.id).toBe(1);
+    expect(contentCatalog.lessons.flatMap((lesson) => lesson.introduces).filter((id) => counts.get(id)! > 1)).toEqual([]);
+  });
   it("teaches marks, yoon, gemination, and Hiragana long-vowel spelling in sequence", () => {
     const advanced = ["hiragana-dakuten-handakuten", "hiragana-contracted-sounds", "hiragana-small-tsu", "hiragana-long-vowels"]
       .map((id) => contentCatalog.lessons.find((lesson) => lesson.id === id)!);
@@ -26,13 +40,20 @@ describe("canonical basic Hiragana course", () => {
     const markedGlyphs = marks.introduces.map((id) => contentCatalog.concepts.find((concept) => concept.id === id)!.display);
     expect(markedGlyphs).toHaveLength(25);
     expect(markedGlyphs).toContain("ぢ"); expect(markedGlyphs).toContain("づ"); expect(markedGlyphs).toContain("ぽ");
-    expect(advanced[1]!.introduces.filter((id) => contentCatalog.concepts.find((concept) => concept.id === id)!.display.length === 2)).toHaveLength(17);
+    expect(advanced[1]!.introduces.filter((id) => contentCatalog.concepts.find((concept) => concept.id === id)!.display.length === 2)).toHaveLength(33);
     expect(advanced[1]!.introduces).toContain("kana-hira-small-ya");
     expect(advanced[2]!.introduces.map((id) => contentCatalog.concepts.find((concept) => concept.id === id)!.display)).toEqual(["っ"]);
     const longLessonText = advanced[3]!.blocks.filter((block) => block.kind === "paragraph").map((block) => block.text).join(" ");
     expect(longLessonText).toContain("おう"); expect(longLessonText).toContain("おお");
     expect(longLessonText).toContain("えい"); expect(longLessonText).toContain("ええ");
     expect(longLessonText).toContain("not the Katakana mark ー");
+    const pronunciationNotes = contentCatalog.lessons.filter((lesson) => ["hiragana-s-row", "hiragana-t-row", "hiragana-h-row", "hiragana-w-row"].includes(lesson.id)).flatMap((lesson) => lesson.blocks).filter((block) => block.kind === "paragraph" || block.kind === "callout").map((block) => block.text).join(" ");
+    expect(pronunciationNotes).toContain("し is the irregular member: it is shi, not si.");
+    expect(pronunciationNotes).toContain("ち (chi) and つ (tsu)");
+    expect(pronunciationNotes).toContain("ふ is conventionally romanized fu");
+    expect(pronunciationNotes).toContain("When は marks the topic");
+    expect(pronunciationNotes).toContain("を remains the kana を");
+    expect(pronunciationNotes).not.toMatch(/\? row|(?:^|\s)\?(?:\s|\.)/);
     for (const lesson of advanced) {
       const paragraphIndex = lesson.blocks.findIndex((block) => block.kind === "paragraph");
       const exerciseIndex = lesson.blocks.findIndex((block) => block.kind === "exercise-slot");
@@ -80,10 +101,11 @@ describe("canonical basic Hiragana course", () => {
     const repos: ProgressRepositories = {
       lessonProgress: { get: async (id) => progress.get(id), put: async (item) => { progress.set(item.id, item); }, list: async () => [...progress.values()] },
       conceptStates: { get: async (id) => states.get(id), put: async (item) => { states.set(item.id, item); }, list: async () => [...states.values()] },
-      reviews: { introduce: async (id) => { scheduled.push(id); } },
+      reviews: { introduce: async (id, _at, cardId) => { scheduled.push(cardId ?? id); } },
     };
     await completeLesson(repos, contentCatalog, lesson, () => new Date("2026-09-28T00:00:00Z"));
-    expect(scheduled).toEqual(lesson.introduces);
+    expect(scheduled).toHaveLength(10);
+    expect(new Set(scheduled).size).toBe(10);
     expect([...states.values()].map((state) => state.lifecycle)).toEqual(Array(5).fill("INTRODUCED"));
     expect([...states.values()].some((state) => state.lifecycle === "MASTERED")).toBe(false);
   });
@@ -95,13 +117,13 @@ describe("canonical basic Hiragana course", () => {
     const repos: ProgressRepositories = {
       lessonProgress: { get: async (id) => progress.get(id), put: async (item) => { progress.set(item.id, item); }, list: async () => [...progress.values()] },
       conceptStates: { get: async (id) => states.get(id), put: async (item) => { states.set(item.conceptId, item); }, list: async () => [...states.values()] },
-      reviews: { introduce: async (id) => { scheduled.push(id); } },
+      reviews: { introduce: async (id, _at, cardId) => { scheduled.push(cardId ?? id); } },
     };
     for (const lesson of lessons) await completeLesson(repos, contentCatalog, lesson, () => new Date("2026-09-28T00:00:00Z"));
     expect(states.size).toBe(46);
     expect([...states.values()].every((state) => state.lifecycle === "INTRODUCED")).toBe(true);
-    expect(scheduled).toHaveLength(46);
-    expect(new Set(scheduled).size).toBe(46);
+    expect(scheduled).toHaveLength(92);
+    expect(new Set(scheduled).size).toBe(92);
   });
   it("introduces the final segment without replacing existing long-term review state", async () => {
     const lesson = contentCatalog.lessons.find((item) => item.id === "hiragana-w-row")!;

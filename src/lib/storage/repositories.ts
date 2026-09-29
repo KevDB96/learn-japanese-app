@@ -33,9 +33,8 @@ export function createRepositories(db: IDBDatabase) {
       async append(event: ReviewEvent) { await withStore(db, "reviewEvents", "readwrite", (s) => s.add(event)); },
       async getStates() { return withStore<ReviewCardState[]>(db, "reviewStates", "readonly", (s) => s.getAll()); },
       async due(now: number) { return selectDueReviews(await this.getStates(), now); },
-      async introduce(conceptId: string, at: number) {
+      async introduce(conceptId: string, at: number, cardId = conceptId) {
         const state = createSrsState(conceptId, at);
-        const cardId = conceptId;
         const existing = await withStore<ReviewCardState | undefined>(db, "reviewStates", "readonly", (s) => s.get(cardId));
         if (!existing) await withStore(db, "reviewStates", "readwrite", (s) => s.add({ id: cardId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId, state } satisfies ReviewCardState));
       },

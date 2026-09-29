@@ -155,7 +155,7 @@
     },
     {
       "id": "hiragana-a-row",
-      "display": "Hiragana ? row",
+      "display": "Hiragana A row",
       "requires": [
         "introduction"
       ],
@@ -171,7 +171,7 @@
         {
           "id": "hiragana-a-row-title",
           "kind": "heading",
-          "text": "Hiragana: ? row"
+          "text": "Hiragana: A row"
         },
         {
           "id": "hiragana-a-row-teach",
@@ -294,7 +294,7 @@
     },
     {
       "id": "hiragana-k-row",
-      "display": "Hiragana ? row",
+      "display": "Hiragana K row",
       "requires": [
         "hiragana-a-row"
       ],
@@ -310,7 +310,7 @@
         {
           "id": "hiragana-k-row-title",
           "kind": "heading",
-          "text": "Hiragana: ? row"
+          "text": "Hiragana: K row"
         },
         {
           "id": "hiragana-k-row-teach",
@@ -433,7 +433,7 @@
     },
     {
       "id": "hiragana-s-row",
-      "display": "Hiragana ? row",
+      "display": "Hiragana S row",
       "requires": [
         "hiragana-k-row"
       ],
@@ -449,12 +449,12 @@
         {
           "id": "hiragana-s-row-title",
           "kind": "heading",
-          "text": "Hiragana: ? row"
+          "text": "Hiragana: S row"
         },
         {
           "id": "hiragana-s-row-teach",
           "kind": "paragraph",
-          "text": "Most sounds add s before the vowel. ? is the irregular member: it is shi, not si."
+          "text": "Most sounds add s before the vowel. し is the irregular member: it is shi, not si."
         },
         {
           "id": "hiragana-s-row-readout",
@@ -572,7 +572,7 @@
     },
     {
       "id": "hiragana-t-row",
-      "display": "Hiragana ? row",
+      "display": "Hiragana T row",
       "requires": [
         "hiragana-s-row"
       ],
@@ -588,12 +588,12 @@
         {
           "id": "hiragana-t-row-title",
           "kind": "heading",
-          "text": "Hiragana: ? row"
+          "text": "Hiragana: T row"
         },
         {
           "id": "hiragana-t-row-teach",
           "kind": "paragraph",
-          "text": "Most sounds add t before the vowel. The irregular sounds are ? (chi) and ? (tsu)."
+          "text": "Most sounds add t before the vowel. The irregular sounds are ち (chi) and つ (tsu)."
         },
         {
           "id": "hiragana-t-row-readout",
@@ -922,7 +922,7 @@
         {
           "id": "hiragana-h-row-teach",
           "kind": "paragraph",
-          "text": "Most sounds add h before the vowel. ? is conventionally romanized fu; its sound uses light friction between the lips, not a strong English f."
+          "text": "Most sounds add h before the vowel. ふ is conventionally romanized fu; its sound uses light friction between the lips, not a strong English f."
         },
         {
           "id": "hiragana-h-row-readout",
@@ -955,7 +955,7 @@
           "id": "hiragana-h-row-topic",
           "kind": "callout",
           "title": "A common particle",
-          "text": "When ? marks the topic of a sentence, it is pronounced wa. The kana remains ?."
+          "text": "When は marks the topic of a sentence, it is pronounced wa. The kana remains は."
         },
         {
           "id": "hiragana-h-row-guided",
@@ -1151,7 +1151,7 @@
           "id": "hiragana-m-row-visual",
           "kind": "callout",
           "title": "Similar shapes",
-          "text": "Compare ? and ?: ? has a looped tail, while ? crosses its loop."
+          "text": "Compare む and す: む has a looped tail, while す crosses its loop."
         },
         {
           "id": "hiragana-m-row-guided",
@@ -1497,7 +1497,7 @@
           "id": "hiragana-r-row-visual",
           "kind": "callout",
           "title": "Similar shapes",
-          "text": "Compare ? and ?: ? ends open; ? curls back."
+          "text": "Compare る and ろ: ろ ends open; る curls back."
         },
         {
           "id": "hiragana-r-row-guided",
@@ -1658,7 +1658,7 @@
         {
           "id": "hiragana-w-row-teach",
           "kind": "paragraph",
-          "text": "The w row has ? and ?, followed in the basic chart by ?. ? is conventionally romanized wo, but as a particle in modern standard Japanese it is normally pronounced o."
+          "text": "The w row has わ and を, followed in the basic chart by ん. を is conventionally romanized wo, but as a particle in modern standard Japanese it is normally pronounced o."
         },
         {
           "id": "hiragana-w-row-readout",
@@ -1683,7 +1683,7 @@
           "id": "hiragana-w-row-pronunciation",
           "kind": "callout",
           "title": "Pronunciation",
-          "text": "? remains the kana ? and is normally pronounced o when used as the object particle in modern standard Japanese. ? is a moraic nasal, takes one beat, and changes articulation with its sound context; it is not always pronounced like an English n."
+          "text": "を remains the kana を and is normally pronounced o when used as the object particle in modern standard Japanese. ん is a moraic nasal, takes one beat, and changes articulation with its sound context; it is not always pronounced like an English n."
         },
         {
           "id": "hiragana-w-row-guided",
@@ -2050,8 +2050,24 @@
         "kana-hira-yoon-3058-3083",
         "kana-hira-yoon-3058-3085",
         "kana-hira-yoon-3058-3087",
+        "kana-hira-yoon-306b-3083",
+        "kana-hira-yoon-306b-3085",
+        "kana-hira-yoon-306b-3087",
+        "kana-hira-yoon-3072-3083",
+        "kana-hira-yoon-3072-3085",
+        "kana-hira-yoon-3072-3087",
+        "kana-hira-yoon-307f-3083",
+        "kana-hira-yoon-307f-3085",
+        "kana-hira-yoon-307f-3087",
+        "kana-hira-yoon-308a-3083",
+        "kana-hira-yoon-308a-3085",
+        "kana-hira-yoon-308a-3087",
         "kana-hira-yoon-3073-3087",
+        "kana-hira-yoon-3073-3083",
+        "kana-hira-yoon-3073-3085",
         "kana-hira-yoon-3074-3087",
+        "kana-hira-yoon-3074-3083",
+        "kana-hira-yoon-3074-3085",
         "kana-hira-small-ya",
         "kana-hira-small-yu",
         "kana-hira-small-yo"
@@ -2311,7 +2327,7 @@
     },
     {
       "id": "hiragana-small-tsu",
-      "display": "Small ? and doubled consonants",
+      "display": "Small っ and doubled consonants",
       "requires": [
         "hiragana-contracted-sounds"
       ],
@@ -2891,37 +2907,37 @@
     {
       "id": "kana-hira-yoon-3057-3083",
       "display": "しゃ",
-      "reading": "shya",
+      "reading": "sha",
       "translation": "Hiragana しゃ"
     },
     {
       "id": "kana-hira-yoon-3057-3085",
       "display": "しゅ",
-      "reading": "shyu",
+      "reading": "shu",
       "translation": "Hiragana しゅ"
     },
     {
       "id": "kana-hira-yoon-3057-3087",
       "display": "しょ",
-      "reading": "shyo",
+      "reading": "sho",
       "translation": "Hiragana しょ"
     },
     {
       "id": "kana-hira-yoon-3061-3083",
       "display": "ちゃ",
-      "reading": "chya",
+      "reading": "cha",
       "translation": "Hiragana ちゃ"
     },
     {
       "id": "kana-hira-yoon-3061-3085",
       "display": "ちゅ",
-      "reading": "chyu",
+      "reading": "chu",
       "translation": "Hiragana ちゅ"
     },
     {
       "id": "kana-hira-yoon-3061-3087",
       "display": "ちょ",
-      "reading": "chyo",
+      "reading": "cho",
       "translation": "Hiragana ちょ"
     },
     {
@@ -3017,19 +3033,19 @@
     {
       "id": "kana-hira-yoon-3058-3083",
       "display": "じゃ",
-      "reading": "jya",
+      "reading": "ja",
       "translation": "Hiragana じゃ"
     },
     {
       "id": "kana-hira-yoon-3058-3085",
       "display": "じゅ",
-      "reading": "jyu",
+      "reading": "ju",
       "translation": "Hiragana じゅ"
     },
     {
       "id": "kana-hira-yoon-3058-3087",
       "display": "じょ",
-      "reading": "jyo",
+      "reading": "jo",
       "translation": "Hiragana じょ"
     },
     {

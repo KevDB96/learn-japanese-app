@@ -18,6 +18,13 @@ describe('Hiragana progress derivation', () => {
     expect(deriveKanaMastery('kana-hira-a', srs, undefined)).toBe('mastered')
   })
 
+  it('requires review evidence across every scheduled form before showing Mastered', () => {
+    let stable = createSrsState('kana-hira-a', Date.UTC(2026, 0, 1))
+    for (let i = 0; i < 6; i += 1) stable = reviewSrsState(stable, 'Got It', Date.UTC(2026, 0, 1) + i * day)
+    expect(deriveKanaMastery('kana-hira-a', [stable, createSrsState('kana-hira-a', Date.UTC(2026, 0, 1))], undefined)).toBe('learning')
+    expect(deriveKanaMastery('kana-hira-a', [stable, stable], undefined)).toBe('mastered')
+  })
+
   it('lets lapses lower the derived state', () => {
     let srs = createSrsState('kana-hira-a', Date.UTC(2026, 0, 1))
     for (let i = 0; i < 4; i += 1) srs = reviewSrsState(srs, 'Got It', Date.UTC(2026, 0, 1) + i * day)

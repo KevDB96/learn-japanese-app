@@ -47,16 +47,18 @@ export function targetedContrastGroups(events: readonly ReviewEvent[], kana: rea
   })
 }
 
-export function deriveKanaMastery(_conceptId: string, srs: SrsState | undefined, _concept: ConceptState | undefined): KanaMastery {
-  if (!srs || srs.reviewCount === 0) return _concept ? 'introduced' : 'unseen'
-  if (isStruggling(srs)) return 'struggling'
-  if (srs.reviewCount >= 4 && srs.stability >= 5 && srs.scheduler.state === 'Review') return 'mastered'
+export function deriveKanaMastery(_conceptId: string, srs: SrsState | readonly SrsState[] | undefined, _concept: ConceptState | undefined): KanaMastery {
+  const states: readonly SrsState[] = !srs ? [] : Array.isArray(srs) ? srs as readonly SrsState[] : [srs as SrsState]
+  if (states.length === 0 || states.every((state) => state.reviewCount === 0)) return _concept ? 'introduced' : 'unseen'
+  if (states.some(isStruggling)) return 'struggling'
+  if (states.every((state) => state.reviewCount >= 4 && state.stability >= 5 && state.scheduler.state === 'Review')) return 'mastered'
   return 'learning'
 }
 
 export function deriveHiraganaProgress(kana: readonly KanaConcept[], concepts: readonly ConceptState[], states: readonly { conceptId: string; state: SrsState }[], events: readonly ReviewEvent[]): KanaProgress[] {
   const conceptMap = new Map(concepts.map((item) => [item.conceptId, item]))
-  const srsMap = new Map(states.map((item) => [item.conceptId, item.state]))
+  const srsMap = new Map<string, SrsState[]>()
+  for (const item of states) { const group = srsMap.get(item.conceptId) ?? []; group.push(item.state); srsMap.set(item.conceptId, group) }
   return kana.filter((item) => item.reviewEligible !== false && item.form === 'base').map((item) => ({
     concept: item,
     state: deriveKanaMastery(item.id, srsMap.get(item.id), conceptMap.get(item.id)),
@@ -65,11 +67,13 @@ export function deriveHiraganaProgress(kana: readonly KanaConcept[], concepts: r
   }))
 }
 
-function describe(_id: string, srs: SrsState | undefined, concept: ConceptState | undefined): string {
-  if (!srs || srs.reviewCount === 0) return concept ? 'Introduced; no reviews yet' : 'Not introduced yet'
-  if (isStruggling(srs)) return `${srs.lapseCount} lapses; practice recommended`
-  if (srs.reviewCount >= 4 && srs.stability >= 5 && srs.scheduler.state === 'Review') return `Stable across ${srs.reviewCount} reviews`
-  return `${srs.reviewCount} reviews; building stability`
+function describe(_id: string, srs: readonly SrsState[] | undefined, concept: ConceptState | undefined): string {
+  if (!srs || srs.every((state) => state.reviewCount === 0)) return concept ? 'Introduced; no reviews yet' : 'Not introduced yet'
+  const reviewed = srs.filter((state) => state.reviewCount > 0)
+  const lapses = reviewed.reduce((sum, state) => sum + state.lapseCount, 0)
+  if (srs.some(isStruggling)) return `${lapses} lapses; practice recommended`
+  if (srs.every((state) => state.reviewCount >= 4 && state.stability >= 5 && state.scheduler.state === 'Review')) return `Stable across ${srs.length} review forms`
+  return `${reviewed.reduce((sum, state) => sum + state.reviewCount, 0)} reviews across ${reviewed.length} forms`
 }
 
 function isStruggling(srs: SrsState): boolean {

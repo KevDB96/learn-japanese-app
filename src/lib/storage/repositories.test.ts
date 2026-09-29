@@ -67,8 +67,8 @@ describe("local storage repositories", () => {
     expect(await afterReload.reviews.rebuild()).toEqual(before);
     const due = await afterReload.reviews.due(Date.parse("2026-01-01T00:02:00.000Z"));
     expect(due).toMatchObject([{ cardId: "kana-a", conceptId: "kana-a" }]);
-    const plan = composeSession({ dueReviewIds: due.map((candidate) => candidate.conceptId as ContentId), weakConceptIds: [], newMaterialCap: 0 });
-    expect(plan.items).toEqual([{ kind: "review", conceptId: "kana-a" }]);
+    const plan = composeSession({ dueReviews: due.map((candidate) => ({ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: "kana-glyph-to-sound" })), weakConceptIds: [], newMaterialCap: 0 });
+    expect(plan.items).toEqual([{ kind: "review", conceptId: "kana-a", cardId: "kana-a", formId: "kana-glyph-to-sound" }]);
     expect(plan.summary.reviewCount).toBe(1);
   });
 

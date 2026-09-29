@@ -65,7 +65,7 @@ test('guest Introduction resumes, completes, and remains available offline', asy
   await expect(page.getByRole('status')).toContainText('Lesson complete')
   await page.reload()
   await expect(page.getByRole('heading', { name: 'Learn Japanese' })).toBeVisible()
-  await expect(page.getByText('No lesson is ready yet.')).toBeVisible()
+  await expect(page.getByText('Hiragana A row')).toBeVisible()
   await expect.poll(() => page.evaluate(() => new Promise((resolve) => {
     const request = indexedDB.open('learn-japanese-local')
     request.onsuccess = () => { const db = request.result; const get = db.transaction('lessonProgress').objectStore('lessonProgress').get('introduction'); get.onsuccess = () => { resolve(get.result?.status); db.close() } }

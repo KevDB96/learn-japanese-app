@@ -1,10 +1,12 @@
 import type { ContentCatalog, ContentId, Lesson } from "../../lib/content/types.ts";
 import type { ConceptLifecycle, ConceptState, LessonProgress, StoredRecord } from "../../lib/storage/types.ts";
+import { reviewCardsForConcept } from "../../lib/content/kana.ts";
+import { kanaFixtures } from "../../content/kana-fixtures.ts";
 
 export type ProgressRepositories = {
   lessonProgress: { get(id: string): Promise<LessonProgress | undefined>; put(value: LessonProgress): Promise<void>; list(): Promise<LessonProgress[]> };
   conceptStates: { get(id: string): Promise<ConceptState | undefined>; put(value: ConceptState): Promise<void>; list(): Promise<ConceptState[]> };
-  reviews?: { introduce(conceptId: string, at: number): Promise<void>; record?(input: { id: string; conceptId: string; cardId: string; rating: import("../review/srs.ts").ReviewRating; reviewedAt: string; kind: "practice"; confusedConceptId?: string }): Promise<void> };
+  reviews?: { introduce(conceptId: string, at: number, cardId?: string): Promise<void>; record?(input: { id: string; conceptId: string; cardId: string; rating: import("../review/srs.ts").ReviewRating; reviewedAt: string; kind: "practice"; confusedConceptId?: string }): Promise<void> };
 };
 
 export type ResumeResult = { readonly kind: "resume"; readonly blockIndex: number } | { readonly kind: "content-changed"; readonly blockIndex: 0 };
@@ -49,7 +51,10 @@ export async function completeLesson(repos: ProgressRepositories, catalog: Conte
   if (existing?.status === "completed") return;
   const updatedAt = stamp(now);
   for (const conceptId of new Set([...lesson.introduces, ...lesson.reinforces])) {
-    await repos.reviews?.introduce(conceptId, Date.parse(updatedAt));
+    const kana = kanaFixtures.find((item) => item.id === conceptId);
+    const cards = kana ? reviewCardsForConcept(kana) : [];
+    if (cards.length) for (const card of cards) await repos.reviews?.introduce(conceptId, Date.parse(updatedAt), card.id);
+    else await repos.reviews?.introduce(conceptId, Date.parse(updatedAt));
     const previous = await repos.conceptStates.get(conceptId);
     const lifecycle: ConceptLifecycle = getConceptLifecycle(previous) === "UNSEEN" ? "INTRODUCED" : getConceptLifecycle(previous);
     await repos.conceptStates.put({

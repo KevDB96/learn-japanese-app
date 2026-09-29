@@ -90,6 +90,10 @@ h1 {
 }
 
 .lesson-content { display: grid; gap: 1rem; }
+.kana-review { display: grid; gap: .75rem; }
+.kana-review p, .kana-review h2 { margin: 0; }
+.kana-review [role="group"], .review-ratings { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+.kana-review button { min-height: 3rem; padding: .4rem .6rem; border: 1px solid #b8c2bc; border-radius: .65rem; background: #fffefa; color: #174f43; touch-action: manipulation; }
 .lesson-content h2, .lesson-content h3, .lesson-content p { margin: 0; }
 .lesson-content [lang="ja"] { font-size: 1.15em; }
 .japanese-example { display: grid; gap: .25rem; }
