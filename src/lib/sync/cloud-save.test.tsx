@@ -40,7 +40,7 @@ describe("cloud convenience saves", () => {
     expect(screen.getByText("Saved")).toBeInTheDocument();
   });
 
-  it("requires an explicit choice when local and cloud saves differ", async () => {
+  it("merges local and cloud saves instead of replacing learner history", async () => {
     const adapter = new FakeCloud();
     adapter.document = { profileId: CLOUD_PROFILE_IDS.kevin, revision: 4, schemaVersion: 1, updatedAt: "2026-01-02T00:00:00.000Z", state: { settings: [{ id: "settings-cloud", recordVersion: 1, updatedAt: "2026-01-02T00:00:00.000Z", dailyGoal: 12, preferredReading: "kana" }] } };
     const repos = await openLocalRepositories();
@@ -49,10 +49,13 @@ describe("cloud convenience saves", () => {
     render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
     expect(await screen.findByText("Conflict")).toBeInTheDocument();
     expect(adapter.writes).toBe(0);
-    fireEvent.click(screen.getByRole("button", { name: "Use cloud" }));
+    fireEvent.click(screen.getByRole("button", { name: "Merge saves" }));
     const check = await openLocalRepositories();
     await waitFor(async () => expect(await check.settings.get("settings-cloud")).toMatchObject({ dailyGoal: 12 }));
+    expect(await check.settings.get("settings-local")).toMatchObject({ dailyGoal: 8 });
     check.close();
-    expect(adapter.writes).toBe(0);
+    await waitFor(() => expect(adapter.writes).toBe(1));
+    expect(window.localStorage.getItem("learn-japanese:last-known-good:kevin")).toContain("settings-local");
+    expect(JSON.parse(window.localStorage.getItem("learn-japanese:cloud-metadata:kevin") ?? "{}")).toMatchObject({ revision: 5, schemaVersion: 1 });
   });
 });

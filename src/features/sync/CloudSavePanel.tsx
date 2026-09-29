@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
 import { CLOUD_PROFILE_IDS, CLOUD_SAVE_SCHEMA_VERSION, CloudSaveConflictError, compareSaveMetadata, configuredCloudSave, type CloudSaveAdapter, type CloudSaveDocument, type SyncState } from "../../lib/sync/cloud-save.ts";
-import { readProfileSnapshot, replaceProfileSnapshot } from "../../lib/sync/profile-snapshot.ts";
+import { applyMergedProfileSnapshot, mergeProfileSnapshots, readProfileSnapshot, saveCloudMetadata, validateCloudDocument } from "../../lib/sync/profile-snapshot.ts";
 
 export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfileId; adapter?: CloudSaveAdapter }) {
   const [cloudAdapter] = useState<CloudSaveAdapter | undefined>(() => adapter ?? configuredCloudSave());
@@ -18,7 +18,8 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
     const refresh = async (allowWrite: boolean) => {
       try {
         const snapshot = await readProfileSnapshot(profileId);
-        const remote = await cloudAdapter.read(CLOUD_PROFILE_IDS[profileId]);
+        const rawRemote = await cloudAdapter.read(CLOUD_PROFILE_IDS[profileId]);
+        const remote = rawRemote ? validateCloudDocument(rawRemote, profileId) : undefined;
         if (!active) return;
         const previouslyKnown = known;
         setLocal(snapshot); setCloud(remote); known = remote;
@@ -29,10 +30,10 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
         if (allowWrite && snapshot.updatedAt) {
           setStatus("saving");
           const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: snapshot.updatedAt, state: snapshot.state }, remote?.revision ?? 0);
-          if (active) { known = written; setCloud(written); setStatus("saved"); }
+          if (active) { saveCloudMetadata(profileId, written.revision, written.schemaVersion); known = written; setCloud(written); setStatus("saved"); }
         } else if (!remote && snapshot.updatedAt) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 800); }
         else setStatus("saved");
-      } catch (error) { if (active) setStatus(error instanceof CloudSaveConflictError ? "conflict" : "offline"); }
+      } catch (error) { if (active) { setStatus(error instanceof CloudSaveConflictError ? "conflict" : error instanceof TypeError ? "conflict" : "offline"); setMessage(error instanceof TypeError ? "Cloud save is invalid or from an unsupported version. This device's data is preserved." : ""); } }
     };
     const onChange = (event: Event) => {
       const detail = (event as CustomEvent<{ profileId: string; origin?: string }>).detail;
@@ -49,24 +50,23 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
     return () => { active = false; if (timer) clearTimeout(timer); window.removeEventListener("learn-japanese:state-changed", onChange); window.removeEventListener("online", onOnline); window.removeEventListener("offline", onOffline); };
   }, [cloudAdapter, profileId]);
 
-  async function keepThisDevice() {
-    if (!cloudAdapter || !local) return;
+  async function mergeSaves() {
+    if (!cloud || !cloudAdapter || !local) return;
     setStatus("saving");
     try {
+      const merged = mergeProfileSnapshots(local, cloud, profileId);
+      await applyMergedProfileSnapshot(profileId, merged);
       const latest = await cloudAdapter.read(CLOUD_PROFILE_IDS[profileId]);
-      const result = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (latest?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: local.updatedAt ?? new Date().toISOString(), state: local.state }, latest?.revision ?? 0);
-      setCloud(result); setStatus("saved"); setMessage("");
-    } catch { setStatus("conflict"); setMessage("Save changed. Compare again."); }
-  }
-  async function useCloud() {
-    if (!cloud) return;
-    setStatus("saving");
-    try { await replaceProfileSnapshot(profileId, cloud.state); setLocal(await readProfileSnapshot(profileId)); setStatus("saved"); setMessage(""); }
-    catch { setStatus("conflict"); setMessage("Could not restore cloud save."); }
+      const validLatest = latest ? validateCloudDocument(latest, profileId) : undefined;
+      if (validLatest && validLatest.revision !== cloud.revision) throw new CloudSaveConflictError();
+      const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (validLatest?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: merged.updatedAt ?? new Date().toISOString(), state: merged.state }, validLatest?.revision ?? 0);
+      saveCloudMetadata(profileId, written.revision, written.schemaVersion);
+      setLocal(await readProfileSnapshot(profileId)); setCloud(written); setStatus("saved"); setMessage("");
+    } catch (error) { setStatus("conflict"); setMessage(error instanceof TypeError ? "Cloud save could not be merged. This device's data is preserved." : "Save changed during merge. Compare again."); }
   }
 
   const label = status === "saved" ? "Saved" : status === "saving" ? "Saving" : status === "offline" ? "Offline" : status === "conflict" ? "Conflict" : "Device only";
   return <section className="save-status" aria-live="polite">
-    <div><strong>{label}</strong>{status === "unavailable" && <p>Cloud saves are not configured.</p>}{status === "conflict" && <><p>Choose which save to keep.</p><div className="save-actions"><button type="button" onClick={() => void keepThisDevice()}>Keep this device</button>{cloud && <button type="button" onClick={() => void useCloud()}>Use cloud</button>}</div></>}{message && <p role="alert">{message}</p>}</div>
+    <div><strong>{label}</strong>{status === "unavailable" && <p>Cloud saves are not configured.</p>}{status === "conflict" && <><p>Review histories will be merged when compatible.</p><div className="save-actions">{cloud && local && <button type="button" onClick={() => void mergeSaves()}>Merge saves</button>}</div></>}{message && <p role="alert">{message}</p>}</div>
   </section>;
 }
