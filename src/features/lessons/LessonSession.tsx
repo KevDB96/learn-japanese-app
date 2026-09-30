@@ -7,6 +7,7 @@ import { completeLesson, resolveLessonResume, saveLessonPosition } from "./progr
 import { LessonRenderer } from "./LessonRenderer.tsx";
 import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
+import { identifyKanaConfusion } from "../progress/hiragana.ts";
 
 type SessionState = { readonly repos: ProgressRepositories; readonly index: number; readonly mismatch: boolean; readonly completed: boolean };
 
@@ -34,13 +35,10 @@ export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId
   const progress = session.repos;
   const allKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
   const recordConfusion = async (exercise: import("../../lib/content/types.ts").ExerciseDefinition, answer: string) => {
-    const target = allKana.find((item) => item.reviewEligible !== false && (exercise.prompt.includes(item.glyph) || new RegExp(`\\b${item.romanization}\\b`, "i").test(exercise.prompt)));
-    const targetId = target?.id;
-    const normalized = answer.trim().toLocaleLowerCase();
-    const chosenId = allKana.find((item) => item.reviewEligible !== false && (item.glyph === answer.trim() || item.romanization.toLocaleLowerCase() === normalized))?.id;
-    if (!targetId || !chosenId || targetId === chosenId) return;
+    const confusion = identifyKanaConfusion(allKana, exercise.prompt, exercise.answer, answer);
+    if (!confusion) return;
     const reviewedAt = new Date().toISOString();
-    await progress.reviews?.record?.({ id: `confusion-${crypto.randomUUID()}`, conceptId: targetId, confusedConceptId: chosenId, cardId: targetId, rating: "Forgot", reviewedAt, kind: "practice" });
+    await progress.reviews?.record?.({ id: `confusion-${crypto.randomUUID()}`, conceptId: confusion.targetId, confusedConceptId: confusion.selectedId, cardId: confusion.targetId, rating: "Forgot", reviewedAt, kind: "practice" });
   };
   const finishOrContinue = async () => {
     setBusy(true);

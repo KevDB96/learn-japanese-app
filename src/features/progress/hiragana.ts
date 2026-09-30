@@ -2,11 +2,15 @@ import type { KanaConcept } from '../../lib/content/types.ts'
 import type { ConceptState, ReviewEvent } from '../../lib/storage/types.ts'
 import type { SrsState } from '../review/srs.ts'
 
-export const KNOWN_HIRAGANA_CONFUSIONS = [
+export const KNOWN_KANA_CONFUSIONS = [
   { glyphs: ['ぬ', 'め'], ids: ['kana-hira-nu', 'kana-hira-me'] },
   { glyphs: ['れ', 'ね'], ids: ['kana-hira-re', 'kana-hira-ne'] },
   { glyphs: ['る', 'ろ'], ids: ['kana-hira-ru', 'kana-hira-ro'] },
   { glyphs: ['さ', 'ち'], ids: ['kana-hira-sa', 'kana-hira-ti'] },
+  { glyphs: ['シ', 'ツ'], ids: ['kana-kata-shi', 'kana-kata-tsu'] },
+  { glyphs: ['ソ', 'ン'], ids: ['kana-kata-so', 'kana-kata-n'] },
+  { glyphs: ['ク', 'ケ'], ids: ['kana-kata-ku', 'kana-kata-ke'] },
+  { glyphs: ['ワ', 'ウ'], ids: ['kana-kata-wa', 'kana-kata-u'] },
 ] as const
 
 export type KanaMastery = 'unseen' | 'introduced' | 'learning' | 'mastered' | 'struggling'
@@ -26,7 +30,7 @@ export function confusionScore(a: string, b: string, events: readonly ReviewEven
 }
 
 export function getTargetedConfusions(events: readonly ReviewEvent[], threshold = 2): readonly (readonly [string, string])[] {
-  return KNOWN_HIRAGANA_CONFUSIONS.filter(({ ids: [a, b] }) => confusionScore(a, b, events) >= threshold).map(({ glyphs }) => glyphs)
+  return KNOWN_KANA_CONFUSIONS.filter(({ ids: [a, b] }) => confusionScore(a, b, events) >= threshold).map(({ glyphs }) => glyphs)
 }
 
 export function targetedConfusionIds(events: readonly ReviewEvent[], kana: readonly KanaConcept[], threshold = 2): string[] {
@@ -81,10 +85,21 @@ function isStruggling(srs: SrsState): boolean {
 }
 
 export function kanaIdForGlyph(kana: readonly KanaConcept[], glyph: string): string | undefined {
-  return kana.find((item) => item.script === 'hiragana' && item.glyph === glyph)?.id
+  return kana.find((item) => item.glyph === glyph)?.id
 }
 
-export function kanaIdForAnswer(kana: readonly KanaConcept[], answer: string): string | undefined {
+export function kanaIdForAnswer(kana: readonly KanaConcept[], answer: string, script?: KanaConcept['script']): string | undefined {
   const normalized = answer.trim().toLocaleLowerCase()
-  return kana.find((item) => item.script === 'hiragana' && (item.glyph === answer.trim() || item.romanization.toLocaleLowerCase() === normalized))?.id
+  return kana.find((item) => item.reviewEligible !== false && (!script || item.script === script) && (item.glyph === answer.trim() || item.romanization.toLocaleLowerCase() === normalized))?.id
+}
+
+export function identifyKanaConfusion(kana: readonly KanaConcept[], prompt: string, expectedAnswer: string, selectedAnswer: string): { targetId: string; selectedId: string } | undefined {
+  const normalizedAnswer = expectedAnswer.trim().toLocaleLowerCase()
+  const candidates = kana.filter((item) => item.reviewEligible !== false && (item.glyph === expectedAnswer.trim() || item.romanization.toLocaleLowerCase() === normalizedAnswer))
+  const target = candidates.find((item) => prompt.includes(item.glyph))
+    ?? candidates.find((item) => item.script === (/\p{Script=Katakana}/u.test(prompt) ? 'katakana' : 'hiragana'))
+  if (!target) return undefined
+  const selectedId = kanaIdForAnswer(kana, selectedAnswer, target.script)
+  if (!selectedId || selectedId === target.id) return undefined
+  return { targetId: target.id, selectedId }
 }

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { kanaFixtures } from '../../content/kana-fixtures.ts'
+import { kanaFixtures, katakanaFixtures } from '../../content/kana-fixtures.ts'
 import type { ReviewEvent } from '../../lib/storage/types.ts'
 import { createSrsState, reviewSrsState } from '../review/srs.ts'
-import { deriveKanaMastery, confusionScore, getTargetedConfusions, targetedConfusionIds } from './hiragana.ts'
+import { deriveKanaMastery, confusionScore, getTargetedConfusions, identifyKanaConfusion, targetedConfusionIds } from './hiragana.ts'
 
 const event = (id: string, target: string, chosen: string): ReviewEvent => ({ id, recordVersion: 1, updatedAt: '2026-01-01T00:00:00.000Z', reviewedAt: '2026-01-01T00:00:00.000Z', conceptId: target, confusedConceptId: chosen, cardId: target, rating: 'again', kind: 'practice' })
 const day = 86_400_000
@@ -41,5 +41,30 @@ describe('Hiragana progress derivation', () => {
     expect(targetedConfusionIds(events, kanaFixtures)).toEqual(expect.arrayContaining(['kana-hira-nu', 'kana-hira-me']))
     expect(confusionScore('kana-hira-re', 'kana-hira-ne', events)).toBe(0)
     expect(getTargetedConfusions([event('unrelated', 'kana-hira-a', 'kana-hira-i')])).toEqual([])
+  })
+
+  it('seeds Katakana visual pairs and triggers only at the repeated-evidence threshold', () => {
+    const shiTsu = [event('s1', 'kana-kata-shi', 'kana-kata-tsu'), event('s2', 'kana-kata-shi', 'kana-kata-tsu')]
+    const kana = [...katakanaFixtures]
+    expect(getTargetedConfusions(shiTsu, 2)).toContainEqual(['シ', 'ツ'])
+    expect(targetedConfusionIds(shiTsu, kana, 2)).toEqual(expect.arrayContaining(['kana-kata-shi', 'kana-kata-tsu']))
+    expect(getTargetedConfusions(shiTsu.slice(0, 1), 2)).not.toContainEqual(['シ', 'ツ'])
+    expect(getTargetedConfusions([event('n1', 'kana-kata-so', 'kana-kata-n')], 2)).not.toContainEqual(['ソ', 'ン'])
+  })
+
+  it('recognizes reverse-direction pair evidence but ignores unrelated and self selections', () => {
+    const events = [
+      event('1', 'kana-kata-tsu', 'kana-kata-shi'),
+      event('2', 'kana-kata-a', 'kana-kata-i'),
+      event('3', 'kana-kata-so', 'kana-kata-so'),
+    ]
+    expect(confusionScore('kana-kata-shi', 'kana-kata-tsu', events)).toBe(1)
+    expect(getTargetedConfusions(events)).toEqual([])
+  })
+
+  it('records the selected wrong Katakana and ignores answers that do not identify a kana', () => {
+    expect(identifyKanaConfusion(katakanaFixtures, 'Choose the Katakana シ', 'shi', 'ツ')).toEqual({ targetId: 'kana-kata-shi', selectedId: 'kana-kata-tsu' })
+    expect(identifyKanaConfusion(katakanaFixtures, 'Choose the Katakana シ', 'shi', 'shi')).toBeUndefined()
+    expect(identifyKanaConfusion(katakanaFixtures, 'Choose the Katakana シ', 'shi', 'unknown')).toBeUndefined()
   })
 })

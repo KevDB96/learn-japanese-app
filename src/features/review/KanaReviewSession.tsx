@@ -4,6 +4,7 @@ import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { ReviewRating } from "./srs.ts";
 import type { SessionItem } from "../../lib/session/session.ts";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
+import { kanaIdForAnswer } from "../progress/hiragana.ts";
 
 const ratings: readonly ReviewRating[] = ["Forgot", "Hard", "Got It", "Easy"];
 
@@ -27,12 +28,13 @@ export function KanaReviewSession({ item, nextLabel, onRated, profileId }: { ite
   const correctAnswer = form === "kana-sound-to-glyph" ? concept.glyph : concept.romanization;
   const options = choices.map((choice) => form === "kana-sound-to-glyph" ? choice.glyph : choice.romanization);
   const correct = answer === correctAnswer;
+  const confusedConceptId = answer && !correct ? kanaIdForAnswer(allKana, answer, concept.script) : undefined;
   const rate = async (rating: ReviewRating) => {
     setSaving(true); setError(false);
     const repos = await openLocalRepositories(undefined, profileId).catch(() => undefined);
     if (!repos) { setSaving(false); setError(true); return; }
     try {
-      await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: item.conceptId, cardId: item.cardId, rating, reviewedAt: new Date().toISOString() });
+      await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: item.conceptId, cardId: item.cardId, rating, reviewedAt: new Date().toISOString(), ...(confusedConceptId && confusedConceptId !== item.conceptId ? { confusedConceptId } : {}) });
       onRated();
     } catch { setError(true); }
     finally { repos.close(); setSaving(false); }

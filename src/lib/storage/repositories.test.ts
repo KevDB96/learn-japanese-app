@@ -99,14 +99,14 @@ describe("local storage repositories", () => {
     await kevin.lessonProgress.put({ id: "lesson-a", profileId: "kevin", lessonId: "lesson-a", recordVersion: 1, updatedAt: stamp, status: "completed" });
     await kevin.conceptStates.put({ id: "concept-a", profileId: "kevin", conceptId: "concept-a", recordVersion: 1, updatedAt: stamp, familiarity: 2 });
     await kevin.pendingSync.put({ id: "sync-a", profileId: "kevin", operation: "upsert", entityId: "lesson-a", payload: {}, recordVersion: 1, updatedAt: stamp });
-    await kevin.reviews.record({ id: "same-event", conceptId: "concept-a", cardId: "same-card", rating: "Got It", reviewedAt: stamp });
-    await janne.reviews.record({ id: "same-event", conceptId: "concept-b", cardId: "same-card", rating: "Forgot", reviewedAt: stamp });
+    await kevin.reviews.record({ id: "same-event", conceptId: "kana-kata-shi", confusedConceptId: "kana-kata-tsu", cardId: "same-card", rating: "Got It", reviewedAt: stamp });
+    await janne.reviews.record({ id: "same-event", conceptId: "kana-kata-so", confusedConceptId: "kana-kata-n", cardId: "same-card", rating: "Forgot", reviewedAt: stamp });
     expect(await janne.settings.list()).toEqual([]);
     expect(await janne.lessonProgress.list()).toEqual([]);
     expect(await janne.conceptStates.list()).toEqual([]);
     expect(await janne.pendingSync.list()).toEqual([]);
-    expect(await kevin.reviews.list()).toMatchObject([{ conceptId: "concept-a" }]);
-    expect(await janne.reviews.list()).toMatchObject([{ conceptId: "concept-b" }]);
+    expect(await kevin.reviews.list()).toMatchObject([{ conceptId: "kana-kata-shi", confusedConceptId: "kana-kata-tsu" }]);
+    expect(await janne.reviews.list()).toMatchObject([{ conceptId: "kana-kata-so", confusedConceptId: "kana-kata-n" }]);
     expect(await kevin.reviews.getStates()).toMatchObject([{ cardId: "same-card", state: { reviewCount: 1, lapseCount: 0 } }]);
     expect(await janne.reviews.getStates()).toMatchObject([{ cardId: "same-card", state: { reviewCount: 1, lapseCount: 1 } }]);
     expect(await janne.appMetadata.get("app")).toEqual(await kevin.appMetadata.get("app"));

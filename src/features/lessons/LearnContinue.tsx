@@ -37,7 +37,7 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
           if (availableKana.some((item) => item.id === candidate.conceptId)) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: "kana-glyph-to-sound" }];
           return [];
         });
-        const plan = composeSession({ dueReviews, reviewLimit: 10, weakConceptIds: [], contrastGroups: targetedContrastGroups(events, kanaFixtures).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP, allowOversizedLesson: true });
+        const plan = composeSession({ dueReviews, reviewLimit: 10, weakConceptIds: [], contrastGroups: targetedContrastGroups(events, availableKana).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP, allowOversizedLesson: true });
         if (!cancelled) setState({ plan, lessonId: lesson?.id, contrast: plan.items.find((item): item is Extract<typeof item, { kind: "contrast" }> => item.kind === "contrast") });
       } catch {
         if (!cancelled) setError(true);
@@ -62,13 +62,13 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   }
   const nextItem = state.plan.items.find((item) => item.kind === "lesson");
   if (!nextItem) return <div className="learn-continue">
-    {state.contrast && <section aria-label="Hiragana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
+    {state.contrast && <section aria-label="Kana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
     {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
     {!state.contrast && state.plan.summary.reviewCount === 0 && <section className="learning-empty"><img src={`/assets/states/all-caught-up-${profileId}.webp`} alt="" /><p>All caught up</p></section>}
   </div>;
   const lesson = contentCatalog.lessons.find((item) => item.id === nextItem.lessonId)!;
   return <div className="learn-continue">
-    {state.contrast && <section aria-label="Hiragana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
+    {state.contrast && <section aria-label="Kana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
     {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
     <p>{lesson.display}</p>
     <button className="primary-action" type="button" onClick={() => setStarted(true)}>Continue</button>
@@ -85,6 +85,6 @@ function KanaContrastPractice({ glyphs, onDone }: { glyphs: readonly string[]; o
     setTargetIndex((index) => index + 1);
     setMessage("Correct");
   };
-  if (message === "Contrast complete") return <section aria-label="Hiragana contrast practice"><p role="status">{message}</p><button type="button" onClick={onDone}>Done</button></section>;
-  return <section aria-label="Hiragana contrast practice"><h2>Choose <span lang="ja">{target}</span></h2><div role="group" aria-label="Kana choices">{glyphs.map((glyph) => <button key={glyph} type="button" onClick={() => choose(glyph)}><span lang="ja">{glyph}</span></button>)}</div>{message && <p role="status">{message}</p>}</section>;
+  if (message === "Contrast complete") return <section aria-label="Kana contrast practice"><p role="status">{message}</p><button type="button" onClick={onDone}>Done</button></section>;
+  return <section aria-label="Kana contrast practice"><h2>Choose <span lang="ja">{target}</span></h2><div role="group" aria-label="Kana choices">{glyphs.map((glyph) => <button key={glyph} type="button" onClick={() => choose(glyph)}><span lang="ja">{glyph}</span></button>)}</div>{message && <p role="status">{message}</p>}</section>;
 }
