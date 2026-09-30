@@ -62,6 +62,33 @@ export interface KanaReviewForm {
   readonly answer: "sound" | "glyph";
 }
 
+/** A lexical item is one learning concept; its generated prompt forms do not create extra concepts. */
+export interface VocabularyConcept {
+  readonly id: ContentId;
+  readonly written: string;
+  /** Kana reading shown to learners, including furigana content for kanji-bearing words. */
+  readonly reading: string;
+  readonly meanings: readonly string[];
+  readonly partOfSpeech: string;
+  readonly tags: readonly string[];
+  readonly audioId?: string;
+  readonly examples?: readonly VocabularyExample[];
+}
+
+export interface VocabularyExample {
+  readonly written: string;
+  readonly reading: string;
+  readonly meaning: string;
+}
+
+export type VocabularyReviewFormKind = "meaning" | "reading" | "production";
+export interface VocabularyReviewForm {
+  readonly id: string;
+  readonly kind: VocabularyReviewFormKind;
+  readonly prompt: "meaning" | "written";
+  readonly answer: "meanings" | "written" | "reading";
+}
+
 export interface PronunciationManifest {
   readonly version: number;
   readonly entries: readonly { readonly id: string; readonly provider: string; readonly asset?: string; readonly text?: string }[];
@@ -104,4 +131,5 @@ export interface ContentCatalog {
   readonly lessons: readonly Lesson[];
   readonly concepts: readonly Concept[];
   readonly sentences: readonly Sentence[];
+  readonly vocabulary?: readonly VocabularyConcept[];
 }
