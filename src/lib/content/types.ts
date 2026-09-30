@@ -103,6 +103,29 @@ export interface GrammarExample {
   readonly grammarIds: readonly ContentId[];
 }
 
+/** A useful expression remains one concept; compositional examples link back to grammar. */
+export interface PhraseConcept {
+  readonly id: ContentId;
+  readonly japanese: string;
+  /** Kana-only learner reading. */
+  readonly reading: string;
+  readonly meaning: string;
+  readonly literalBreakdown?: readonly { readonly japanese: string; readonly reading: string; readonly meaning: string }[];
+  readonly learningMode: "memorized" | "compositional";
+  readonly formality: "casual" | "polite" | "formal";
+  readonly usageNotes: readonly string[];
+  readonly grammarIds: readonly ContentId[];
+  readonly audioId?: string;
+}
+
+export type PhraseReviewFormKind = "meaning" | "production";
+export interface PhraseReviewForm {
+  readonly id: string;
+  readonly kind: PhraseReviewFormKind;
+  readonly prompt: "meaning" | "japanese";
+  readonly answer: "japanese" | "meaning";
+}
+
 export type VocabularyReviewFormKind = "meaning" | "reading" | "production";
 export interface VocabularyReviewForm {
   readonly id: string;
