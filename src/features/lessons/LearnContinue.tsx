@@ -9,7 +9,12 @@ import { targetedContrastGroups } from "../progress/hiragana.ts";
 import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
 import { generateKanaReviewCards, KANA_REVIEW_FORMS } from "../../lib/content/kana.ts";
 import { KanaReviewSession } from "../review/KanaReviewSession.tsx";
+import { ConceptReviewSession } from "../review/ConceptReviewSession.tsx";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
+import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
+import { phraseFixtures } from "../../content/phrase-fixtures.ts";
+import { generateVocabularyReviewCards } from "../../lib/content/vocabulary.ts";
+import { generatePhraseReviewCards } from "../../lib/content/phrases.ts";
 
 type LearnState = { readonly plan: SessionPlan; readonly lessonId?: string; readonly contrast?: Extract<SessionPlan["items"][number], { kind: "contrast" }> };
 const NEW_MATERIAL_CAP = 5;
@@ -29,7 +34,8 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
         const lessonMode = progress.some((item) => item.lessonId === lesson?.id && item.status === "in-progress") ? "resume" : "new";
         const availableKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
         const cards = generateKanaReviewCards(availableKana, KANA_REVIEW_FORMS);
-        const cardForms = new Map(cards.map((card) => [card.id, card.formId]));
+        const allCards = [...cards, ...generateVocabularyReviewCards(vocabularyFixtures), ...generatePhraseReviewCards(phraseFixtures)];
+        const cardForms = new Map(allCards.map((card) => [card.id, card.formId]));
         const dueReviews = due.flatMap((candidate) => {
           const exactFormId = cardForms.get(candidate.cardId);
           if (exactFormId) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: exactFormId }];
@@ -54,7 +60,10 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   const firstReview = reviews[0];
   const nextLessonItem = state.plan.items.find((item): item is Extract<typeof item, { kind: "lesson" }> => item.kind === "lesson");
   const nextLessonLabel = nextLessonItem ? contentCatalog.lessons.find((item) => item.id === nextLessonItem.lessonId)?.display : undefined;
-  if (firstReview) return <KanaReviewSession key={`${profileId}:${firstReview.cardId}`} profileId={profileId} item={firstReview} nextLabel={nextLessonLabel ? `${reviews.length} reviews due · Next: ${nextLessonLabel}` : reviews.length > 1 ? `${reviews.length - 1} more reviews` : undefined} onRated={() => setState((current) => current ? ({ ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "review" || item.cardId !== firstReview.cardId), summary: { ...current.plan.summary, reviewCount: Math.max(0, current.plan.summary.reviewCount - 1) } } }) : current)} />;
+  if (firstReview) {
+    const props = { key: `${profileId}:${firstReview.cardId}`, profileId, item: firstReview, nextLabel: nextLessonLabel ? `${reviews.length} reviews due · Next: ${nextLessonLabel}` : reviews.length > 1 ? `${reviews.length - 1} more reviews` : undefined, onRated: () => setState((current) => current ? ({ ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "review" || item.cardId !== firstReview.cardId), summary: { ...current.plan.summary, reviewCount: Math.max(0, current.plan.summary.reviewCount - 1) } } }) : current) };
+    return firstReview.formId.startsWith("kana-") ? <KanaReviewSession {...props} /> : <ConceptReviewSession {...props} />;
+  }
   if (contrastStarted && state.contrast) return <KanaContrastPractice glyphs={state.contrast.glyphs} onDone={() => setContrastStarted(false)} />;
   if (started && state.lessonId) {
     const lesson = contentCatalog.lessons.find((item) => item.id === state.lessonId)!;
