@@ -27,19 +27,24 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let known: CloudSaveDocument | undefined;
     let syncingEvents = false;
-    const syncEvents = async () => {
-      if (syncingEvents || !active || !navigator.onLine) return;
+    let queuedEventSync: boolean | undefined;
+    const syncEvents = async (reconcile = true) => {
+      if (!active || !navigator.onLine) return;
+      if (syncingEvents) { queuedEventSync = queuedEventSync === undefined ? reconcile : queuedEventSync || reconcile; return; }
       syncingEvents = true;
       try {
-        const result = await syncReviewEventHistory(cloudAdapter, profileId);
-        if (active && result.remaining > 0) retryTimer = setTimeout(() => void syncEvents(), 2000);
+        const result = await syncReviewEventHistory(cloudAdapter, profileId, reconcile);
+        if (active && result.remaining > 0) retryTimer = setTimeout(() => void syncEvents(false), 2000);
       } catch (error) {
         if (active) {
           setStatus(error instanceof TypeError ? "conflict" : "offline");
           setMessage(error instanceof TypeError ? "Review history needs attention. Local reviews are preserved." : "");
-          retryTimer = setTimeout(() => void syncEvents(), 30000);
+          retryTimer = setTimeout(() => void syncEvents(reconcile), 30000);
         }
-      } finally { syncingEvents = false; }
+      } finally {
+        syncingEvents = false;
+        if (active && queuedEventSync !== undefined) { const nextReconcile = queuedEventSync; queuedEventSync = undefined; void syncEvents(nextReconcile); }
+      }
     };
     const refresh = async (allowWrite: boolean) => {
       try {
@@ -67,7 +72,7 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
       if (timer) clearTimeout(timer);
       setStatus(navigator.onLine ? "saving" : "offline");
       timer = setTimeout(() => void refresh(true), 800);
-      void syncEvents();
+      void syncEvents(false);
     };
     const onOnline = () => { void refresh(false); void syncEvents(); };
     const onOffline = () => setStatus("offline");

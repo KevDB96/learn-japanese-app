@@ -8,6 +8,7 @@ import { REVIEW_EVENT_BATCH_SIZE, syncReviewEventHistory } from "./review-event-
 class FakeCloud implements CloudSaveAdapter {
   events = new Map<string, Record<string, unknown>>();
   batches: number[] = [];
+  reads = 0;
   partial = true;
   document?: CloudSaveDocument;
   async read(profileId: string) { return this.document?.profileId === profileId ? this.document : undefined; }
@@ -24,6 +25,7 @@ class FakeCloud implements CloudSaveAdapter {
     return ack;
   }
   async readReviewEvents(_profileId: string, offset: number, limit: number) {
+    this.reads++;
     return [...this.events.values()].sort((a, b) => String(a.reviewedAt).localeCompare(String(b.reviewedAt)) || String(a.id).localeCompare(String(b.id))).slice(offset, offset + limit);
   }
 }
@@ -57,5 +59,32 @@ describe("append-only review cloud sync", () => {
     expect(await check.reviews.list()).toHaveLength(163);
     expect(await check.pendingSync.list()).toEqual([]);
     check.close();
+  });
+
+  it("uploads local changes without reading remote pages and uploads events arriving mid-pass", async () => {
+    const repos = await openLocalRepositories(undefined, "kevin");
+    const timestamp = "2026-01-01T00:00:00.000Z";
+    const event = (id: string) => ({ id, recordVersion: 1, updatedAt: timestamp, reviewedAt: timestamp, conceptId: id, cardId: id, rating: "good" as const, kind: "scheduled-review" as const });
+    await repos.reviews.append(event("00000000-0000-4000-8000-000000000001"));
+    repos.close();
+    const adapter = new FakeCloud();
+    const write = adapter.writeReviewEvents.bind(adapter);
+    let addedDuringWrite = false;
+    adapter.writeReviewEvents = async (profileId, events) => {
+      const ack = await write(profileId, events);
+      if (!addedDuringWrite) {
+        addedDuringWrite = true;
+        const during = await openLocalRepositories(undefined, "kevin");
+        await during.reviews.append(event("00000000-0000-4000-8000-000000000002"));
+        during.close();
+      }
+      return ack;
+    };
+    const result = await syncReviewEventHistory(adapter, "kevin", false);
+    expect(result.remaining).toBe(0);
+    expect(adapter.events.size).toBe(2);
+    expect(adapter.reads).toBe(0);
+    await syncReviewEventHistory(adapter, "kevin");
+    expect(adapter.reads).toBe(1);
   });
 });

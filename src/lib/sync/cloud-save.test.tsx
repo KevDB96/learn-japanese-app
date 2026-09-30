@@ -10,6 +10,7 @@ import { CLOUD_PROFILE_IDS, compareSaveMetadata, type CloudSaveAdapter, type Clo
 class FakeCloud implements CloudSaveAdapter {
   document?: CloudSaveDocument;
   writes = 0;
+  eventReads = 0;
   events = new Map<string, Record<string, unknown>>();
   async read(profileId: string) { return this.document?.profileId === profileId ? this.document : undefined; }
   async write(document: CloudSaveDocument, expectedRevision: number) {
@@ -19,7 +20,7 @@ class FakeCloud implements CloudSaveAdapter {
     return this.document;
   }
   async writeReviewEvents(_profileId: string, events: readonly Record<string, unknown>[]) { for (const event of events) this.events.set(String(event.id), event); return events.map((event) => String(event.id)); }
-  async readReviewEvents(_profileId: string, offset: number, limit: number) { return [...this.events.values()].slice(offset, offset + limit); }
+  async readReviewEvents(_profileId: string, offset: number, limit: number) { this.eventReads++; return [...this.events.values()].slice(offset, offset + limit); }
 }
 
 afterEach(async () => {
@@ -55,6 +56,16 @@ describe("cloud convenience saves", () => {
     repos.close();
     render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
     await waitFor(() => expect(adapter.events.has(id)).toBe(true));
+    await waitFor(() => expect(adapter.eventReads).toBeGreaterThan(0));
+    const startupReads = adapter.eventReads;
+    const nextId = "00000000-0000-4000-8000-000000000043";
+    const changed = await openLocalRepositories(undefined, "kevin");
+    await changed.reviews.record({ id: nextId, conceptId: "kana-i", cardId: "kana-i", rating: "Got It", reviewedAt: "2026-01-02T00:00:00.000Z" });
+    changed.close();
+    await waitFor(() => expect(adapter.events.has(nextId)).toBe(true));
+    expect(adapter.eventReads).toBe(startupReads);
+    window.dispatchEvent(new Event("online"));
+    await waitFor(() => expect(adapter.eventReads).toBeGreaterThan(startupReads));
     expect(adapter.document).toBeUndefined();
   });
 

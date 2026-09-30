@@ -19,9 +19,9 @@ function validEvent(value: Record<string, unknown>): value is Record<string, unk
     && ["scheduled-review", "practice"].includes(String(value.kind));
 }
 
-/** Flushes a bounded outbox slice, then downloads the append-only cloud history in bounded pages. */
-export async function syncReviewEventHistory(adapter: CloudSaveAdapter, profileId: LearnerProfileId): Promise<{ remaining: number }> {
-  if (!adapter.writeReviewEvents || !adapter.readReviewEvents) return { remaining: 0 };
+/** Flushes a bounded outbox slice and optionally reconciles the append-only cloud history. */
+export async function syncReviewEventHistory(adapter: CloudSaveAdapter, profileId: LearnerProfileId, reconcile = true): Promise<{ remaining: number }> {
+  if (!adapter.writeReviewEvents || (reconcile && !adapter.readReviewEvents)) return { remaining: 0 };
   const repos = await openLocalRepositories(undefined, profileId);
   try {
     let pending = (await repos.pendingSync.list()).filter((item) => item.operation === "review-event");
@@ -37,7 +37,7 @@ export async function syncReviewEventHistory(adapter: CloudSaveAdapter, profileI
       if (acknowledged.size === 0) break;
     }
 
-    for (let offset = 0; ; offset += REMOTE_PAGE_SIZE) {
+    if (reconcile && adapter.readReviewEvents) for (let offset = 0; ; offset += REMOTE_PAGE_SIZE) {
       const page = await adapter.readReviewEvents(CLOUD_PROFILE_IDS[profileId], offset, REMOTE_PAGE_SIZE);
       for (const raw of page) {
         const event = raw as Record<string, unknown>;
