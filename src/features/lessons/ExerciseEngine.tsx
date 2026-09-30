@@ -8,9 +8,15 @@ export function normalizeExerciseAnswer(value: string, normalizeWhitespace = fal
 
 export function evaluateExerciseAnswer(exercise: ExerciseDefinition, answer: string): boolean {
   if (exercise.type === "cloze") return evaluateClozeAnswer(exercise, answer);
+  if (exercise.type === "sentence-order") return false;
   const normalize = (value: string) => normalizeExerciseAnswer(value, exercise.type === "short-text" && exercise.normalizeWhitespace === true);
   const expected = [exercise.answer, ...(exercise.type === "short-text" ? exercise.acceptedAnswers ?? [] : [])];
   return expected.some((value) => normalize(value) === normalize(answer));
+}
+
+export function evaluateSentenceOrder(exercise: Extract<ExerciseDefinition, { type: "sentence-order" }>, order: readonly string[]): boolean {
+  const matches = (candidate: readonly string[]) => candidate.length === order.length && candidate.every((id, index) => id === order[index]);
+  return matches(exercise.answerOrder) || (exercise.acceptedOrders ?? []).some(matches);
 }
 
 /** Japanese cloze matching trims only answer edges and preserves script, punctuation, and internal spacing. */
@@ -23,7 +29,7 @@ type ExerciseRendererProps = { exercise: ExerciseDefinition; onComplete?: (id: s
 type ExerciseRenderer = (props: ExerciseRendererProps) => ReactNode;
 
 function ChoiceExercise({ exercise, onComplete, onIncorrect }: ExerciseRendererProps) {
-  if (exercise.type === "short-text" || exercise.type === "cloze") throw new Error("Text exercise dispatched to choice renderer");
+  if (exercise.type === "short-text" || exercise.type === "cloze" || exercise.type === "sentence-order") throw new Error("Text exercise dispatched to choice renderer");
   const [result, setResult] = useState<boolean | null>(null);
   const completed = useRef(false);
   const submit = (answer: string) => {
@@ -85,11 +91,42 @@ function ClozeExercise({ exercise, onComplete, onIncorrect }: ExerciseRendererPr
   </section>;
 }
 
+function SentenceOrderExercise({ exercise, onComplete, onIncorrect }: ExerciseRendererProps) {
+  if (exercise.type !== "sentence-order") throw new Error("Non-sentence-order exercise dispatched to sentence renderer");
+  const [order, setOrder] = useState<string[]>([]);
+  const [result, setResult] = useState<boolean | null>(null);
+  const completed = useRef(false);
+  const byId = new Map(exercise.chunks.map((chunk) => [chunk.id, chunk]));
+  const sentence = (ids: readonly string[]) => ids.map((id) => byId.get(id)?.japanese ?? "").join("");
+  const submit = () => {
+    if (!order.length || result === true) return;
+    const correct = evaluateSentenceOrder(exercise, order);
+    setResult(correct);
+    if (!correct) onIncorrect?.(exercise, sentence(order));
+    if (correct && !completed.current) { completed.current = true; onComplete?.(exercise.id); }
+  };
+  const update = (next: string[]) => { setOrder(next); setResult(null); };
+  return <section aria-label={exercise.prompt}>
+    <h4>{exercise.prompt}</h4>
+    <div className="sentence-order-answer" lang="ja" aria-label="Sentence in progress">{sentence(order) || <span className="sentence-order-placeholder">Tap chunks to build the sentence</span>}</div>
+    <div className="sentence-order-chunks" role="group" aria-label="Sentence chunks">{exercise.chunks.filter((chunk) => !order.includes(chunk.id)).map((chunk) => <button type="button" key={chunk.id} lang="ja" onClick={() => update([...order, chunk.id])}>{chunk.japanese}</button>)}</div>
+    {order.length > 0 && <ol className="sentence-order-selected" aria-label="Selected sentence chunks">{order.map((id, index) => {
+      const chunk = byId.get(id)!;
+      return <li key={id}><span lang="ja">{chunk.japanese}</span><button type="button" aria-label={`Remove ${chunk.japanese}`} onClick={() => update(order.filter((item) => item !== id))}>Remove</button><button type="button" aria-label={`Move ${chunk.japanese} earlier`} disabled={index === 0} onClick={() => { const next = [...order]; [next[index - 1], next[index]] = [next[index]!, next[index - 1]!]; update(next); }}>Earlier</button><button type="button" aria-label={`Move ${chunk.japanese} later`} disabled={index === order.length - 1} onClick={() => { const next = [...order]; [next[index], next[index + 1]] = [next[index + 1]!, next[index]!]; update(next); }}>Later</button></li>;
+    })}</ol>}
+    <button type="button" onClick={submit} disabled={order.length !== exercise.chunks.length || result === true}>Check</button>
+    {result !== null && <p role="status">{result ? exercise.feedback.success : exercise.feedback.explanation}</p>}
+    {result === true && <div className="sentence-order-breakdown"><p lang="ja">{sentence(exercise.answerOrder)}</p><ol>{exercise.answerOrder.map((id) => { const chunk = byId.get(id)!; return <li key={id}><span lang="ja">{chunk.japanese}</span> · <span lang="ja">{chunk.reading}</span> · {chunk.meaning}</li>; })}</ol><p>{exercise.explanation}</p></div>}
+    {result === false && <button type="button" onClick={() => setResult(null)}>Try again</button>}
+  </section>;
+}
+
 export const exerciseRenderers: Readonly<Record<ExerciseDefinition["type"], ExerciseRenderer>> = Object.freeze({
   "multiple-choice": ChoiceExercise,
   "character-selection": ChoiceExercise,
   "short-text": TextExercise,
   "cloze": ClozeExercise,
+  "sentence-order": SentenceOrderExercise,
 });
 
 export function ExerciseRendererView(props: ExerciseRendererProps) {

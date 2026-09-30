@@ -56,12 +56,21 @@ export function validateGrammarContent(lessons: readonly GrammarMiniLesson[]): s
       exerciseIds.add(exercise.id);
       if (!nonEmpty(exercise.prompt)) issues.push(`${exercisePath}.prompt is required`);
       if (!nonEmpty(exercise.feedback.success) || !nonEmpty(exercise.feedback.explanation)) issues.push(`${exercisePath}.feedback must include success and explanation`);
-      if (!nonEmpty(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
+      if (exercise.type !== "sentence-order" && !nonEmpty(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
       if ((exercise.type === "multiple-choice" || exercise.type === "character-selection") && (exercise.options.length < 2 || exercise.options.some((option) => !nonEmpty(option)))) issues.push(`${exercisePath}.options must contain at least two non-empty strings`);
       if (exercise.type === "cloze") {
         if (typeof exercise.before !== "string" || typeof exercise.after !== "string" || (!exercise.before && !exercise.after)) issues.push(`${exercisePath} must include cloze context around one blank`);
         if (!nonEmpty(exercise.explanation)) issues.push(`${exercisePath}.explanation is required`);
         if (exercise.acceptedAnswers?.some((answer) => !nonEmpty(answer))) issues.push(`${exercisePath}.acceptedAnswers must contain non-empty strings`);
+      }
+      if (exercise.type === "sentence-order") {
+        const ids = exercise.chunks.map((chunk) => chunk.id);
+        if (ids.length < 2 || exercise.chunks.some((chunk) => !nonEmpty(chunk.id) || !nonEmpty(chunk.japanese) || !nonEmpty(chunk.reading) || !nonEmpty(chunk.meaning))) issues.push(`${exercisePath}.chunks must contain at least two complete authored chunks`);
+        if (new Set(ids).size !== ids.length) issues.push(`${exercisePath}.chunks must have unique IDs`);
+        const validOrder = (order: readonly string[]) => order.length === ids.length && new Set(order).size === ids.length && ids.every((id) => order.includes(id));
+        if (!validOrder(exercise.answerOrder)) issues.push(`${exercisePath}.answerOrder must be a permutation of chunk IDs`);
+        if (exercise.acceptedOrders?.some((order) => !validOrder(order))) issues.push(`${exercisePath}.acceptedOrders must contain permutations of chunk IDs`);
+        if (!nonEmpty(exercise.explanation)) issues.push(`${exercisePath}.explanation is required`);
       }
     });
   });

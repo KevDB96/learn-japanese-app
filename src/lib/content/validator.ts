@@ -164,12 +164,24 @@ export function validateContent(input: unknown): string[] {
           const feedback = exercise.feedback;
           if (!isRecord(feedback)) issues.push(`${exercisePath}.feedback must be an object`);
           else for (const field of ["success", "explanation"]) if (!string(feedback[field])) issues.push(`${exercisePath}.feedback.${field} is required`);
-          if (!string(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
+          if (exercise.type !== "sentence-order" && !string(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
           if (exercise.type === "multiple-choice" || exercise.type === "character-selection") {
             if (!Array.isArray(exercise.options) || exercise.options.length < 2 || exercise.options.some((option) => !string(option))) issues.push(`${exercisePath}.options must contain at least two non-empty strings`);
           } else if (exercise.type === "short-text") {
             if (exercise.acceptedAnswers !== undefined && (!Array.isArray(exercise.acceptedAnswers) || exercise.acceptedAnswers.some((answer) => !string(answer)))) issues.push(`${exercisePath}.acceptedAnswers must contain non-empty strings`);
             if (exercise.normalizeWhitespace !== undefined && typeof exercise.normalizeWhitespace !== "boolean") issues.push(`${exercisePath}.normalizeWhitespace must be boolean`);
+          } else if (exercise.type === "cloze") {
+            if (!string(exercise.before) || !string(exercise.after) || !string(exercise.explanation)) issues.push(`${exercisePath} cloze context and explanation are required`);
+            if (exercise.acceptedAnswers !== undefined && (!Array.isArray(exercise.acceptedAnswers) || exercise.acceptedAnswers.some((answer) => !string(answer)))) issues.push(`${exercisePath}.acceptedAnswers must contain non-empty strings`);
+          } else if (exercise.type === "sentence-order") {
+            const chunks = exercise.chunks;
+            const ids = Array.isArray(chunks) ? chunks.map((chunk) => chunk?.id) : [];
+            const orderValid = (order: unknown) => Array.isArray(order) && order.length === ids.length && new Set(order).size === ids.length && ids.every((id) => order.includes(id));
+            if (!Array.isArray(chunks) || chunks.length < 2 || chunks.some((chunk) => !isRecord(chunk) || !string(chunk.id) || !string(chunk.japanese) || !string(chunk.reading) || !string(chunk.meaning))) issues.push(`${exercisePath}.chunks must contain at least two complete authored chunks`);
+            if (new Set(ids).size !== ids.length) issues.push(`${exercisePath}.chunks must have unique IDs`);
+            if (!orderValid(exercise.answerOrder)) issues.push(`${exercisePath}.answerOrder must be a permutation of chunk IDs`);
+            if (exercise.acceptedOrders !== undefined && (!Array.isArray(exercise.acceptedOrders) || exercise.acceptedOrders.some((order) => !orderValid(order)))) issues.push(`${exercisePath}.acceptedOrders must contain permutations of chunk IDs`);
+            if (!string(exercise.explanation)) issues.push(`${exercisePath}.explanation is required`);
           } else issues.push(`${exercisePath}.type "${String(exercise.type)}" is unknown`);
         });
       }

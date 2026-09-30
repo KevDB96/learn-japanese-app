@@ -35,7 +35,7 @@ export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId
   const progress = session.repos;
   const allKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
   const recordConfusion = async (exercise: import("../../lib/content/types.ts").ExerciseDefinition, answer: string) => {
-    const confusion = identifyKanaConfusion(allKana, exercise.prompt, exercise.answer, answer);
+    const confusion = identifyKanaConfusion(allKana, exercise.prompt, "answer" in exercise ? exercise.answer : "", answer);
     if (!confusion) return;
     const reviewedAt = new Date().toISOString();
     await progress.reviews?.record?.({ id: `confusion-${crypto.randomUUID()}`, conceptId: confusion.targetId, confusedConceptId: confusion.selectedId, cardId: confusion.targetId, rating: "Forgot", reviewedAt, kind: "practice" });

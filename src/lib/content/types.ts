@@ -179,7 +179,8 @@ export type ExerciseDefinition =
   | (ExerciseBase & { readonly type: "multiple-choice"; readonly options: readonly string[]; readonly answer: string })
   | (ExerciseBase & { readonly type: "character-selection"; readonly options: readonly string[]; readonly answer: string })
   | (ExerciseBase & { readonly type: "short-text"; readonly answer: string; readonly acceptedAnswers?: readonly string[]; readonly normalizeWhitespace?: boolean })
-  | (ExerciseBase & { readonly type: "cloze"; readonly before: string; readonly after: string; readonly answer: string; readonly acceptedAnswers?: readonly string[]; readonly explanation: string });
+  | (ExerciseBase & { readonly type: "cloze"; readonly before: string; readonly after: string; readonly answer: string; readonly acceptedAnswers?: readonly string[]; readonly explanation: string })
+  | (ExerciseBase & { readonly type: "sentence-order"; readonly chunks: readonly { readonly id: string; readonly japanese: string; readonly reading: string; readonly meaning: string }[]; readonly answerOrder: readonly string[]; readonly acceptedOrders?: readonly (readonly string[])[]; readonly explanation: string });
 
 export interface ContentCatalog {
   readonly metadata: ContentMetadata;

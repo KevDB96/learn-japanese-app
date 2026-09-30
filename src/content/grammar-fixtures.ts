@@ -41,6 +41,12 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
     exercises: [
       { id: id("grammar-ka-question-exercise"), type: "multiple-choice", prompt: "Which ending makes 学生です a polite yes/no question?", options: ["ですか", "かです", "はです"], answer: "ですか", feedback: { success: "Correct.", explanation: "Place か after the polite statement ending です." } },
       { id: id("grammar-ka-question-cloze"), type: "cloze", prompt: "Complete the polite question.", before: "ねこは学生です", after: "。", answer: "か", explanation: "Place か after です to form a polite yes/no question.", feedback: { success: "Correct.", explanation: "Place か after です to form a polite yes/no question." } },
+      { id: id("grammar-ka-question-order"), type: "sentence-order", prompt: "Build the polite question.", chunks: [
+        { id: "topic", japanese: "ねこは", reading: "ねこは", meaning: "As for the cat" },
+        { id: "description", japanese: "学生", reading: "がくせい", meaning: "student" },
+        { id: "copula", japanese: "です", reading: "です", meaning: "polite copula" },
+        { id: "question", japanese: "か。", reading: "か。", meaning: "question marker and sentence ending" },
+      ], answerOrder: ["topic", "description", "copula", "question"], explanation: "Place か after です to turn the polite statement into a question.", feedback: { success: "Correct.", explanation: "Keep か after the polite ending です." } },
     ],
   },
 ];

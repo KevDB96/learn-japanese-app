@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ExerciseDefinition } from '../../lib/content/types.ts'
-import { evaluateExerciseAnswer, ExerciseRendererView, ExerciseSlot, normalizeExerciseAnswer } from './ExerciseEngine.tsx'
+import { evaluateExerciseAnswer, evaluateSentenceOrder, ExerciseRendererView, ExerciseSlot, normalizeExerciseAnswer } from './ExerciseEngine.tsx'
 
 afterEach(cleanup)
 
@@ -11,6 +11,7 @@ const choice: ExerciseDefinition = { id: 'choice-check' as ExerciseDefinition['i
 const kana: ExerciseDefinition = { ...choice, id: 'kana-check' as ExerciseDefinition['id'], type: 'character-selection', prompt: 'Choose kana', options: ['あ', 'ア'], answer: 'あ' }
 const text: ExerciseDefinition = { id: 'text-check' as ExerciseDefinition['id'], type: 'short-text', prompt: 'Write it', answer: 'こんにちは', acceptedAnswers: [' こんにちは '], feedback, normalizeWhitespace: true }
 const cloze: ExerciseDefinition = { id: 'cloze-check' as ExerciseDefinition['id'], type: 'cloze', prompt: 'Complete the sentence', before: '猫は学生', after: '。', answer: 'です', acceptedAnswers: ['で す'], explanation: 'です completes the polite sentence.', feedback }
+const sentenceOrder: Extract<ExerciseDefinition, { type: 'sentence-order' }> = { id: 'sentence-order-check' as ExerciseDefinition['id'], type: 'sentence-order', prompt: 'Build the sentence', chunks: [{ id: 'topic', japanese: '猫は', reading: 'ねこは', meaning: 'As for the cat' }, { id: 'description', japanese: '学生', reading: 'がくせい', meaning: 'student' }, { id: 'ending', japanese: 'です。', reading: 'です。', meaning: 'polite copula and ending' }], answerOrder: ['topic', 'description', 'ending'], acceptedOrders: [['description', 'topic', 'ending']], explanation: 'The topic comes first, followed by its description and the polite ending.', feedback }
 
 describe('lesson exercises', () => {
   it('dispatches all content-defined types and handles correct, incorrect, retry and one-time completion', () => {
@@ -67,6 +68,27 @@ describe('lesson exercises', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Hiragana' }))
     expect(onIncorrect).toHaveBeenCalledWith(choice, 'Hiragana')
     cleanup()
+  })
+
+  it('accepts only complete authored sentence orderings and renders accessible touch construction with a breakdown', () => {
+    expect(evaluateSentenceOrder(sentenceOrder, ['topic', 'description', 'ending'])).toBe(true)
+    expect(evaluateSentenceOrder(sentenceOrder, ['description', 'topic', 'ending'])).toBe(true)
+    expect(evaluateSentenceOrder(sentenceOrder, ['topic', 'ending', 'description'])).toBe(false)
+    expect(evaluateSentenceOrder(sentenceOrder, ['topic', 'description'])).toBe(false)
+    const onComplete = vi.fn()
+    render(<ExerciseRendererView exercise={sentenceOrder} onComplete={onComplete} />)
+    fireEvent.click(screen.getByRole('button', { name: '学生' }))
+    fireEvent.click(screen.getByRole('button', { name: '猫は' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Move 猫は earlier' }))
+    expect(screen.getByLabelText('Sentence in progress')).toHaveTextContent('猫は学生')
+    fireEvent.click(screen.getByRole('button', { name: 'Remove 学生' }))
+    fireEvent.click(screen.getByRole('button', { name: '学生' }))
+    fireEvent.click(screen.getByRole('button', { name: 'です。' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Check' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Good.')
+    expect(screen.getByText('がくせい')).toBeInTheDocument()
+    expect(screen.getByText(sentenceOrder.explanation)).toBeInTheDocument()
+    expect(onComplete).toHaveBeenCalledTimes(1)
   })
 
   it('renders the three Introduction exercise definitions through the slot registry', () => {

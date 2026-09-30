@@ -40,4 +40,9 @@ describe("grammar mini-lessons", () => {
     expect(cards.length).toBeGreaterThan(0);
     expect(cards.every((card) => card.kind === "cloze" && card.conceptId.startsWith("grammar-") && card.answers.length > 0)).toBe(true);
   });
+
+  it("rejects sentence orderings that are not permutations of authored chunks", () => {
+    const changed = grammarFixtures.map((lesson) => ({ ...lesson, exercises: lesson.exercises.map((exercise) => exercise.type === "sentence-order" ? { ...exercise, answerOrder: ["topic", "topic"] } : exercise) }));
+    expect(validateGrammarContent(changed)).toContain('grammar[2].exercises[2].answerOrder must be a permutation of chunk IDs');
+  });
 });
