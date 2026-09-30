@@ -7,6 +7,7 @@ import { HiraganaProgress } from '../features/progress/HiraganaProgress.tsx'
 import { CloudSavePanel } from '../features/sync/CloudSavePanel.tsx'
 import { ProfileTransferPanel } from '../features/sync/ProfileTransferPanel.tsx'
 import { MixedKanaPractice } from '../features/practice/MixedKanaPractice.tsx'
+import { PlacementEntry } from '../features/placement/PlacementEntry.tsx'
 
 const destinations = [
   { id: 'learn', label: 'Learn', title: 'Learn Japanese' },
@@ -87,6 +88,7 @@ export function App() {
 
 function LearnHome({ profileId }: { profileId: LearnerProfileId }) {
   return <div className="home-stack">
+    <PlacementEntry profileId={profileId} />
     <section className="course-card featured-course" aria-label="Hiragana course">
       <img className="course-art" src={asset(`courses/${profileId}/hiragana.webp`)} alt="" />
       <div className="course-content"><span className="course-kicker">YOUR FIRST COURSE</span><h2>Hiragana</h2><p>Read the sounds and symbols of Japanese.</p><span className="course-status"><span className="status-dot" /> Ready to learn</span></div>

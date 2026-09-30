@@ -50,6 +50,15 @@ describe("lesson progress", () => {
     expect(getNextLesson(catalog, await db.repos.lessonProgress.list(), await db.repos.conceptStates.list())?.id).toBe("next");
   });
 
+  it("allows explicit placement introductions to satisfy lesson prerequisites without mastery", async () => {
+    const db = memory();
+    db.concepts.set("concept-a", { id: "concept-a", recordVersion: 1, updatedAt: new Date(0).toISOString(), conceptId: "concept-a", lifecycle: "INTRODUCED", familiarity: 0 });
+    expect(getUnlockedLessons(catalog, [], [...db.concepts.values()]).map((item) => item.id)).toEqual(["next"]);
+    expect(getContinueLesson(catalog, [], [...db.concepts.values()])?.id).toBe("next");
+    expect(db.reviewStates.size).toBe(0);
+    expect(getConceptLifecycle(db.concepts.get("concept-a"))).toBe("INTRODUCED");
+  });
+
   it("chooses the next eligible lesson for a new learner and resumes an interrupted lesson", async () => {
     const db = memory();
     expect(getContinueLesson(catalog, [], [])).toBe(intro);

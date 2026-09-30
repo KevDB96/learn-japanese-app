@@ -73,8 +73,13 @@ export async function completeLesson(repos: ProgressRepositories, catalog: Conte
   });
 }
 
-function satisfied(requirement: ContentId, lessonIds: Set<string>, states: Map<string, ConceptState>): boolean {
+function satisfied(requirement: ContentId, lessonIds: Set<string>, states: Map<string, ConceptState>, lessons: readonly Lesson[]): boolean {
   if (lessonIds.has(requirement)) return true;
+  const requiredLesson = lessons.find((lesson) => lesson.id === requirement);
+  if (requiredLesson?.introduces.length && requiredLesson.introduces.every((id) => {
+    const lifecycle = states.get(id)?.lifecycle;
+    return lifecycle === "INTRODUCED" || lifecycle === "LEARNING" || lifecycle === "FAMILIAR" || lifecycle === "MASTERED";
+  })) return true;
   const lifecycle = states.get(requirement)?.lifecycle;
   return lifecycle === "INTRODUCED" || lifecycle === "LEARNING" || lifecycle === "FAMILIAR" || lifecycle === "MASTERED";
 }
@@ -82,7 +87,13 @@ function satisfied(requirement: ContentId, lessonIds: Set<string>, states: Map<s
 export function getUnlockedLessons(catalog: ContentCatalog, progress: readonly LessonProgress[], states: readonly ConceptState[]): readonly Lesson[] {
   const completed = new Set(progress.filter((item) => item.status === "completed").map((item) => item.lessonId));
   const conceptStates = new Map(states.map((item) => [item.conceptId, item]));
-  return catalog.lessons.filter((lesson) => !completed.has(lesson.id) && lesson.requires.every((id) => satisfied(id, completed, conceptStates)));
+  const introduced = (id: ContentId) => {
+    const lifecycle = conceptStates.get(id)?.lifecycle;
+    return lifecycle === "INTRODUCED" || lifecycle === "LEARNING" || lifecycle === "FAMILIAR" || lifecycle === "MASTERED";
+  };
+  return catalog.lessons.filter((lesson) => !completed.has(lesson.id)
+    && !(lesson.introduces.length && lesson.introduces.every(introduced))
+    && lesson.requires.every((id) => satisfied(id, completed, conceptStates, catalog.lessons)));
 }
 
 export function getNextLesson(catalog: ContentCatalog, progress: readonly LessonProgress[], states: readonly ConceptState[]): Lesson | undefined {

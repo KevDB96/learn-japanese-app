@@ -121,6 +121,14 @@ h2, h3, p { margin-top: 0; }
 .kana-progress-detail h3, .kana-progress-detail p { margin: 0; }
 .kana-progress-detail h3 [lang="ja"] { font-size: 1.5rem; }
 .kana-progress-detail p { color: var(--text-muted); font-size: .85rem; }
+.placement-entry { display: grid; gap: .65rem; padding: 1rem; border: 1px solid var(--card-border); border-radius: 1rem; background: var(--surface-card); }
+.placement-entry h2, .placement-entry h3, .placement-entry p { margin: 0; }
+.placement-entry h3 { display: grid; place-items: center; min-height: 5rem; font-size: 3rem; }
+.placement-entry label { display: grid; gap: .35rem; }
+.placement-entry input { min-height: 2.8rem; padding: .5rem .7rem; border: 1px solid var(--card-border); border-radius: .65rem; background: var(--surface-raised); color: var(--text); font: inherit; }
+.placement-levels, .placement-actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+.placement-entry button { min-height: 2.7rem; padding: .45rem .75rem; border: 1px solid var(--card-border); border-radius: .65rem; background: var(--surface-raised); color: var(--text); font-weight: 700; cursor: pointer; }
+.placement-entry button:disabled { opacity: .55; }
 .kana-progress-detail button, .lesson-session > button { min-height: 2.9rem; padding: .5rem .9rem; border: 0; border-radius: .75rem; background: var(--accent-strong); color: #fff; font-weight: 750; cursor: pointer; touch-action: manipulation; }
 .lesson-session { display: grid; gap: 1rem; }
 .lesson-content { display: grid; gap: 1rem; padding: 1rem; border: 1px solid var(--card-border); border-radius: 1.1rem; background: var(--surface-raised); }
