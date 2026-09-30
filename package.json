@@ -9,7 +9,8 @@
     "test": "vitest run src --environment jsdom",
     "assets:validate": "node scripts/assets-validate.mjs",
     "content:validate": "node --experimental-strip-types scripts/content-validate.ts",
-    "build": "npm run assets:validate && tsc -b && vite build && node scripts/generate-service-worker.mjs",
+    "build": "npm run assets:validate && tsc -b && vite build --base=/learn-japanese-app/ && node scripts/generate-service-worker.mjs /learn-japanese-app/",
+    "deploy:pages": "node scripts/deploy-pages.mjs",
     "test:browser": "playwright test",
     "typecheck": "tsc -b --pretty false"
   },

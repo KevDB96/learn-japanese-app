@@ -15,7 +15,7 @@ const destinations = [
 ] as const
 
 type Destination = (typeof destinations)[number]['id']
-const asset = (path: string) => `/assets/${path}`
+const asset = (path: string) => `${import.meta.env.BASE_URL}assets/${path}`
 
 function destinationFromHash(): Destination {
   const id = window.location.hash.slice(1)

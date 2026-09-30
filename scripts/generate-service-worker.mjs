@@ -3,6 +3,8 @@ import { readFile, readdir, writeFile } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 
 const root = 'dist'
+const base = process.argv[2]
+if (base !== '/learn-japanese-app/') throw new Error('Expected Pages base /learn-japanese-app/')
 const files = []
 
 async function collect(directory) {
@@ -15,7 +17,7 @@ async function collect(directory) {
 
 await collect(root)
 files.sort()
-const urls = files.map((file) => `/${relative(root, file).split(sep).join('/')}`)
+const urls = files.map((file) => `${base}${relative(root, file).split(sep).join('/')}`)
 const hash = createHash('sha256')
 for (const file of files) hash.update(await readFile(file))
 const cacheName = `learn-japanese-${hash.digest('hex').slice(0, 12)}`
