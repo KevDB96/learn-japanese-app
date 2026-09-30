@@ -82,6 +82,15 @@ h2, h3, p { margin-top: 0; }
 .activity-card p { margin: 0 0 .75rem; color: var(--text-muted); font-size: .83rem; }
 .activity-card .course-kicker { margin-bottom: .2rem; }
 .activity-card-listening { background: var(--surface-card); }
+.mixed-practice { display: grid; gap: .7rem; padding: 1rem; border: 1px solid var(--card-border); border-radius: 1.15rem; background: var(--surface-raised); }
+.mixed-practice h2, .mixed-practice h3, .mixed-practice p { margin: 0; }
+.mixed-practice h2 { font-size: 1.15rem; }
+.mixed-practice h3 { display: grid; place-items: center; min-height: 5rem; border-radius: .8rem; background: var(--surface-card); font-size: 2.6rem; }
+.practice-mode-list, .practice-answer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr)); gap: .5rem; }
+.mixed-practice button { min-height: 2.9rem; padding: .45rem .7rem; border: 1px solid var(--card-border); border-radius: .7rem; background: var(--surface-card); color: var(--text); cursor: pointer; touch-action: manipulation; }
+.mixed-practice button[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
+.mixed-practice button:disabled { opacity: .7; }
+.practice-word-count { color: var(--text-muted); font-size: .8rem; }
 .coming-soon { color: var(--text-muted); font-size: .8rem; font-weight: 700; }
 .more-profile-card, .save-status { display: flex; align-items: center; gap: .9rem; padding: 1rem; border: 1px solid var(--card-border); border-radius: 1.1rem; background: var(--surface-raised); }
 .more-profile-card > img { width: 4rem; height: 4rem; border-radius: .9rem; object-fit: cover; }

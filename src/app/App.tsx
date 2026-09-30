@@ -6,6 +6,7 @@ import './app.css'
 import { HiraganaProgress } from '../features/progress/HiraganaProgress.tsx'
 import { CloudSavePanel } from '../features/sync/CloudSavePanel.tsx'
 import { ProfileTransferPanel } from '../features/sync/ProfileTransferPanel.tsx'
+import { MixedKanaPractice } from '../features/practice/MixedKanaPractice.tsx'
 
 const destinations = [
   { id: 'learn', label: 'Learn', title: 'Learn Japanese' },
@@ -103,6 +104,7 @@ function PracticeHome({ profileId, onProgress }: { profileId: LearnerProfileId; 
       <img src={asset(`activities/practice-${profileId}.webp`)} alt="" />
       <div><span className="course-kicker">HIRAGANA</span><h2>Kana practice</h2><p>Choose a character from your progress to practise it again.</p><button className="secondary-action" type="button" onClick={onProgress}>Choose characters</button></div>
     </section>
+    <MixedKanaPractice profileId={profileId} />
     <section className="activity-card activity-card-listening">
       <img src={asset(`activities/listening-${profileId}.webp`)} alt="" />
       <div><span className="course-kicker">LISTENING</span><h2>Sound practice</h2><p>Listening activities will appear as they’re added to your course.</p><span className="coming-soon">Coming soon</span></div>
