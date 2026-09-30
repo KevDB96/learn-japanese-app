@@ -10,6 +10,7 @@ const feedback = { success: 'Good.', explanation: 'Katakana is used for borrowed
 const choice: ExerciseDefinition = { id: 'choice-check' as ExerciseDefinition['id'], type: 'multiple-choice', prompt: 'Choose the script', options: ['Hiragana', 'Katakana'], answer: 'Katakana', feedback }
 const kana: ExerciseDefinition = { ...choice, id: 'kana-check' as ExerciseDefinition['id'], type: 'character-selection', prompt: 'Choose kana', options: ['あ', 'ア'], answer: 'あ' }
 const text: ExerciseDefinition = { id: 'text-check' as ExerciseDefinition['id'], type: 'short-text', prompt: 'Write it', answer: 'こんにちは', acceptedAnswers: [' こんにちは '], feedback, normalizeWhitespace: true }
+const cloze: ExerciseDefinition = { id: 'cloze-check' as ExerciseDefinition['id'], type: 'cloze', prompt: 'Complete the sentence', before: '猫は学生', after: '。', answer: 'です', acceptedAnswers: ['で す'], explanation: 'です completes the polite sentence.', feedback }
 
 describe('lesson exercises', () => {
   it('dispatches all content-defined types and handles correct, incorrect, retry and one-time completion', () => {
@@ -39,6 +40,25 @@ describe('lesson exercises', () => {
     expect(evaluateExerciseAnswer(text, 'こんにちは')).toBe(true)
     expect(evaluateExerciseAnswer(text, 'こん にちは')).toBe(false)
     expect(evaluateExerciseAnswer({ ...text, acceptedAnswers: undefined, normalizeWhitespace: false }, ' こんにちは ')).toBe(true)
+  })
+
+  it('renders cloze context intact and accepts only authored kana/kanji alternatives', () => {
+    render(<ExerciseRendererView exercise={cloze} />)
+    expect(screen.getByText('猫は学生', { exact: false })).toBeInTheDocument()
+    expect(evaluateExerciseAnswer(cloze, ' です ')).toBe(true)
+    expect(evaluateExerciseAnswer(cloze, 'で す')).toBe(true)
+    expect(evaluateExerciseAnswer({ ...cloze, answer: '猫', acceptedAnswers: ['ねこ'] }, 'ねこ')).toBe(true)
+    expect(evaluateExerciseAnswer({ ...cloze, answer: '猫', acceptedAnswers: ['ねこ'] }, 'ネコ')).toBe(false)
+    expect(evaluateExerciseAnswer(cloze, 'です。')).toBe(false)
+  })
+
+  it('shows concise cloze context after a wrong lesson answer and allows retry', () => {
+    render(<ExerciseRendererView exercise={cloze} />)
+    fireEvent.change(screen.getByRole('textbox', { name: 'Missing text' }), { target: { value: 'ます' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Check' }))
+    expect(screen.getByRole('status')).toHaveTextContent(cloze.explanation)
+    fireEvent.click(screen.getByRole('button', { name: 'Try again' }))
+    expect(screen.getByRole('textbox', { name: 'Missing text' })).toHaveValue('')
   })
 
   it('reports a wrong chosen option with the exercise identity for confusion tracking', () => {

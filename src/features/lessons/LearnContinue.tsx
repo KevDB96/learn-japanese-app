@@ -15,6 +15,8 @@ import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
 import { phraseFixtures } from "../../content/phrase-fixtures.ts";
 import { generateVocabularyReviewCards } from "../../lib/content/vocabulary.ts";
 import { generatePhraseReviewCards } from "../../lib/content/phrases.ts";
+import { grammarFixtures } from "../../content/grammar-fixtures.ts";
+import { generateGrammarClozeReviewCards } from "../../lib/content/grammar.ts";
 
 type LearnState = { readonly plan: SessionPlan; readonly lessonId?: string; readonly contrast?: Extract<SessionPlan["items"][number], { kind: "contrast" }> };
 const NEW_MATERIAL_CAP = 5;
@@ -34,7 +36,7 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
         const lessonMode = progress.some((item) => item.lessonId === lesson?.id && item.status === "in-progress") ? "resume" : "new";
         const availableKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
         const cards = generateKanaReviewCards(availableKana, KANA_REVIEW_FORMS);
-        const allCards = [...cards, ...generateVocabularyReviewCards(vocabularyFixtures), ...generatePhraseReviewCards(phraseFixtures)];
+        const allCards = [...cards, ...generateVocabularyReviewCards(vocabularyFixtures), ...generatePhraseReviewCards(phraseFixtures), ...generateGrammarClozeReviewCards(grammarFixtures)];
         const cardForms = new Map(allCards.map((card) => [card.id, card.formId]));
         const dueReviews = due.flatMap((candidate) => {
           const exactFormId = cardForms.get(candidate.cardId);

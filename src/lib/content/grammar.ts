@@ -1,4 +1,24 @@
 import { CONTENT_ID_PATTERN, type GrammarMiniLesson } from "./types.ts";
+import type { ContentId, ExerciseDefinition } from "./types.ts";
+
+export interface GrammarClozeReviewCard {
+  readonly id: string;
+  readonly conceptId: ContentId;
+  readonly formId: "grammar-cloze";
+  readonly kind: "cloze";
+  readonly prompt: string;
+  readonly answers: readonly string[];
+  readonly reading: string;
+  readonly exercise: Extract<ExerciseDefinition, { type: "cloze" }>;
+}
+
+/** Scheduled clozes reuse authored lesson blanks and keep scheduling at grammar-point granularity. */
+export function generateGrammarClozeReviewCards(lessons: readonly GrammarMiniLesson[]): GrammarClozeReviewCard[] {
+  return lessons.flatMap((lesson) => lesson.exercises.flatMap((exercise) => exercise.type === "cloze" ? [{
+    id: `${lesson.id}--${exercise.id}`, conceptId: lesson.id, formId: "grammar-cloze" as const, kind: "cloze" as const,
+    prompt: exercise.prompt, answers: [exercise.answer, ...(exercise.acceptedAnswers ?? [])], reading: `${exercise.before}___${exercise.after}`, exercise,
+  }] : [])).sort((a, b) => a.conceptId.localeCompare(b.conceptId) || a.id.localeCompare(b.id));
+}
 
 const nonEmpty = (value: unknown): value is string => typeof value === "string" && value.trim().length > 0;
 
@@ -38,6 +58,11 @@ export function validateGrammarContent(lessons: readonly GrammarMiniLesson[]): s
       if (!nonEmpty(exercise.feedback.success) || !nonEmpty(exercise.feedback.explanation)) issues.push(`${exercisePath}.feedback must include success and explanation`);
       if (!nonEmpty(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
       if ((exercise.type === "multiple-choice" || exercise.type === "character-selection") && (exercise.options.length < 2 || exercise.options.some((option) => !nonEmpty(option)))) issues.push(`${exercisePath}.options must contain at least two non-empty strings`);
+      if (exercise.type === "cloze") {
+        if (typeof exercise.before !== "string" || typeof exercise.after !== "string" || (!exercise.before && !exercise.after)) issues.push(`${exercisePath} must include cloze context around one blank`);
+        if (!nonEmpty(exercise.explanation)) issues.push(`${exercisePath}.explanation is required`);
+        if (exercise.acceptedAnswers?.some((answer) => !nonEmpty(answer))) issues.push(`${exercisePath}.acceptedAnswers must contain non-empty strings`);
+      }
     });
   });
   for (const [index, lesson] of lessons.entries()) for (const prerequisite of lesson.requires) {

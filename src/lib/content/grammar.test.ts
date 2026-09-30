@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
-import { validateGrammarContent } from "./grammar.ts";
+import { generateGrammarClozeReviewCards, validateGrammarContent } from "./grammar.ts";
 import type { ContentId } from "./types.ts";
 const ids = (...values: string[]) => values.map((value) => value as ContentId);
 
@@ -32,5 +32,12 @@ describe("grammar mini-lessons", () => {
     const errors = validateGrammarContent(changed).join("\n");
     expect(errors).toContain('grammar[0].requires references missing grammar prerequisite "grammar-missing"');
     expect(errors).toContain("grammar dependency cycle:");
+  });
+
+  it("generates stable scheduled cloze cards from explicitly authored grammar blanks", () => {
+    const cards = generateGrammarClozeReviewCards(grammarFixtures);
+    expect(cards.map((card) => card.id)).toEqual(generateGrammarClozeReviewCards(grammarFixtures).map((card) => card.id));
+    expect(cards.length).toBeGreaterThan(0);
+    expect(cards.every((card) => card.kind === "cloze" && card.conceptId.startsWith("grammar-") && card.answers.length > 0)).toBe(true);
   });
 });

@@ -24,7 +24,10 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
     examples: [{ id: id("grammar-desu-copula-example"), japanese: "ねこは学生です。", reading: "ねこはがくせいです。", translation: "The cat is a student.", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula")] }],
     commonMistakes: ["Treating です as a verb that must follow the topic directly, leaving out the description."],
     relatedConceptIds: [id("grammar-topic-wa"), id("grammar-ka-question")],
-    exercises: [{ id: id("grammar-desu-copula-exercise"), type: "short-text", prompt: "Complete ‘ねこは学生___。’ with the polite copula.", answer: "です", feedback: { success: "Correct.", explanation: "です completes this polite noun sentence." } }],
+    exercises: [
+      { id: id("grammar-desu-copula-exercise"), type: "short-text", prompt: "Complete ‘ねこは学生___。’ with the polite copula.", answer: "です", feedback: { success: "Correct.", explanation: "です completes this polite noun sentence." } },
+      { id: id("grammar-desu-copula-cloze"), type: "cloze", prompt: "Complete the sentence.", before: "ねこは学生", after: "。", answer: "です", explanation: "です completes a polite noun sentence.", feedback: { success: "Correct.", explanation: "です completes a polite noun sentence." } },
+    ],
   },
   {
     id: id("grammar-ka-question"),
@@ -35,6 +38,9 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
     examples: [{ id: id("grammar-ka-question-example"), japanese: "ねこは学生ですか。", reading: "ねこはがくせいですか。", translation: "Is the cat a student?", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-ka-question")] }],
     commonMistakes: ["Moving か before です instead of placing it at the end of the polite question."],
     relatedConceptIds: [id("grammar-desu-copula")],
-    exercises: [{ id: id("grammar-ka-question-exercise"), type: "multiple-choice", prompt: "Which ending makes 学生です a polite yes/no question?", options: ["ですか", "かです", "はです"], answer: "ですか", feedback: { success: "Correct.", explanation: "Place か after the polite statement ending です." } }],
+    exercises: [
+      { id: id("grammar-ka-question-exercise"), type: "multiple-choice", prompt: "Which ending makes 学生です a polite yes/no question?", options: ["ですか", "かです", "はです"], answer: "ですか", feedback: { success: "Correct.", explanation: "Place か after the polite statement ending です." } },
+      { id: id("grammar-ka-question-cloze"), type: "cloze", prompt: "Complete the polite question.", before: "ねこは学生です", after: "。", answer: "か", explanation: "Place か after です to form a polite yes/no question.", feedback: { success: "Correct.", explanation: "Place か after です to form a polite yes/no question." } },
+    ],
   },
 ];

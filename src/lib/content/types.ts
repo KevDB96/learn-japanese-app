@@ -178,7 +178,8 @@ interface ExerciseBase { readonly id: ContentId; readonly prompt: string; readon
 export type ExerciseDefinition =
   | (ExerciseBase & { readonly type: "multiple-choice"; readonly options: readonly string[]; readonly answer: string })
   | (ExerciseBase & { readonly type: "character-selection"; readonly options: readonly string[]; readonly answer: string })
-  | (ExerciseBase & { readonly type: "short-text"; readonly answer: string; readonly acceptedAnswers?: readonly string[]; readonly normalizeWhitespace?: boolean });
+  | (ExerciseBase & { readonly type: "short-text"; readonly answer: string; readonly acceptedAnswers?: readonly string[]; readonly normalizeWhitespace?: boolean })
+  | (ExerciseBase & { readonly type: "cloze"; readonly before: string; readonly after: string; readonly answer: string; readonly acceptedAnswers?: readonly string[]; readonly explanation: string });
 
 export interface ContentCatalog {
   readonly metadata: ContentMetadata;

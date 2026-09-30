@@ -23,4 +23,13 @@ describe("concept review interaction", () => {
     expect(screen.queryByRole("group", { name: "Guided choices" })).toBeNull();
     expect(screen.getByLabelText("Answer")).toBeTruthy();
   });
+
+  it("uses the authored grammar cloze in scheduled review and offers SRS ratings after an attempt", () => {
+    const cloze = { kind: "review" as const, conceptId: "grammar-desu-copula" as never, cardId: "grammar-desu-copula--grammar-desu-copula-cloze", formId: "grammar-cloze" };
+    render(<ConceptReviewSession item={cloze} profileId="kevin" onRated={vi.fn()} />);
+    fireEvent.change(screen.getByRole("textbox", { name: "Missing text" }), { target: { value: "ます" } });
+    fireEvent.click(screen.getByRole("button", { name: "Check" }));
+    expect(screen.getByRole("status").textContent).toContain("です completes a polite noun sentence.");
+    expect(screen.getByRole("group", { name: "Review rating" })).toBeTruthy();
+  });
 });
