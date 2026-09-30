@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": 1,
-    "contentVersion": "0.5.0"
+    "contentVersion": "0.6.0"
   },
   "courses": [
     {
@@ -15,7 +15,8 @@
         "katakana-foundations",
         "katakana-through-n",
         "katakana-voiced-and-combinations",
-        "self-introduction"
+        "self-introduction",
+        "people-and-family"
       ],
       "startLessonIds": [
         "introduction"
@@ -98,6 +99,13 @@
       "display": "Self-introduction",
       "lessonIds": [
         "lesson-self-introduction"
+      ]
+    },
+    {
+      "id": "people-and-family",
+      "display": "People and family",
+      "lessonIds": [
+        "lesson-people-and-family"
       ]
     }
   ],
@@ -5014,6 +5022,222 @@
           "text": "Vocabulary, phrase, and grammar cards from this lesson are added to spaced review."
         }
       ]
+    },
+    {
+      "id": "lesson-people-and-family",
+      "display": "People and family",
+      "requires": [
+        "lesson-self-introduction"
+      ],
+      "introduces": [
+        "people-person",
+        "people-family",
+        "family-mother",
+        "family-father",
+        "family-older-brother",
+        "family-older-sister",
+        "family-respectful-parent-terms",
+        "sentence-family-mother",
+        "sentence-family-brother"
+      ],
+      "reinforces": [
+        "identity-topic-marker",
+        "identity-student",
+        "identity-teacher",
+        "identity-polite-copula"
+      ],
+      "blocks": [
+        {
+          "id": "family-title",
+          "kind": "heading",
+          "text": "People and family"
+        },
+        {
+          "id": "family-bridge",
+          "kind": "paragraph",
+          "text": "You already know は for the topic and です for a polite noun sentence. Reuse that pattern to describe people in your family."
+        },
+        {
+          "id": "family-words",
+          "kind": "vocabulary-list",
+          "title": "People and family",
+          "items": [
+            {
+              "japanese": "人",
+              "reading": "ひと",
+              "translation": "person; people"
+            },
+            {
+              "japanese": "家族",
+              "reading": "かぞく",
+              "translation": "family"
+            },
+            {
+              "japanese": "母",
+              "reading": "はは",
+              "translation": "my mother (when speaking to others)"
+            },
+            {
+              "japanese": "父",
+              "reading": "ちち",
+              "translation": "my father (when speaking to others)"
+            },
+            {
+              "japanese": "兄",
+              "reading": "あに",
+              "translation": "my older brother"
+            },
+            {
+              "japanese": "姉",
+              "reading": "あね",
+              "translation": "my older sister"
+            },
+            {
+              "japanese": "お母さん",
+              "reading": "おかあさん",
+              "translation": "mother; mom (respectful/direct address)"
+            },
+            {
+              "japanese": "お父さん",
+              "reading": "おとうさん",
+              "translation": "father; dad (respectful/direct address)"
+            }
+          ]
+        },
+        {
+          "id": "family-register",
+          "kind": "callout",
+          "title": "Whose family?",
+          "text": "When speaking to someone outside your family, use 母 (はは) and 父 (ちち) for your own mother and father. Use お母さん (おかあさん) and お父さん (おとうさん) for another person’s parents or when addressing your own parents. The お…さん forms are respectful; they are not interchangeable in every context."
+        },
+        {
+          "id": "family-pattern",
+          "kind": "grammar-breakdown",
+          "title": "Describe a family member",
+          "japanese": "母は先生です。",
+          "reading": "はははせんせいです。",
+          "translation": "My mother is a teacher.",
+          "parts": [
+            {
+              "text": "母",
+              "reading": "はは",
+              "meaning": "my mother, speaking to others"
+            },
+            {
+              "text": "は",
+              "reading": "は (wa)",
+              "meaning": "marks the topic"
+            },
+            {
+              "text": "先生",
+              "reading": "せんせい",
+              "meaning": "teacher"
+            },
+            {
+              "text": "です",
+              "reading": "です",
+              "meaning": "polite sentence ending"
+            }
+          ]
+        },
+        {
+          "id": "family-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "family-guided-register",
+              "type": "multiple-choice",
+              "prompt": "When telling someone about your own father, which term is usual?",
+              "options": [
+                "父 (ちち)",
+                "お父さん (おとうさん)",
+                "学生 (がくせい)"
+              ],
+              "answer": "父 (ちち)",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "父 (ちち) is the usual term for your own father when speaking to someone outside your family."
+              }
+            },
+            {
+              "id": "family-guided-ending",
+              "type": "cloze",
+              "prompt": "Complete the polite description.",
+              "before": "母は先生",
+              "after": "。",
+              "answer": "です",
+              "explanation": "Reuse です to finish the polite noun sentence.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "母は先生です。 says ‘My mother is a teacher.’"
+              }
+            }
+          ]
+        },
+        {
+          "id": "family-mother-sentence",
+          "kind": "sentence-ref",
+          "sentenceId": "sentence-family-mother"
+        },
+        {
+          "id": "family-brother-sentence",
+          "kind": "sentence-ref",
+          "sentenceId": "sentence-family-brother"
+        },
+        {
+          "id": "family-retrieval",
+          "kind": "exercise-slot",
+          "title": "Recall and build",
+          "exercises": [
+            {
+              "id": "family-recall-kinship",
+              "type": "short-text",
+              "prompt": "Write ‘my older sister’ in kanji.",
+              "answer": "姉",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "姉 is read あね and means my older sister."
+              }
+            },
+            {
+              "id": "family-build-description",
+              "type": "sentence-order",
+              "prompt": "Build ‘My older brother is a student.’",
+              "chunks": [
+                {
+                  "id": "topic",
+                  "japanese": "兄は",
+                  "reading": "あには",
+                  "meaning": "As for my older brother"
+                },
+                {
+                  "id": "role",
+                  "japanese": "学生",
+                  "reading": "がくせい",
+                  "meaning": "student"
+                },
+                {
+                  "id": "ending",
+                  "japanese": "です。",
+                  "reading": "です。",
+                  "meaning": "polite ending"
+                }
+              ],
+              "answerOrder": [
+                "topic",
+                "role",
+                "ending"
+              ],
+              "explanation": "Use the familiar topic + description + です pattern.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "兄は学生です。 (あにはがくせいです。) means ‘My older brother is a student.’"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "concepts": [
@@ -6462,6 +6686,48 @@
       "display": "ケビン",
       "reading": "ケビン",
       "translation": "Kevin, written in katakana"
+    },
+    {
+      "id": "people-person",
+      "display": "人",
+      "reading": "ひと",
+      "translation": "person; people"
+    },
+    {
+      "id": "people-family",
+      "display": "家族",
+      "reading": "かぞく",
+      "translation": "family"
+    },
+    {
+      "id": "family-mother",
+      "display": "母",
+      "reading": "はは",
+      "translation": "my mother when speaking to others"
+    },
+    {
+      "id": "family-father",
+      "display": "父",
+      "reading": "ちち",
+      "translation": "my father when speaking to others"
+    },
+    {
+      "id": "family-older-brother",
+      "display": "兄",
+      "reading": "あに",
+      "translation": "my older brother"
+    },
+    {
+      "id": "family-older-sister",
+      "display": "姉",
+      "reading": "あね",
+      "translation": "my older sister"
+    },
+    {
+      "id": "family-respectful-parent-terms",
+      "display": "お母さん・お父さん",
+      "reading": "おかあさん・おとうさん",
+      "translation": "respectful terms for parents; also used in direct address"
     }
   ],
   "sentences": [
@@ -6566,6 +6832,98 @@
           "meaning": "Kevin",
           "conceptIds": [
             "identity-kevin"
+          ]
+        },
+        {
+          "japanese": "です。",
+          "reading": "です。",
+          "meaning": "polite sentence ending",
+          "conceptIds": [
+            "identity-polite-copula"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sentence-family-mother",
+      "display": "母は先生です。",
+      "reading": "はははせんせいです。",
+      "translation": "My mother is a teacher.",
+      "requires": [
+        "family-mother",
+        "identity-topic-marker",
+        "identity-teacher",
+        "identity-polite-copula"
+      ],
+      "segments": [
+        {
+          "japanese": "母",
+          "reading": "はは",
+          "meaning": "my mother, when speaking to others",
+          "conceptIds": [
+            "family-mother"
+          ]
+        },
+        {
+          "japanese": "は",
+          "reading": "は (wa)",
+          "meaning": "topic marker",
+          "conceptIds": [
+            "identity-topic-marker"
+          ]
+        },
+        {
+          "japanese": "先生",
+          "reading": "せんせい",
+          "meaning": "teacher",
+          "conceptIds": [
+            "identity-teacher"
+          ]
+        },
+        {
+          "japanese": "です。",
+          "reading": "です。",
+          "meaning": "polite sentence ending",
+          "conceptIds": [
+            "identity-polite-copula"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sentence-family-brother",
+      "display": "兄は学生です。",
+      "reading": "あにはがくせいです。",
+      "translation": "My older brother is a student.",
+      "requires": [
+        "family-older-brother",
+        "identity-topic-marker",
+        "identity-student",
+        "identity-polite-copula"
+      ],
+      "segments": [
+        {
+          "japanese": "兄",
+          "reading": "あに",
+          "meaning": "my older brother",
+          "conceptIds": [
+            "family-older-brother"
+          ]
+        },
+        {
+          "japanese": "は",
+          "reading": "は (wa)",
+          "meaning": "topic marker",
+          "conceptIds": [
+            "identity-topic-marker"
+          ]
+        },
+        {
+          "japanese": "学生",
+          "reading": "がくせい",
+          "meaning": "student",
+          "conceptIds": [
+            "identity-student"
           ]
         },
         {

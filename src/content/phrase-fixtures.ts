@@ -32,4 +32,8 @@ export const phraseFixtures: readonly PhraseConcept[] = [
     id: id("phrase-hajimemashite"), japanese: "はじめまして。", reading: "はじめまして。", meaning: "How do you do? (said when meeting for the first time)",
     learningMode: "memorized", formality: "polite", usageNotes: ["A set polite greeting for a first meeting; commonly followed by a self-introduction."], grammarIds: [],
   },
+  {
+    id: id("phrase-okaasan"), japanese: "お母さん", reading: "おかあさん", meaning: "mother; mom",
+    learningMode: "memorized", formality: "polite", usageNotes: ["Use for another person's mother or when addressing your own mother. When describing your own mother to someone outside your family, 母 (はは) is usual."], grammarIds: [],
+  },
 ];

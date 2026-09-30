@@ -70,4 +70,26 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
       ], answerOrder: ["topic", "name", "ending"], explanation: "Put the topic first, then the name, then です.", feedback: { success: "Correct.", explanation: "わたしはケビンです。 is a polite introduction." } },
     ],
   },
+  {
+    id: id("grammar-family-terms"),
+    display: "Talking about family",
+    requires: [id("grammar-desu-copula")],
+    shortExplanation: "Use a plain family term for your own family when speaking to others; さん forms are respectful for another person's family or direct address.",
+    fullExplanation: "When speaking to someone outside your family, use 母 (はは) and 父 (ちち) for your own mother and father. Use お母さん (おかあさん) and お父さん (おとうさん) for someone else's parents or when addressing your own parents. The polite お…さん forms show respect; they are not simply interchangeable with the humble terms for your own family. Put a family member before は and a role before です, reusing the noun sentence pattern.",
+    examples: [
+      { id: id("grammar-family-mother-example"), japanese: "母は先生です。", reading: "はははせんせいです。", translation: "My mother is a teacher.", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-family-terms")] },
+      { id: id("grammar-family-address-example"), japanese: "お母さん。", reading: "おかあさん。", translation: "Mom. (direct address)", grammarIds: [id("grammar-family-terms")] },
+    ],
+    commonMistakes: ["Using お母さん for your own mother when describing her to someone outside your family; 母 is the usual modest term.", "Assuming さん forms are rude or overly formal; they are ordinary respectful family terms when addressing someone or discussing another person's family."],
+    relatedConceptIds: [id("grammar-self-introduction"), id("grammar-desu-copula")],
+    exercises: [
+      { id: id("grammar-family-choice"), type: "multiple-choice", prompt: "When telling someone about your own mother, which term is usual?", options: ["母 (はは)", "お母さん (おかあさん)", "先生 (せんせい)"], answer: "母 (はは)", feedback: { success: "Correct.", explanation: "Use 母 (はは) for your own mother when speaking to someone outside your family." } },
+      { id: id("grammar-family-cloze"), type: "cloze", prompt: "Complete the polite description: ‘My mother is a teacher.’", before: "母は先生", after: "。", answer: "です", explanation: "Reuse the polite noun sentence ending です.", feedback: { success: "Correct.", explanation: "母は先生です。 (はははせんせいです。) reuses は and です." } },
+      { id: id("grammar-family-order"), type: "sentence-order", prompt: "Build ‘My older brother is a student.’", chunks: [
+        { id: "family", japanese: "兄は", reading: "あには", meaning: "As for my older brother" },
+        { id: "role", japanese: "学生", reading: "がくせい", meaning: "student" },
+        { id: "ending", japanese: "です。", reading: "です。", meaning: "polite ending" },
+      ], answerOrder: ["family", "role", "ending"], explanation: "Reuse topic + noun description + です.", feedback: { success: "Correct.", explanation: "兄は学生です。 (あにはがくせいです。) means ‘My older brother is a student.’" } },
+    ],
+  },
 ];

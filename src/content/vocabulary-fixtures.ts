@@ -26,4 +26,12 @@ export const vocabularyFixtures: readonly VocabularyConcept[] = [
     id: id("vocab-kevin"), written: "ケビン", reading: "ケビン", meanings: ["Kevin"], partOfSpeech: "proper noun", tags: ["identity", "name"],
     examples: [{ written: "わたしはケビンです。", reading: "わたしはケビンです。", meaning: "I am Kevin." }],
   },
+  { id: id("vocab-hito"), written: "人", reading: "ひと", meanings: ["person", "people"], partOfSpeech: "noun", tags: ["people", "beginner"] },
+  { id: id("vocab-kazoku"), written: "家族", reading: "かぞく", meanings: ["family"], partOfSpeech: "noun", tags: ["family", "beginner"] },
+  { id: id("vocab-haha"), written: "母", reading: "はは", meanings: ["my mother"], partOfSpeech: "noun", tags: ["family", "beginner"], examples: [{ written: "母は先生です。", reading: "はははせんせいです。", meaning: "My mother is a teacher." }] },
+  { id: id("vocab-chichi"), written: "父", reading: "ちち", meanings: ["my father"], partOfSpeech: "noun", tags: ["family", "beginner"] },
+  { id: id("vocab-ani"), written: "兄", reading: "あに", meanings: ["my older brother"], partOfSpeech: "noun", tags: ["family", "beginner"] },
+  { id: id("vocab-ane"), written: "姉", reading: "あね", meanings: ["my older sister"], partOfSpeech: "noun", tags: ["family", "beginner"] },
+  { id: id("vocab-okaasan"), written: "お母さん", reading: "おかあさん", meanings: ["mother"], partOfSpeech: "noun", tags: ["family", "politeness"] },
+  { id: id("vocab-otousan"), written: "お父さん", reading: "おとうさん", meanings: ["father"], partOfSpeech: "noun", tags: ["family", "politeness"] },
 ];
