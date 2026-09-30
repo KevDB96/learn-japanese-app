@@ -81,6 +81,28 @@ export interface VocabularyExample {
   readonly meaning: string;
 }
 
+/** A grammar point taught as one explanatory unit before its practice exercises. */
+export interface GrammarMiniLesson {
+  readonly id: ContentId;
+  readonly display: string;
+  readonly requires: readonly ContentId[];
+  readonly shortExplanation: string;
+  readonly fullExplanation: string;
+  readonly examples: readonly GrammarExample[];
+  readonly commonMistakes: readonly string[];
+  readonly relatedConceptIds: readonly ContentId[];
+  readonly exercises: readonly ExerciseDefinition[];
+}
+
+export interface GrammarExample {
+  readonly id: ContentId;
+  readonly japanese: string;
+  readonly reading: string;
+  readonly translation: string;
+  /** Grammar points used in this example; each must be this lesson or a prerequisite. */
+  readonly grammarIds: readonly ContentId[];
+}
+
 export type VocabularyReviewFormKind = "meaning" | "reading" | "production";
 export interface VocabularyReviewForm {
   readonly id: string;
