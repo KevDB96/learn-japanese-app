@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": 1,
-    "contentVersion": "0.3.0"
+    "contentVersion": "0.4.0"
   },
   "courses": [
     {
@@ -13,7 +13,8 @@
         "hiragana-n-through-n",
         "hiragana-marks-and-combinations",
         "katakana-foundations",
-        "katakana-through-n"
+        "katakana-through-n",
+        "katakana-voiced-and-combinations"
       ],
       "startLessonIds": [
         "introduction"
@@ -80,6 +81,15 @@
         "katakana-y-row",
         "katakana-r-row",
         "katakana-w-row"
+      ]
+    },
+    {
+      "id": "katakana-voiced-and-combinations",
+      "display": "Katakana: voiced sounds and combinations",
+      "lessonIds": [
+        "katakana-voiced-sounds",
+        "katakana-contracted-sounds",
+        "katakana-loanword-sounds"
       ]
     }
   ],
@@ -4127,6 +4137,669 @@
           ]
         }
       ]
+    },
+    {
+      "id": "katakana-voiced-sounds",
+      "display": "Katakana: voiced sounds",
+      "requires": [
+        "katakana-w-row"
+      ],
+      "introduces": [
+        "kana-kata-mark-30ac",
+        "kana-kata-mark-30ae",
+        "kana-kata-mark-30b0",
+        "kana-kata-mark-30b2",
+        "kana-kata-mark-30b4",
+        "kana-kata-mark-30b6",
+        "kana-kata-mark-30b8",
+        "kana-kata-mark-30ba",
+        "kana-kata-mark-30bc",
+        "kana-kata-mark-30be",
+        "kana-kata-mark-30c0",
+        "kana-kata-mark-30c2",
+        "kana-kata-mark-30c5",
+        "kana-kata-mark-30c7",
+        "kana-kata-mark-30c9",
+        "kana-kata-mark-30d0",
+        "kana-kata-mark-30d3",
+        "kana-kata-mark-30d6",
+        "kana-kata-mark-30d9",
+        "kana-kata-mark-30dc",
+        "kana-kata-mark-30d1",
+        "kana-kata-mark-30d4",
+        "kana-kata-mark-30d7",
+        "kana-kata-mark-30da",
+        "kana-kata-mark-30dd"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-voiced-sounds-title",
+          "kind": "heading",
+          "text": "Dakuten and handakuten"
+        },
+        {
+          "id": "katakana-voiced-sounds-teach",
+          "kind": "paragraph",
+          "text": "Dakuten (゛) voices the k, s, t, and h rows. Handakuten (゜) changes the h row to p. Read each marked character as its own changed sound: シ is shi, ジ is ji, and ヂ is also commonly read ji."
+        },
+        {
+          "id": "katakana-voiced-sounds-grid",
+          "kind": "kana-grid",
+          "title": "Marked sounds",
+          "characters": [
+            {
+              "kana": "ガ",
+              "reading": "ga"
+            },
+            {
+              "kana": "ギ",
+              "reading": "gi"
+            },
+            {
+              "kana": "グ",
+              "reading": "gu"
+            },
+            {
+              "kana": "ゲ",
+              "reading": "ge"
+            },
+            {
+              "kana": "ゴ",
+              "reading": "go"
+            },
+            {
+              "kana": "ザ",
+              "reading": "za"
+            },
+            {
+              "kana": "ジ",
+              "reading": "ji"
+            },
+            {
+              "kana": "ズ",
+              "reading": "zu"
+            },
+            {
+              "kana": "ゼ",
+              "reading": "ze"
+            },
+            {
+              "kana": "ゾ",
+              "reading": "zo"
+            },
+            {
+              "kana": "ダ",
+              "reading": "da"
+            },
+            {
+              "kana": "ヂ",
+              "reading": "ji"
+            },
+            {
+              "kana": "ヅ",
+              "reading": "zu"
+            },
+            {
+              "kana": "デ",
+              "reading": "de"
+            },
+            {
+              "kana": "ド",
+              "reading": "do"
+            },
+            {
+              "kana": "バ",
+              "reading": "ba"
+            },
+            {
+              "kana": "ビ",
+              "reading": "bi"
+            },
+            {
+              "kana": "ブ",
+              "reading": "bu"
+            },
+            {
+              "kana": "ベ",
+              "reading": "be"
+            },
+            {
+              "kana": "ボ",
+              "reading": "bo"
+            },
+            {
+              "kana": "パ",
+              "reading": "pa"
+            },
+            {
+              "kana": "ピ",
+              "reading": "pi"
+            },
+            {
+              "kana": "プ",
+              "reading": "pu"
+            },
+            {
+              "kana": "ペ",
+              "reading": "pe"
+            },
+            {
+              "kana": "ポ",
+              "reading": "po"
+            }
+          ]
+        },
+        {
+          "id": "katakana-voiced-sounds-example",
+          "kind": "japanese-example",
+          "japanese": "ガス",
+          "reading": "gasu",
+          "translation": "gas"
+        },
+        {
+          "id": "katakana-voiced-sounds-guided",
+          "kind": "exercise-slot",
+          "title": "Guided reading",
+          "exercises": [
+            {
+              "id": "katakana-voiced-guided-ga",
+              "type": "multiple-choice",
+              "prompt": "ガ",
+              "options": [
+                "ga",
+                "ka",
+                "pa"
+              ],
+              "answer": "ga",
+              "feedback": {
+                "success": "ガ is ga.",
+                "explanation": "The dakuten changes カ ka to ガ ga."
+              }
+            },
+            {
+              "id": "katakana-voiced-guided-pi",
+              "type": "multiple-choice",
+              "prompt": "ピ",
+              "options": [
+                "pi",
+                "bi",
+                "hi"
+              ],
+              "answer": "pi",
+              "feedback": {
+                "success": "ピ is pi.",
+                "explanation": "Handakuten changes ヒ hi to ピ pi."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-voiced-retrieval",
+          "kind": "exercise-slot",
+          "title": "Recall",
+          "exercises": [
+            {
+              "id": "katakana-voiced-recall-ji",
+              "type": "short-text",
+              "prompt": "Read ジ",
+              "answer": "ji",
+              "feedback": {
+                "success": "ジ is ji.",
+                "explanation": "The marked シ is read ji."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-contracted-sounds",
+      "display": "Katakana: small kana",
+      "requires": [
+        "katakana-voiced-sounds"
+      ],
+      "introduces": [
+        "kana-kata-small-30a1",
+        "kana-kata-small-30a3",
+        "kana-kata-small-30a5",
+        "kana-kata-small-30a7",
+        "kana-kata-small-30a9",
+        "kana-kata-small-30e3",
+        "kana-kata-small-30e5",
+        "kana-kata-small-30e7",
+        "kana-kata-small-30c3",
+        "kana-kata-yoon-30ad-30e3",
+        "kana-kata-yoon-30ad-30e5",
+        "kana-kata-yoon-30ad-30e7",
+        "kana-kata-yoon-30ae-30e3",
+        "kana-kata-yoon-30ae-30e5",
+        "kana-kata-yoon-30ae-30e7",
+        "kana-kata-yoon-30b7-30e3",
+        "kana-kata-yoon-30b7-30e5",
+        "kana-kata-yoon-30b7-30e7",
+        "kana-kata-yoon-30b8-30e3",
+        "kana-kata-yoon-30b8-30e5",
+        "kana-kata-yoon-30b8-30e7",
+        "kana-kata-yoon-30c1-30e3",
+        "kana-kata-yoon-30c1-30e5",
+        "kana-kata-yoon-30c1-30e7",
+        "kana-kata-yoon-30c2-30e3",
+        "kana-kata-yoon-30c2-30e5",
+        "kana-kata-yoon-30c2-30e7",
+        "kana-kata-yoon-30cb-30e3",
+        "kana-kata-yoon-30cb-30e5",
+        "kana-kata-yoon-30cb-30e7",
+        "kana-kata-yoon-30d2-30e3",
+        "kana-kata-yoon-30d2-30e5",
+        "kana-kata-yoon-30d2-30e7",
+        "kana-kata-yoon-30d3-30e3",
+        "kana-kata-yoon-30d3-30e5",
+        "kana-kata-yoon-30d3-30e7",
+        "kana-kata-yoon-30d4-30e3",
+        "kana-kata-yoon-30d4-30e5",
+        "kana-kata-yoon-30d4-30e7",
+        "kana-kata-yoon-30df-30e3",
+        "kana-kata-yoon-30df-30e5",
+        "kana-kata-yoon-30df-30e7",
+        "kana-kata-yoon-30ea-30e3",
+        "kana-kata-yoon-30ea-30e5",
+        "kana-kata-yoon-30ea-30e7"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-contracted-sounds-title",
+          "kind": "heading",
+          "text": "Small kana and contracted sounds"
+        },
+        {
+          "id": "katakana-contracted-sounds-teach",
+          "kind": "paragraph",
+          "text": "Small ャ, ュ, ョ combine with an eligible i-row sound: キ + ャ makes キャ kya. A small ッ marks a doubled consonant or brief stop before the next consonant, as in キット kitto. These readings depend on the neighboring kana."
+        },
+        {
+          "id": "katakana-contracted-sounds-grid",
+          "kind": "kana-grid",
+          "title": "Yōon combinations",
+          "characters": [
+            {
+              "kana": "キャ",
+              "reading": "ka"
+            },
+            {
+              "kana": "キュ",
+              "reading": "ku"
+            },
+            {
+              "kana": "キョ",
+              "reading": "ko"
+            },
+            {
+              "kana": "ギャ",
+              "reading": "ga"
+            },
+            {
+              "kana": "ギュ",
+              "reading": "gu"
+            },
+            {
+              "kana": "ギョ",
+              "reading": "go"
+            },
+            {
+              "kana": "シャ",
+              "reading": "sha"
+            },
+            {
+              "kana": "シュ",
+              "reading": "shu"
+            },
+            {
+              "kana": "ショ",
+              "reading": "sho"
+            },
+            {
+              "kana": "ジャ",
+              "reading": "ja"
+            },
+            {
+              "kana": "ジュ",
+              "reading": "ju"
+            },
+            {
+              "kana": "ジョ",
+              "reading": "jo"
+            },
+            {
+              "kana": "チャ",
+              "reading": "cha"
+            },
+            {
+              "kana": "チュ",
+              "reading": "chu"
+            },
+            {
+              "kana": "チョ",
+              "reading": "cho"
+            },
+            {
+              "kana": "ヂャ",
+              "reading": "ja"
+            },
+            {
+              "kana": "ヂュ",
+              "reading": "ju"
+            },
+            {
+              "kana": "ヂョ",
+              "reading": "jo"
+            },
+            {
+              "kana": "ニャ",
+              "reading": "na"
+            },
+            {
+              "kana": "ニュ",
+              "reading": "nu"
+            },
+            {
+              "kana": "ニョ",
+              "reading": "no"
+            },
+            {
+              "kana": "ヒャ",
+              "reading": "ha"
+            },
+            {
+              "kana": "ヒュ",
+              "reading": "hu"
+            },
+            {
+              "kana": "ヒョ",
+              "reading": "ho"
+            },
+            {
+              "kana": "ビャ",
+              "reading": "ba"
+            },
+            {
+              "kana": "ビュ",
+              "reading": "bu"
+            },
+            {
+              "kana": "ビョ",
+              "reading": "bo"
+            },
+            {
+              "kana": "ピャ",
+              "reading": "pa"
+            },
+            {
+              "kana": "ピュ",
+              "reading": "pu"
+            },
+            {
+              "kana": "ピョ",
+              "reading": "po"
+            },
+            {
+              "kana": "ミャ",
+              "reading": "ma"
+            },
+            {
+              "kana": "ミュ",
+              "reading": "mu"
+            },
+            {
+              "kana": "ミョ",
+              "reading": "mo"
+            },
+            {
+              "kana": "リャ",
+              "reading": "ra"
+            },
+            {
+              "kana": "リュ",
+              "reading": "ru"
+            },
+            {
+              "kana": "リョ",
+              "reading": "ro"
+            }
+          ]
+        },
+        {
+          "id": "katakana-contracted-sounds-example",
+          "kind": "japanese-example",
+          "japanese": "シャツ",
+          "reading": "shatsu",
+          "translation": "shirt"
+        },
+        {
+          "id": "katakana-contracted-sounds-guided",
+          "kind": "exercise-slot",
+          "title": "Guided reading",
+          "exercises": [
+            {
+              "id": "katakana-contracted-guided-kya",
+              "type": "multiple-choice",
+              "prompt": "キャ",
+              "options": [
+                "kya",
+                "kiya",
+                "kyo"
+              ],
+              "answer": "kya",
+              "feedback": {
+                "success": "キャ is kya.",
+                "explanation": "キ and small ャ contract to kya."
+              }
+            },
+            {
+              "id": "katakana-contracted-guided-shu",
+              "type": "multiple-choice",
+              "prompt": "シュ",
+              "options": [
+                "shu",
+                "shuyu",
+                "sho"
+              ],
+              "answer": "shu",
+              "feedback": {
+                "success": "シュ is shu.",
+                "explanation": "シ and small ュ contract to shu."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-contracted-retrieval",
+          "kind": "exercise-slot",
+          "title": "Recall",
+          "exercises": [
+            {
+              "id": "katakana-contracted-recall-ryo",
+              "type": "short-text",
+              "prompt": "Read リョ",
+              "answer": "ryo",
+              "feedback": {
+                "success": "リョ is ryo.",
+                "explanation": "リ and small ョ contract to ryo."
+              }
+            },
+            {
+              "id": "katakana-contracted-recall-sokuon",
+              "type": "short-text",
+              "prompt": "What does small ッ signal?",
+              "answer": "sokuon",
+              "acceptedAnswers": [
+                "doubled consonant",
+                "stop"
+              ],
+              "feedback": {
+                "success": "Small ッ marks a sokuon.",
+                "explanation": "The next consonant is doubled or held with a brief stop."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-loanword-sounds",
+      "display": "Katakana: loanword sounds",
+      "requires": [
+        "katakana-contracted-sounds"
+      ],
+      "introduces": [
+        "kana-kata-extended-30c6-30a3",
+        "kana-kata-extended-30c7-30a3",
+        "kana-kata-extended-30d5-30a1",
+        "kana-kata-extended-30d5-30a3",
+        "kana-kata-extended-30d5-30a7",
+        "kana-kata-extended-30d5-30a9",
+        "kana-kata-extended-30a6-30a3",
+        "kana-kata-extended-30a6-30a7",
+        "kana-kata-extended-30a6-30a9",
+        "kana-kata-extended-30c1-30a7",
+        "kana-kata-long-vowel-mark"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-loanword-sounds-title",
+          "kind": "heading",
+          "text": "Extended sounds and long vowels"
+        },
+        {
+          "id": "katakana-loanword-sounds-teach",
+          "kind": "paragraph",
+          "text": "Small vowels extend Katakana combinations for loanwords: ティ ti, ディ di, ファ fa, フィ fi, フェ fe, フォ fo, ウィ wi, ウェ we, ウォ wo, and チェ che. The long-vowel mark ー lengthens the preceding vowel: コーヒー is kōhī (coffee). Katakana uses ー for long vowels; do not apply Hiragana spelling rules."
+        },
+        {
+          "id": "katakana-loanword-sounds-grid",
+          "kind": "kana-grid",
+          "title": "Extended combinations",
+          "characters": [
+            {
+              "kana": "ティ",
+              "reading": "ti"
+            },
+            {
+              "kana": "ディ",
+              "reading": "di"
+            },
+            {
+              "kana": "ファ",
+              "reading": "fa"
+            },
+            {
+              "kana": "フィ",
+              "reading": "fi"
+            },
+            {
+              "kana": "フェ",
+              "reading": "fe"
+            },
+            {
+              "kana": "フォ",
+              "reading": "fo"
+            },
+            {
+              "kana": "ウィ",
+              "reading": "wi"
+            },
+            {
+              "kana": "ウェ",
+              "reading": "we"
+            },
+            {
+              "kana": "ウォ",
+              "reading": "wo"
+            },
+            {
+              "kana": "チェ",
+              "reading": "che"
+            }
+          ]
+        },
+        {
+          "id": "katakana-loanword-sounds-example",
+          "kind": "japanese-example",
+          "japanese": "コーヒー",
+          "reading": "koohii",
+          "translation": "coffee"
+        },
+        {
+          "id": "katakana-loanword-sounds-guided",
+          "kind": "exercise-slot",
+          "title": "Guided reading",
+          "exercises": [
+            {
+              "id": "katakana-loanword-guided-ti",
+              "type": "multiple-choice",
+              "prompt": "ティ",
+              "options": [
+                "ti",
+                "te",
+                "chi"
+              ],
+              "answer": "ti",
+              "feedback": {
+                "success": "ティ is ti.",
+                "explanation": "テ and small ィ form ti."
+              }
+            },
+            {
+              "id": "katakana-loanword-guided-fa",
+              "type": "multiple-choice",
+              "prompt": "ファ",
+              "options": [
+                "fa",
+                "ha",
+                "fo"
+              ],
+              "answer": "fa",
+              "feedback": {
+                "success": "ファ is fa.",
+                "explanation": "フ and small ァ form fa."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-loanword-retrieval",
+          "kind": "exercise-slot",
+          "title": "Recall",
+          "exercises": [
+            {
+              "id": "katakana-loanword-recall-long",
+              "type": "short-text",
+              "prompt": "What does ー do in コーヒー?",
+              "answer": "lengthens the preceding vowel",
+              "acceptedAnswers": [
+                "lengthens vowel",
+                "long vowel"
+              ],
+              "feedback": {
+                "success": "ー marks a long vowel.",
+                "explanation": "Each ー lengthens the vowel immediately before it."
+              }
+            },
+            {
+              "id": "katakana-loanword-recall-che",
+              "type": "short-text",
+              "prompt": "Read チェ",
+              "answer": "che",
+              "feedback": {
+                "success": "チェ is che.",
+                "explanation": "チ and small ェ form che."
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "concepts": [
@@ -5053,6 +5726,492 @@
       "display": "ン",
       "reading": "n",
       "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-mark-30ac",
+      "display": "ガ",
+      "reading": "ga",
+      "translation": "Katakana ガ"
+    },
+    {
+      "id": "kana-kata-mark-30ae",
+      "display": "ギ",
+      "reading": "gi",
+      "translation": "Katakana ギ"
+    },
+    {
+      "id": "kana-kata-mark-30b0",
+      "display": "グ",
+      "reading": "gu",
+      "translation": "Katakana グ"
+    },
+    {
+      "id": "kana-kata-mark-30b2",
+      "display": "ゲ",
+      "reading": "ge",
+      "translation": "Katakana ゲ"
+    },
+    {
+      "id": "kana-kata-mark-30b4",
+      "display": "ゴ",
+      "reading": "go",
+      "translation": "Katakana ゴ"
+    },
+    {
+      "id": "kana-kata-mark-30b6",
+      "display": "ザ",
+      "reading": "za",
+      "translation": "Katakana ザ"
+    },
+    {
+      "id": "kana-kata-mark-30b8",
+      "display": "ジ",
+      "reading": "ji",
+      "translation": "Katakana ジ"
+    },
+    {
+      "id": "kana-kata-mark-30ba",
+      "display": "ズ",
+      "reading": "zu",
+      "translation": "Katakana ズ"
+    },
+    {
+      "id": "kana-kata-mark-30bc",
+      "display": "ゼ",
+      "reading": "ze",
+      "translation": "Katakana ゼ"
+    },
+    {
+      "id": "kana-kata-mark-30be",
+      "display": "ゾ",
+      "reading": "zo",
+      "translation": "Katakana ゾ"
+    },
+    {
+      "id": "kana-kata-mark-30c0",
+      "display": "ダ",
+      "reading": "da",
+      "translation": "Katakana ダ"
+    },
+    {
+      "id": "kana-kata-mark-30c2",
+      "display": "ヂ",
+      "reading": "ji",
+      "translation": "Katakana ヂ"
+    },
+    {
+      "id": "kana-kata-mark-30c5",
+      "display": "ヅ",
+      "reading": "zu",
+      "translation": "Katakana ヅ"
+    },
+    {
+      "id": "kana-kata-mark-30c7",
+      "display": "デ",
+      "reading": "de",
+      "translation": "Katakana デ"
+    },
+    {
+      "id": "kana-kata-mark-30c9",
+      "display": "ド",
+      "reading": "do",
+      "translation": "Katakana ド"
+    },
+    {
+      "id": "kana-kata-mark-30d0",
+      "display": "バ",
+      "reading": "ba",
+      "translation": "Katakana バ"
+    },
+    {
+      "id": "kana-kata-mark-30d3",
+      "display": "ビ",
+      "reading": "bi",
+      "translation": "Katakana ビ"
+    },
+    {
+      "id": "kana-kata-mark-30d6",
+      "display": "ブ",
+      "reading": "bu",
+      "translation": "Katakana ブ"
+    },
+    {
+      "id": "kana-kata-mark-30d9",
+      "display": "ベ",
+      "reading": "be",
+      "translation": "Katakana ベ"
+    },
+    {
+      "id": "kana-kata-mark-30dc",
+      "display": "ボ",
+      "reading": "bo",
+      "translation": "Katakana ボ"
+    },
+    {
+      "id": "kana-kata-mark-30d1",
+      "display": "パ",
+      "reading": "pa",
+      "translation": "Katakana パ"
+    },
+    {
+      "id": "kana-kata-mark-30d4",
+      "display": "ピ",
+      "reading": "pi",
+      "translation": "Katakana ピ"
+    },
+    {
+      "id": "kana-kata-mark-30d7",
+      "display": "プ",
+      "reading": "pu",
+      "translation": "Katakana プ"
+    },
+    {
+      "id": "kana-kata-mark-30da",
+      "display": "ペ",
+      "reading": "pe",
+      "translation": "Katakana ペ"
+    },
+    {
+      "id": "kana-kata-mark-30dd",
+      "display": "ポ",
+      "reading": "po",
+      "translation": "Katakana ポ"
+    },
+    {
+      "id": "kana-kata-small-30a1",
+      "display": "ァ",
+      "reading": "small a",
+      "translation": "Katakana ァ"
+    },
+    {
+      "id": "kana-kata-small-30a3",
+      "display": "ィ",
+      "reading": "small i",
+      "translation": "Katakana ィ"
+    },
+    {
+      "id": "kana-kata-small-30a5",
+      "display": "ゥ",
+      "reading": "small u",
+      "translation": "Katakana ゥ"
+    },
+    {
+      "id": "kana-kata-small-30a7",
+      "display": "ェ",
+      "reading": "small e",
+      "translation": "Katakana ェ"
+    },
+    {
+      "id": "kana-kata-small-30a9",
+      "display": "ォ",
+      "reading": "small o",
+      "translation": "Katakana ォ"
+    },
+    {
+      "id": "kana-kata-small-30e3",
+      "display": "ャ",
+      "reading": "small ya",
+      "translation": "Katakana ャ"
+    },
+    {
+      "id": "kana-kata-small-30e5",
+      "display": "ュ",
+      "reading": "small yu",
+      "translation": "Katakana ュ"
+    },
+    {
+      "id": "kana-kata-small-30e7",
+      "display": "ョ",
+      "reading": "small yo",
+      "translation": "Katakana ョ"
+    },
+    {
+      "id": "kana-kata-small-30c3",
+      "display": "ッ",
+      "reading": "sokuon",
+      "translation": "Katakana ッ"
+    },
+    {
+      "id": "kana-kata-yoon-30ad-30e3",
+      "display": "キャ",
+      "reading": "ka",
+      "translation": "Katakana キャ"
+    },
+    {
+      "id": "kana-kata-yoon-30ad-30e5",
+      "display": "キュ",
+      "reading": "ku",
+      "translation": "Katakana キュ"
+    },
+    {
+      "id": "kana-kata-yoon-30ad-30e7",
+      "display": "キョ",
+      "reading": "ko",
+      "translation": "Katakana キョ"
+    },
+    {
+      "id": "kana-kata-yoon-30ae-30e3",
+      "display": "ギャ",
+      "reading": "ga",
+      "translation": "Katakana ギャ"
+    },
+    {
+      "id": "kana-kata-yoon-30ae-30e5",
+      "display": "ギュ",
+      "reading": "gu",
+      "translation": "Katakana ギュ"
+    },
+    {
+      "id": "kana-kata-yoon-30ae-30e7",
+      "display": "ギョ",
+      "reading": "go",
+      "translation": "Katakana ギョ"
+    },
+    {
+      "id": "kana-kata-yoon-30b7-30e3",
+      "display": "シャ",
+      "reading": "sha",
+      "translation": "Katakana シャ"
+    },
+    {
+      "id": "kana-kata-yoon-30b7-30e5",
+      "display": "シュ",
+      "reading": "shu",
+      "translation": "Katakana シュ"
+    },
+    {
+      "id": "kana-kata-yoon-30b7-30e7",
+      "display": "ショ",
+      "reading": "sho",
+      "translation": "Katakana ショ"
+    },
+    {
+      "id": "kana-kata-yoon-30b8-30e3",
+      "display": "ジャ",
+      "reading": "ja",
+      "translation": "Katakana ジャ"
+    },
+    {
+      "id": "kana-kata-yoon-30b8-30e5",
+      "display": "ジュ",
+      "reading": "ju",
+      "translation": "Katakana ジュ"
+    },
+    {
+      "id": "kana-kata-yoon-30b8-30e7",
+      "display": "ジョ",
+      "reading": "jo",
+      "translation": "Katakana ジョ"
+    },
+    {
+      "id": "kana-kata-yoon-30c1-30e3",
+      "display": "チャ",
+      "reading": "cha",
+      "translation": "Katakana チャ"
+    },
+    {
+      "id": "kana-kata-yoon-30c1-30e5",
+      "display": "チュ",
+      "reading": "chu",
+      "translation": "Katakana チュ"
+    },
+    {
+      "id": "kana-kata-yoon-30c1-30e7",
+      "display": "チョ",
+      "reading": "cho",
+      "translation": "Katakana チョ"
+    },
+    {
+      "id": "kana-kata-yoon-30c2-30e3",
+      "display": "ヂャ",
+      "reading": "ja",
+      "translation": "Katakana ヂャ"
+    },
+    {
+      "id": "kana-kata-yoon-30c2-30e5",
+      "display": "ヂュ",
+      "reading": "ju",
+      "translation": "Katakana ヂュ"
+    },
+    {
+      "id": "kana-kata-yoon-30c2-30e7",
+      "display": "ヂョ",
+      "reading": "jo",
+      "translation": "Katakana ヂョ"
+    },
+    {
+      "id": "kana-kata-yoon-30cb-30e3",
+      "display": "ニャ",
+      "reading": "na",
+      "translation": "Katakana ニャ"
+    },
+    {
+      "id": "kana-kata-yoon-30cb-30e5",
+      "display": "ニュ",
+      "reading": "nu",
+      "translation": "Katakana ニュ"
+    },
+    {
+      "id": "kana-kata-yoon-30cb-30e7",
+      "display": "ニョ",
+      "reading": "no",
+      "translation": "Katakana ニョ"
+    },
+    {
+      "id": "kana-kata-yoon-30d2-30e3",
+      "display": "ヒャ",
+      "reading": "ha",
+      "translation": "Katakana ヒャ"
+    },
+    {
+      "id": "kana-kata-yoon-30d2-30e5",
+      "display": "ヒュ",
+      "reading": "hu",
+      "translation": "Katakana ヒュ"
+    },
+    {
+      "id": "kana-kata-yoon-30d2-30e7",
+      "display": "ヒョ",
+      "reading": "ho",
+      "translation": "Katakana ヒョ"
+    },
+    {
+      "id": "kana-kata-yoon-30d3-30e3",
+      "display": "ビャ",
+      "reading": "ba",
+      "translation": "Katakana ビャ"
+    },
+    {
+      "id": "kana-kata-yoon-30d3-30e5",
+      "display": "ビュ",
+      "reading": "bu",
+      "translation": "Katakana ビュ"
+    },
+    {
+      "id": "kana-kata-yoon-30d3-30e7",
+      "display": "ビョ",
+      "reading": "bo",
+      "translation": "Katakana ビョ"
+    },
+    {
+      "id": "kana-kata-yoon-30d4-30e3",
+      "display": "ピャ",
+      "reading": "pa",
+      "translation": "Katakana ピャ"
+    },
+    {
+      "id": "kana-kata-yoon-30d4-30e5",
+      "display": "ピュ",
+      "reading": "pu",
+      "translation": "Katakana ピュ"
+    },
+    {
+      "id": "kana-kata-yoon-30d4-30e7",
+      "display": "ピョ",
+      "reading": "po",
+      "translation": "Katakana ピョ"
+    },
+    {
+      "id": "kana-kata-yoon-30df-30e3",
+      "display": "ミャ",
+      "reading": "ma",
+      "translation": "Katakana ミャ"
+    },
+    {
+      "id": "kana-kata-yoon-30df-30e5",
+      "display": "ミュ",
+      "reading": "mu",
+      "translation": "Katakana ミュ"
+    },
+    {
+      "id": "kana-kata-yoon-30df-30e7",
+      "display": "ミョ",
+      "reading": "mo",
+      "translation": "Katakana ミョ"
+    },
+    {
+      "id": "kana-kata-yoon-30ea-30e3",
+      "display": "リャ",
+      "reading": "ra",
+      "translation": "Katakana リャ"
+    },
+    {
+      "id": "kana-kata-yoon-30ea-30e5",
+      "display": "リュ",
+      "reading": "ru",
+      "translation": "Katakana リュ"
+    },
+    {
+      "id": "kana-kata-yoon-30ea-30e7",
+      "display": "リョ",
+      "reading": "ro",
+      "translation": "Katakana リョ"
+    },
+    {
+      "id": "kana-kata-extended-30c6-30a3",
+      "display": "ティ",
+      "reading": "ti",
+      "translation": "Katakana ティ"
+    },
+    {
+      "id": "kana-kata-extended-30c7-30a3",
+      "display": "ディ",
+      "reading": "di",
+      "translation": "Katakana ディ"
+    },
+    {
+      "id": "kana-kata-extended-30d5-30a1",
+      "display": "ファ",
+      "reading": "fa",
+      "translation": "Katakana ファ"
+    },
+    {
+      "id": "kana-kata-extended-30d5-30a3",
+      "display": "フィ",
+      "reading": "fi",
+      "translation": "Katakana フィ"
+    },
+    {
+      "id": "kana-kata-extended-30d5-30a7",
+      "display": "フェ",
+      "reading": "fe",
+      "translation": "Katakana フェ"
+    },
+    {
+      "id": "kana-kata-extended-30d5-30a9",
+      "display": "フォ",
+      "reading": "fo",
+      "translation": "Katakana フォ"
+    },
+    {
+      "id": "kana-kata-extended-30a6-30a3",
+      "display": "ウィ",
+      "reading": "wi",
+      "translation": "Katakana ウィ"
+    },
+    {
+      "id": "kana-kata-extended-30a6-30a7",
+      "display": "ウェ",
+      "reading": "we",
+      "translation": "Katakana ウェ"
+    },
+    {
+      "id": "kana-kata-extended-30a6-30a9",
+      "display": "ウォ",
+      "reading": "wo",
+      "translation": "Katakana ウォ"
+    },
+    {
+      "id": "kana-kata-extended-30c1-30a7",
+      "display": "チェ",
+      "reading": "che",
+      "translation": "Katakana チェ"
+    },
+    {
+      "id": "kana-kata-long-vowel-mark",
+      "display": "ー",
+      "reading": "long vowel mark",
+      "translation": "Katakana ー"
     }
   ],
   "sentences": []

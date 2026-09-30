@@ -47,7 +47,7 @@ export interface KanaConcept {
   readonly romanization: string;
   readonly row: string;
   readonly order: number;
-  readonly form: "base" | "marked" | "contracted" | "small";
+  readonly form: "base" | "marked" | "contracted" | "small" | "marker";
   readonly componentIds: readonly ContentId[];
   /** False for productive combinations that are taught for reading, not scheduled as separate cards. */
   readonly reviewEligible?: boolean;

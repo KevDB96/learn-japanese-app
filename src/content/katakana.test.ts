@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { contentCatalog } from "../lib/content/catalog.ts";
-import { katakanaFixtures } from "./kana-fixtures.ts";
+import { katakanaAdvancedFixtures, katakanaFixtures, kanaAudioManifest } from "./kana-fixtures.ts";
+import { KANA_REVIEW_FORMS, generateKanaReviewCards, validateKanaContent } from "../lib/content/kana.ts";
 import { completeLesson, getContinueLesson } from "../features/lessons/progress.ts";
 import type { ProgressRepositories } from "../features/lessons/progress.ts";
 import type { ConceptState, LessonProgress } from "../lib/storage/types.ts";
@@ -94,5 +95,50 @@ describe("canonical base Katakana course", () => {
     expect([...states.values()].some((state) => state.lifecycle === "MASTERED")).toBe(false);
     expect(scheduled).toHaveLength(92);
     expect(new Set(scheduled).size).toBe(92);
+  });
+});
+
+describe("voiced and contracted Katakana course", () => {
+  const advancedLessons = () => contentCatalog.lessons.filter((lesson) => lesson.id.startsWith("katakana-") && !lesson.id.endsWith("-row") && lesson.id !== "katakana-foundations" && lesson.id !== "katakana-through-n");
+
+  it("covers voiced, semi-voiced, small, yōon, loanword, and long-vowel forms relationally", () => {
+    expect(katakanaAdvancedFixtures.filter((item) => item.form === "marked")).toHaveLength(25);
+    expect(katakanaAdvancedFixtures.filter((item) => item.form === "contracted" && item.row.startsWith("yoon-")).length).toBeGreaterThan(30);
+    expect(katakanaAdvancedFixtures.filter((item) => item.row === "extended-loanword").map((item) => item.glyph)).toEqual(["ティ", "ディ", "ファ", "フィ", "フェ", "フォ", "ウィ", "ウェ", "ウォ", "チェ"]);
+    const derived = katakanaAdvancedFixtures.filter((item) => item.form === "contracted");
+    expect(derived.every((item) => item.componentIds.length === 2 && item.reviewEligible === false)).toBe(true);
+    expect(generateKanaReviewCards(katakanaAdvancedFixtures)).toHaveLength(50);
+    expect(validateKanaContent([...katakanaFixtures, ...katakanaAdvancedFixtures], KANA_REVIEW_FORMS, kanaAudioManifest)).toEqual([]);
+  });
+
+  it("teaches in prerequisite order with examples using only available Katakana mechanics", () => {
+    const courseLessons = advancedLessons();
+    expect(courseLessons.map((lesson) => lesson.id)).toEqual(["katakana-voiced-sounds", "katakana-contracted-sounds", "katakana-loanword-sounds"]);
+    expect(courseLessons.map((lesson) => lesson.requires)).toEqual([["katakana-w-row"], ["katakana-voiced-sounds"], ["katakana-contracted-sounds"]]);
+    const known = new Set(katakanaFixtures.map((item) => item.glyph));
+    for (const lesson of courseLessons) {
+      const current = lesson.introduces.map((id) => contentCatalog.concepts.find((item) => item.id === id)!.display);
+      for (const block of lesson.blocks) if (block.kind === "japanese-example") {
+        expect([...block.japanese].every((glyph) => known.has(glyph) || current.includes(glyph))).toBe(true);
+      }
+      current.forEach((glyph) => known.add(glyph));
+    }
+    expect(courseLessons[2]?.blocks.find((block) => block.id.endsWith("-teach"))).toMatchObject({ kind: "paragraph", text: expect.stringContaining("do not apply Hiragana spelling rules") });
+  });
+
+  it("introduces marked sounds for review while keeping productive combinations out of separate SRS memory", async () => {
+    const lessonProgress = new Map<string, LessonProgress>();
+    const conceptStates = new Map<string, ConceptState>();
+    const scheduled: string[] = [];
+    const repos: ProgressRepositories = {
+      lessonProgress: { get: async (id) => lessonProgress.get(id), put: async (value) => { lessonProgress.set(value.id, value); }, list: async () => [...lessonProgress.values()] },
+      conceptStates: { get: async (id) => conceptStates.get(id), put: async (value) => { conceptStates.set(value.conceptId, value); }, list: async () => [...conceptStates.values()] },
+      reviews: { introduce: async (_id, _at, cardId) => { if (cardId) scheduled.push(cardId); } },
+    };
+    for (const lesson of advancedLessons()) await completeLesson(repos, contentCatalog, lesson, () => new Date("2026-09-30T00:00:00Z"));
+    expect(scheduled).toHaveLength(50);
+    expect(scheduled.every((cardId) => katakanaAdvancedFixtures.some((item) => item.form === "marked" && cardId.startsWith(`${item.id}--`)))).toBe(true);
+    expect([...conceptStates.values()]).toHaveLength(katakanaAdvancedFixtures.length);
+    expect([...conceptStates.values()].every((state) => state.lifecycle === "INTRODUCED")).toBe(true);
   });
 });

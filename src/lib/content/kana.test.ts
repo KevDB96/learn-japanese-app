@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { kanaAudioManifest, kanaFixtures } from "../../content/kana-fixtures.ts";
+import { kanaAudioManifest, kanaFixtures, katakanaAdvancedFixtures, katakanaFixtures } from "../../content/kana-fixtures.ts";
 import type { ContentId } from "./types.ts";
 import { KANA_REVIEW_FORMS, generateKanaReviewCards, kanaAudioCoverage, validateKanaContent } from "./kana.ts";
 import { playPronunciation, type PronunciationProvider } from "./pronunciation.ts";
@@ -59,7 +59,16 @@ describe("kana content model", () => {
     ];
     const issues = validateKanaContent(invalid, KANA_REVIEW_FORMS, kanaAudioManifest).join("\n");
     expect(issues).toContain("marked kana must link to its legal unmarked base");
-    expect(issues).toContain("small kana must be ゃ, ゅ, ょ, or っ");
-    expect(issues).toContain("contracted kana must link a valid yoon base and small ゃ, ゅ, or ょ");
+    expect(issues).toContain("small kana glyph is not legal for hiragana");
+    expect(issues).toContain("contracted kana must link a legal yoon or extended Katakana combination");
+  });
+
+  it("rejects illegal Katakana extended combinations and accepts only listed loanword forms", () => {
+    const all = [...katakanaFixtures, ...katakanaAdvancedFixtures];
+    expect(validateKanaContent(all, KANA_REVIEW_FORMS, kanaAudioManifest)).toEqual([]);
+    const ti = katakanaAdvancedFixtures.find((item) => item.glyph === "ティ")!;
+    const smallYa = katakanaAdvancedFixtures.find((item) => item.glyph === "ャ")!;
+    const invalid = all.map((item) => item.id === ti.id ? { ...item, componentIds: [item.componentIds[0]!, smallYa.id] } : item);
+    expect(validateKanaContent(invalid, KANA_REVIEW_FORMS, kanaAudioManifest).join("\n")).toContain("contracted kana must link a legal yoon or extended Katakana combination");
   });
 });

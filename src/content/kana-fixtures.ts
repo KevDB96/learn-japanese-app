@@ -73,4 +73,51 @@ export const katakanaFixtures: readonly KanaConcept[] = katakanaRows.flatMap(({ 
     romanization: sounds[order]!, row: `${name}-row`, order, form: "base" as const, componentIds: [],
   })),
 );
+
+const kataBase = (glyph: string) => katakanaFixtures.find((item) => item.glyph === glyph) ?? kataMarked.find((item) => item.glyph === glyph)!;
+const kataSmall = (glyph: string, romanization: string, order: number): KanaConcept => ({
+  id: id(`kana-kata-small-${glyph.codePointAt(0)!.toString(16)}`), script: "katakana", glyph, romanization,
+  row: "small-kana", order, form: "small", componentIds: [], reviewEligible: false,
+});
+const kataMarkedRows = [
+  { plain: "カキクケコ", marked: "ガギグゲゴ", roma: ["ga", "gi", "gu", "ge", "go"] },
+  { plain: "サシスセソ", marked: "ザジズゼゾ", roma: ["za", "ji", "zu", "ze", "zo"] },
+  { plain: "タチツテト", marked: "ダヂヅデド", roma: ["da", "ji", "zu", "de", "do"] },
+  { plain: "ハヒフヘホ", marked: "バビブベボ", roma: ["ba", "bi", "bu", "be", "bo"] },
+  { plain: "ハヒフヘホ", marked: "パピプペポ", roma: ["pa", "pi", "pu", "pe", "po"] },
+];
+const kataMarked: KanaConcept[] = kataMarkedRows.flatMap(({ plain, marked, roma }, row) => [...marked].map((glyph, order) => ({
+  id: id(`kana-kata-mark-${glyph.codePointAt(0)!.toString(16)}`), script: "katakana" as const, glyph,
+  romanization: roma[order]!, row: row === 4 ? "p-row" : `${roma[0]![0]}-row`, order, form: "marked" as const,
+  componentIds: [kataBase([...plain][order]!).id],
+})));
+const kataSmallKana = [
+  kataSmall("ァ", "small a", 0), kataSmall("ィ", "small i", 1), kataSmall("ゥ", "small u", 2),
+  kataSmall("ェ", "small e", 3), kataSmall("ォ", "small o", 4), kataSmall("ャ", "small ya", 5),
+  kataSmall("ュ", "small yu", 6), kataSmall("ョ", "small yo", 7), kataSmall("ッ", "sokuon", 8),
+];
+const kataYoonBases = ["キ", "ギ", "シ", "ジ", "チ", "ヂ", "ニ", "ヒ", "ビ", "ピ", "ミ", "リ"];
+const kataYoon: KanaConcept[] = kataYoonBases.flatMap((glyph) => {
+  const base = [...katakanaFixtures, ...kataMarked].find((item) => item.glyph === glyph)!;
+  const onset = base.romanization.startsWith("sh") ? "sh" : base.romanization.startsWith("ch") ? "ch" : base.romanization.startsWith("j") ? "j" : base.romanization[0]!;
+  return ["ャ", "ュ", "ョ"].map((smallGlyph, index) => ({
+    id: id(`kana-kata-yoon-${base.glyph.codePointAt(0)!.toString(16)}-${smallGlyph.codePointAt(0)!.toString(16)}`),
+    script: "katakana" as const, glyph: `${glyph}${smallGlyph}`, romanization: `${onset}${["a", "u", "o"][index]!}`,
+    row: `yoon-${base.romanization}`, order: index, form: "contracted" as const,
+    componentIds: [base.id, kataSmallKana[5 + index]!.id], reviewEligible: false,
+  }));
+});
+const extendedPairs = [
+  ["テ", "ィ", "ti"], ["デ", "ィ", "di"], ["フ", "ァ", "fa"], ["フ", "ィ", "fi"], ["フ", "ェ", "fe"],
+  ["フ", "ォ", "fo"], ["ウ", "ィ", "wi"], ["ウ", "ェ", "we"], ["ウ", "ォ", "wo"], ["チ", "ェ", "che"],
+] as const;
+const kataExtended: KanaConcept[] = extendedPairs.map(([baseGlyph, smallGlyph, romanization]) => ({
+  id: id(`kana-kata-extended-${[...baseGlyph + smallGlyph].map((char) => char.codePointAt(0)!.toString(16)).join("-")}`),
+  script: "katakana", glyph: `${baseGlyph}${smallGlyph}`, romanization, row: "extended-loanword", order: extendedPairs.findIndex((item) => item[0] === baseGlyph && item[1] === smallGlyph),
+  form: "contracted", componentIds: [kataBase(baseGlyph).id, kataSmallKana.find((item) => item.glyph === smallGlyph)!.id], reviewEligible: false,
+}));
+export const katakanaAdvancedFixtures: readonly KanaConcept[] = [
+  ...kataMarked, ...kataSmallKana, ...kataYoon, ...kataExtended,
+  { id: id("kana-kata-long-vowel-mark"), script: "katakana", glyph: "\u30fc", romanization: "long vowel mark", row: "loanword-markers", order: 0, form: "marker", componentIds: [], reviewEligible: false },
+];
 export const kanaAudioManifest: PronunciationManifest = { version: 1, entries: [] };

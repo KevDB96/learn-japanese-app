@@ -5,8 +5,7 @@ import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { ProgressRepositories } from "./progress.ts";
 import { completeLesson, resolveLessonResume, saveLessonPosition } from "./progress.ts";
 import { LessonRenderer } from "./LessonRenderer.tsx";
-import { kanaFixtures } from "../../content/kana-fixtures.ts";
-import { kanaIdForAnswer } from "../progress/hiragana.ts";
+import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
 
 type SessionState = { readonly repos: ProgressRepositories; readonly index: number; readonly mismatch: boolean; readonly completed: boolean };
@@ -33,10 +32,12 @@ export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId
   if (storageError) return <p role="status">Lesson progress is unavailable.</p>;
   if (!session) return <p role="status">Loading lesson…</p>;
   const progress = session.repos;
+  const allKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
   const recordConfusion = async (exercise: import("../../lib/content/types.ts").ExerciseDefinition, answer: string) => {
-    const target = kanaFixtures.find((item) => item.script === "hiragana" && (exercise.prompt.includes(item.glyph) || new RegExp(`\\b${item.romanization}\\b`, "i").test(exercise.prompt)));
+    const target = allKana.find((item) => item.reviewEligible !== false && (exercise.prompt.includes(item.glyph) || new RegExp(`\\b${item.romanization}\\b`, "i").test(exercise.prompt)));
     const targetId = target?.id;
-    const chosenId = kanaIdForAnswer(kanaFixtures, answer);
+    const normalized = answer.trim().toLocaleLowerCase();
+    const chosenId = allKana.find((item) => item.reviewEligible !== false && (item.glyph === answer.trim() || item.romanization.toLocaleLowerCase() === normalized))?.id;
     if (!targetId || !chosenId || targetId === chosenId) return;
     const reviewedAt = new Date().toISOString();
     await progress.reviews?.record?.({ id: `confusion-${crypto.randomUUID()}`, conceptId: targetId, confusedConceptId: chosenId, cardId: targetId, rating: "Forgot", reviewedAt, kind: "practice" });

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { kanaFixtures } from "../../content/kana-fixtures.ts";
+import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { ReviewRating } from "./srs.ts";
 import type { SessionItem } from "../../lib/session/session.ts";
@@ -8,12 +8,13 @@ import type { LearnerProfileId } from "../../lib/storage/types.ts";
 const ratings: readonly ReviewRating[] = ["Forgot", "Hard", "Got It", "Easy"];
 
 export function KanaReviewSession({ item, nextLabel, onRated, profileId }: { item: Extract<SessionItem, { kind: "review" }>; nextLabel?: string; onRated: () => void; profileId: LearnerProfileId }) {
-  const concept = kanaFixtures.find((kana) => kana.id === item.conceptId);
+  const allKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
+  const concept = allKana.find((kana) => kana.id === item.conceptId);
   const form = item.formId;
   const choices = useMemo(() => {
     if (!concept) return [];
-    const candidates = kanaFixtures.filter((kana) => kana.reviewEligible !== false && kana.form === concept.form);
-    const fallback = kanaFixtures.filter((kana) => kana.reviewEligible !== false);
+    const candidates = allKana.filter((kana) => kana.script === concept.script && kana.reviewEligible !== false && kana.form === concept.form);
+    const fallback = allKana.filter((kana) => kana.script === concept.script && kana.reviewEligible !== false);
     const source = candidates.length >= 4 ? candidates : fallback;
     const start = Math.max(0, source.findIndex((kana) => kana.id === concept.id));
     return Array.from({ length: Math.min(4, source.length) }, (_, offset) => source[(start + offset) % source.length]!);

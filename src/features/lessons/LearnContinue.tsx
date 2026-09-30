@@ -6,7 +6,7 @@ import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import { getContinueLesson } from "./progress.ts";
 import { LessonSession } from "./LessonSession.tsx";
 import { targetedContrastGroups } from "../progress/hiragana.ts";
-import { kanaFixtures } from "../../content/kana-fixtures.ts";
+import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
 import { generateKanaReviewCards, KANA_REVIEW_FORMS } from "../../lib/content/kana.ts";
 import { KanaReviewSession } from "../review/KanaReviewSession.tsx";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
@@ -27,13 +27,14 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
         const [progress, concepts, due, events] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(Date.now()), repos.reviews.list()]);
         const lesson = getContinueLesson(contentCatalog, progress, concepts);
         const lessonMode = progress.some((item) => item.lessonId === lesson?.id && item.status === "in-progress") ? "resume" : "new";
-        const cards = generateKanaReviewCards(kanaFixtures, KANA_REVIEW_FORMS);
+        const availableKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
+        const cards = generateKanaReviewCards(availableKana, KANA_REVIEW_FORMS);
         const cardForms = new Map(cards.map((card) => [card.id, card.formId]));
         const dueReviews = due.flatMap((candidate) => {
           const exactFormId = cardForms.get(candidate.cardId);
           if (exactFormId) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: exactFormId }];
           // Preserve cards created by earlier concept-level releases as glyph-to-sound reviews.
-          if (kanaFixtures.some((item) => item.id === candidate.conceptId)) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: "kana-glyph-to-sound" }];
+          if (availableKana.some((item) => item.id === candidate.conceptId)) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: "kana-glyph-to-sound" }];
           return [];
         });
         const plan = composeSession({ dueReviews, reviewLimit: 10, weakConceptIds: [], contrastGroups: targetedContrastGroups(events, kanaFixtures).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP, allowOversizedLesson: true });
