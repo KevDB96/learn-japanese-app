@@ -111,4 +111,26 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
       { id: id("grammar-people-two-recall"), type: "short-text", prompt: "Write ‘two people’ in Japanese.", answer: "二人 (ふたり)", acceptedAnswers: ["二人", "ふたり"], feedback: { success: "Correct.", explanation: "二人 is read ふたり, a special form." } },
     ],
   },
+  {
+    id: id("grammar-likes-and-requests"),
+    display: "Likes and polite requests",
+    requires: [id("grammar-family-terms"), id("grammar-ka-question")],
+    shortExplanation: "Use が for the thing liked or disliked, and を for the thing requested.",
+    fullExplanation: "In 好き (すき, like) and 嫌い (きらい, dislike) sentences, the thing liked or disliked is commonly marked with が: 寿司が好きです means ‘I like sushi.’ は can mark the topic, as in わたしは寿司が好きです. This is not English word order: Japanese marks the liked thing with が, rather than using を as a direct object. For a simple request, mark the requested item with を and add ください: これをください (‘This, please’). お願いします is another courteous way to ask, as in 水をお願いします. ください is polite and practical in a shop or restaurant; add すみません to get attention when appropriate.",
+    examples: [
+      { id: id("grammar-food-suki-example"), japanese: "わたしは寿司が好きです。", reading: "わたしはすしがすきです。", translation: "I like sushi.", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-likes-and-requests")] },
+      { id: id("grammar-food-kirai-example"), japanese: "コーヒーが嫌いです。", reading: "コーヒーがきらいです。", translation: "I dislike coffee.", grammarIds: [id("grammar-desu-copula"), id("grammar-likes-and-requests")] },
+      { id: id("grammar-food-request-example"), japanese: "これをください。", reading: "これをください。", translation: "This, please.", grammarIds: [id("grammar-likes-and-requests")] },
+    ],
+    commonMistakes: ["Using を for the liked item by copying the English ‘like something’; 好き and 嫌い commonly take が.", "Putting を after the polite request word; mark the requested item with を before ください or お願いします."],
+    relatedConceptIds: [id("grammar-family-terms"), id("grammar-ka-question")],
+    exercises: [
+      { id: id("grammar-food-ga-choice"), type: "multiple-choice", prompt: "Which particle marks sushi in ‘I like sushi’ using 好きです?", options: ["が", "を", "に"], answer: "が", feedback: { success: "Correct.", explanation: "寿司が好きです uses が for the thing liked." } },
+      { id: id("grammar-food-request-cloze"), type: "cloze", prompt: "Complete the polite request ‘This, please.’", before: "これ___ください。", after: "", answer: "を", explanation: "を marks the item requested before ください.", feedback: { success: "Correct.", explanation: "これをください means ‘This, please.’" } },
+      { id: id("grammar-food-request-order"), type: "sentence-order", prompt: "Build ‘Water, please.’", chunks: [
+        { id: "water", japanese: "水を", reading: "みずを", meaning: "water, marked as the request" },
+        { id: "request", japanese: "お願いします。", reading: "おねがいします。", meaning: "please; courteous request" },
+      ], answerOrder: ["water", "request"], explanation: "Put the requested item with を before お願いします.", feedback: { success: "Correct.", explanation: "水をお願いします is a courteous way to request water." } },
+    ],
+  },
 ];

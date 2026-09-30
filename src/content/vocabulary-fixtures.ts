@@ -50,4 +50,10 @@ export const vocabularyFixtures: readonly VocabularyConcept[] = [
   { id: id("vocab-han"), written: "半", reading: "はん", meanings: ["half", "half past"], partOfSpeech: "time expression", tags: ["time", "beginner"] },
   { id: id("vocab-hitori"), written: "一人", reading: "ひとり", meanings: ["one person"], partOfSpeech: "counter phrase", tags: ["counters", "people", "beginner"] },
   { id: id("vocab-futari"), written: "二人", reading: "ふたり", meanings: ["two people"], partOfSpeech: "counter phrase", tags: ["counters", "people", "beginner"] },
+  { id: id("vocab-gohan"), written: "ご飯", reading: "ごはん", meanings: ["rice", "meal"], partOfSpeech: "noun", tags: ["food", "beginner"] },
+  { id: id("vocab-pan"), written: "パン", reading: "パン", meanings: ["bread"], partOfSpeech: "noun", tags: ["food", "beginner"] },
+  { id: id("vocab-sushi"), written: "寿司", reading: "すし", meanings: ["sushi"], partOfSpeech: "noun", tags: ["food", "beginner"] },
+  { id: id("vocab-ramen"), written: "ラーメン", reading: "ラーメン", meanings: ["ramen"], partOfSpeech: "noun", tags: ["food", "beginner"] },
+  { id: id("vocab-ocha"), written: "お茶", reading: "おちゃ", meanings: ["tea"], partOfSpeech: "noun", tags: ["drink", "beginner"] },
+  { id: id("vocab-coffee"), written: "コーヒー", reading: "コーヒー", meanings: ["coffee"], partOfSpeech: "noun", tags: ["drink", "beginner"] },
 ];

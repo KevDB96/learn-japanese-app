@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": 1,
-    "contentVersion": "0.6.0"
+    "contentVersion": "0.7.0"
   },
   "courses": [
     {
@@ -17,7 +17,8 @@
         "katakana-voiced-and-combinations",
         "self-introduction",
         "people-and-family",
-        "numbers-and-time"
+        "numbers-and-time",
+        "food-and-requests"
       ],
       "startLessonIds": [
         "introduction"
@@ -115,7 +116,8 @@
       "lessonIds": [
         "lesson-numbers-and-time"
       ]
-    }
+    },
+    {"id":"food-and-requests","display":"Food and simple requests","lessonIds":["lesson-food-and-requests"]}
   ],
   "lessons": [
     {
@@ -5274,7 +5276,8 @@
           {"id":"number-build-time","type":"sentence-order","prompt":"Build ‘It is half past four.’","chunks":[{"id":"time","japanese":"四時半","reading":"よじはん","meaning":"half past four"},{"id":"ending","japanese":"です。","reading":"です。","meaning":"polite ending"}],"answerOrder":["time","ending"],"explanation":"Put the time expression before the familiar polite ending です.","feedback":{"success":"Correct.","explanation":"四時半です。 means ‘It is half past four.’"}}
         ]}
       ]
-    }
+    },
+    {"id":"lesson-food-and-requests","display":"Food and simple requests","requires":["lesson-numbers-and-time"],"introduces":["food-rice-meal","food-bread","food-sushi","food-ramen","food-tea","food-coffee","food-likes","food-simple-request"],"reinforces":["identity-topic-marker","identity-polite-copula","time-question"],"blocks":[{"id":"food-title","kind":"heading","text":"Food and simple requests"},{"id":"food-bridge","kind":"paragraph","text":"Reuse the polite endings です and ですか from earlier lessons to talk about what you like and ask for food."},{"id":"food-words","kind":"vocabulary-list","title":"Food and drinks","items":[{"japanese":"ご飯","reading":"ごはん","translation":"rice; meal"},{"japanese":"パン","reading":"パン","translation":"bread"},{"japanese":"寿司","reading":"すし","translation":"sushi"},{"japanese":"ラーメン","reading":"ラーメン","translation":"ramen"},{"japanese":"お茶","reading":"おちゃ","translation":"tea"},{"japanese":"コーヒー","reading":"コーヒー","translation":"coffee"},{"japanese":"水","reading":"みず","translation":"water (from an earlier lesson)"}]},{"id":"food-like-pattern","kind":"grammar-breakdown","title":"Say what you like","japanese":"わたしは寿司が好きです。","reading":"わたしはすしがすきです。","translation":"I like sushi.","parts":[{"text":"わたしは","reading":"わたしは","meaning":"as for me; は marks the topic (wa)"},{"text":"寿司が","reading":"すしが","meaning":"sushi; が marks the thing liked"},{"text":"好きです","reading":"すきです","meaning":"like; polite form"}]},{"id":"food-marking-note","kind":"callout","title":"Marking matters","text":"好き (すき, like) and 嫌い (きらい, dislike) commonly use が for the thing liked or disliked: 寿司が好きです. Do not copy English order and add を; が marks the liked thing. は can mark the overall topic: わたしは寿司が好きです. The speaker can be left unstated when it is clear."},{"id":"food-dislike-example","kind":"japanese-example","japanese":"コーヒーが嫌いです。","reading":"コーヒーがきらいです。","translation":"I dislike coffee."},{"id":"food-request-pattern","kind":"grammar-breakdown","title":"Ask for something politely","japanese":"これをください。水をお願いします。","reading":"これをください。みずをおねがいします。","translation":"This, please. Water, please.","parts":[{"text":"これ・水","reading":"これ・みず","meaning":"this; water"},{"text":"を","reading":"を","meaning":"marks what is requested"},{"text":"ください・お願いします","reading":"ください・おねがいします","meaning":"please give me; a courteous request"}]},{"id":"food-politeness-note","kind":"callout","title":"Polite requests","text":"ください is a polite, practical request at a shop or restaurant. お願いします is another courteous option, as in 水をお願いします. Use すみません to get someone’s attention when appropriate."},{"id":"food-guided","kind":"exercise-slot","title":"Guided practice","exercises":[{"id":"food-like-choice","type":"multiple-choice","prompt":"Which particle marks sushi in the sentence 寿司___好きです。?","options":["が","を","に"],"answer":"が","feedback":{"success":"Correct.","explanation":"好き commonly marks the liked thing with が."}},{"id":"food-request-cloze","type":"cloze","prompt":"Complete ‘This, please.’","before":"これ","after":"ください。","answer":"を","explanation":"を marks the requested item before ください.","feedback":{"success":"Correct.","explanation":"これをください means ‘This, please.’"}},{"id":"food-comprehension","type":"multiple-choice","prompt":"What does 水をお願いします mean?","options":["Water, please.","I dislike water.","What is the water?"],"answer":"Water, please.","feedback":{"success":"Correct.","explanation":"水 is water; お願いします makes a courteous request."}}]},{"id":"food-retrieval","kind":"exercise-slot","title":"Recall and build","exercises":[{"id":"food-recall-sushi","type":"short-text","prompt":"Write ‘sushi’ in Japanese.","answer":"寿司","acceptedAnswers":["すし"],"feedback":{"success":"Correct.","explanation":"寿司 is read すし."}},{"id":"food-order-request","type":"sentence-order","prompt":"Build ‘Water, please.’","chunks":[{"id":"water","japanese":"水を","reading":"みずを","meaning":"water, marked as the request"},{"id":"request","japanese":"お願いします。","reading":"おねがいします。","meaning":"please; courteous request"}],"answerOrder":["water","request"],"explanation":"Put the item marked with を before お願いします.","feedback":{"success":"Correct.","explanation":"水をお願いします is a courteous request for water."}}]}]}
   ],
   "concepts": [
     {
@@ -6781,7 +6784,15 @@
     {"id":"time-half","display":"半","reading":"はん","translation":"half past"},
     {"id":"time-question","display":"何時","reading":"なんじ","translation":"what time"},
     {"id":"counter-people","display":"人","reading":"にん・ひとり・ふたり","translation":"people counter; one and two are special"},
-    {"id":"counter-tsu","display":"つ","reading":"つ","translation":"general counter for small numbers of objects"}
+    {"id":"counter-tsu","display":"つ","reading":"つ","translation":"general counter for small numbers of objects"},
+    {"id":"food-rice-meal","display":"ご飯","reading":"ごはん","translation":"rice; meal"},
+    {"id":"food-bread","display":"パン","reading":"パン","translation":"bread"},
+    {"id":"food-sushi","display":"寿司","reading":"すし","translation":"sushi"},
+    {"id":"food-ramen","display":"ラーメン","reading":"ラーメン","translation":"ramen"},
+    {"id":"food-tea","display":"お茶","reading":"おちゃ","translation":"tea"},
+    {"id":"food-coffee","display":"コーヒー","reading":"コーヒー","translation":"coffee"},
+    {"id":"food-likes","display":"好き・嫌い","reading":"すき・きらい","translation":"like; dislike"},
+    {"id":"food-simple-request","display":"ください・お願いします","reading":"ください・おねがいします","translation":"please give me; please"}
   ],
   "sentences": [
     {

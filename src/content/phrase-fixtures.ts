@@ -36,4 +36,21 @@ export const phraseFixtures: readonly PhraseConcept[] = [
     id: id("phrase-okaasan"), japanese: "お母さん", reading: "おかあさん", meaning: "mother; mom",
     learningMode: "memorized", formality: "polite", usageNotes: ["Use for another person's mother or when addressing your own mother. When describing your own mother to someone outside your family, 母 (はは) is usual."], grammarIds: [],
   },
+  {
+    id: id("phrase-suki-desu"), japanese: "寿司が好きです。", reading: "すしがすきです。", meaning: "I like sushi.",
+    learningMode: "compositional", formality: "polite", usageNotes: ["Put the liked thing before が; the speaker is understood from context."], grammarIds: [id("grammar-likes-and-requests")],
+  },
+  {
+    id: id("phrase-kore-o-kudasai"), japanese: "これをください。", reading: "これをください。", meaning: "This, please.",
+    literalBreakdown: [
+      { japanese: "これ", reading: "これ", meaning: "this" },
+      { japanese: "を", reading: "を", meaning: "marks the thing requested" },
+      { japanese: "ください", reading: "ください", meaning: "please give me" },
+    ],
+    learningMode: "compositional", formality: "polite", usageNotes: ["A natural polite request when ordering or choosing an item."], grammarIds: [id("grammar-likes-and-requests")],
+  },
+  {
+    id: id("phrase-mizu-o-onegaishimasu"), japanese: "水をお願いします。", reading: "みずをおねがいします。", meaning: "Water, please.",
+    learningMode: "compositional", formality: "polite", usageNotes: ["A courteous request for water; お願いします is a polite set phrase."], grammarIds: [id("grammar-likes-and-requests")],
+  },
 ];
