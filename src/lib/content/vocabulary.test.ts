@@ -9,7 +9,7 @@ describe("vocabulary concepts and review forms", () => {
     expect(cards).toEqual(generateVocabularyReviewCards(vocabularyFixtures));
     expect(cards).toHaveLength(vocabularyFixtures.length * 3);
     expect(new Set(cards.map(({ id }) => id)).size).toBe(cards.length);
-    expect(cards.map(({ kind }) => kind)).toEqual(["meaning", "production", "reading", "meaning", "production", "reading"]);
+    expect(cards.map(({ kind }) => kind)).toEqual(vocabularyFixtures.flatMap(() => ["meaning", "production", "reading"]));
     expect(cards.find(({ kind, conceptId }) => kind === "meaning" && conceptId === "vocab-neko")?.answers).toEqual(["cat"]);
     expect(cards.find(({ kind, conceptId }) => kind === "reading" && conceptId === "vocab-neko")?.answers).toEqual(["ねこ"]);
     expect(cards.find(({ kind, conceptId }) => kind === "production" && conceptId === "vocab-neko")?.answers).toEqual(["猫"]);

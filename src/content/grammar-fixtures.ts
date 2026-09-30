@@ -49,4 +49,25 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
       ], answerOrder: ["topic", "description", "copula", "question"], explanation: "Place か after です to turn the polite statement into a question.", feedback: { success: "Correct.", explanation: "Keep か after the polite ending です." } },
     ],
   },
+  {
+    id: id("grammar-self-introduction"),
+    display: "Simple self-introductions",
+    requires: [id("grammar-topic-wa"), id("grammar-desu-copula")],
+    shortExplanation: "Use わたしは + a name or role + です to introduce yourself politely.",
+    fullExplanation: "わたし means ‘I’. Put は after わたし to mark the topic; as a particle it is pronounced wa. Add a name or role, then です for a polite statement. For a first meeting, はじめまして is a set polite greeting and does not need to be translated word for word.",
+    examples: [
+      { id: id("grammar-self-introduction-student"), japanese: "わたしは学生です。", reading: "わたしはがくせいです。", translation: "I am a student.", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-self-introduction")] },
+      { id: id("grammar-self-introduction-name"), japanese: "わたしはケビンです。", reading: "わたしはケビンです。", translation: "I am Kevin.", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-self-introduction")] },
+    ],
+    commonMistakes: ["Reading the topic particle は as ha; here it is pronounced wa.", "Leaving out the description between は and です."],
+    relatedConceptIds: [id("grammar-topic-wa"), id("grammar-desu-copula")],
+    exercises: [
+      { id: id("grammar-self-introduction-cloze"), type: "cloze", prompt: "Complete the polite self-introduction.", before: "わたしは学生", after: "。", answer: "です", explanation: "です completes this polite identity statement.", feedback: { success: "Correct.", explanation: "です completes this polite identity statement." } },
+      { id: id("grammar-self-introduction-order"), type: "sentence-order", prompt: "Build ‘I am Kevin.’", chunks: [
+        { id: "topic", japanese: "わたしは", reading: "わたしは", meaning: "As for me" },
+        { id: "name", japanese: "ケビン", reading: "ケビン", meaning: "Kevin" },
+        { id: "ending", japanese: "です。", reading: "です。", meaning: "polite ending" },
+      ], answerOrder: ["topic", "name", "ending"], explanation: "Put the topic first, then the name, then です.", feedback: { success: "Correct.", explanation: "わたしはケビンです。 is a polite introduction." } },
+    ],
+  },
 ];

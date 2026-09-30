@@ -13,7 +13,7 @@ describe("phrase concepts and review forms", () => {
   it("generates only two deterministic cards for memorized phrases", () => {
     const cards = generatePhraseReviewCards(phraseFixtures);
     expect(cards).toEqual(generatePhraseReviewCards(phraseFixtures));
-    expect(cards).toHaveLength(2 * PHRASE_REVIEW_FORMS.length);
+    expect(cards).toHaveLength(phraseFixtures.filter(({ learningMode }) => learningMode === "memorized").length * PHRASE_REVIEW_FORMS.length);
     expect(new Set(cards.map(({ id }) => id)).size).toBe(cards.length);
     expect(cards.every(({ conceptId }) => phraseFixtures.find((phrase) => phrase.id === conceptId)?.learningMode === "memorized")).toBe(true);
     expect(cards.find(({ conceptId, kind }) => conceptId === "phrase-ohayou-gozaimasu" && kind === "production")?.answers).toEqual(["おはようございます"]);

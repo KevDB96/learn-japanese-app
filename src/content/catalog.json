@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": 1,
-    "contentVersion": "0.4.0"
+    "contentVersion": "0.5.0"
   },
   "courses": [
     {
@@ -14,7 +14,8 @@
         "hiragana-marks-and-combinations",
         "katakana-foundations",
         "katakana-through-n",
-        "katakana-voiced-and-combinations"
+        "katakana-voiced-and-combinations",
+        "self-introduction"
       ],
       "startLessonIds": [
         "introduction"
@@ -90,6 +91,13 @@
         "katakana-voiced-sounds",
         "katakana-contracted-sounds",
         "katakana-loanword-sounds"
+      ]
+    },
+    {
+      "id": "self-introduction",
+      "display": "Self-introduction",
+      "lessonIds": [
+        "lesson-self-introduction"
       ]
     }
   ],
@@ -4805,6 +4813,207 @@
           ]
         }
       ]
+    },
+    {
+      "id": "lesson-self-introduction",
+      "display": "Introduce yourself",
+      "requires": [
+        "katakana-loanword-sounds"
+      ],
+      "introduces": [
+        "identity-watashi",
+        "identity-topic-marker",
+        "identity-student",
+        "identity-teacher",
+        "identity-polite-copula",
+        "identity-kevin"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "self-intro-title",
+          "kind": "heading",
+          "text": "Introduce yourself"
+        },
+        {
+          "id": "self-intro-explain",
+          "kind": "paragraph",
+          "text": "Use わたしは + a role or name + です。 to give a simple, polite introduction. は marks the topic and is pronounced wa here; です is the polite sentence ending. The pattern uses the topic and noun sentence forms you have already met."
+        },
+        {
+          "id": "self-intro-vocabulary",
+          "kind": "vocabulary-list",
+          "title": "People and roles",
+          "items": [
+            {
+              "japanese": "わたし",
+              "reading": "わたし",
+              "translation": "I; me"
+            },
+            {
+              "japanese": "学生",
+              "reading": "がくせい",
+              "translation": "student"
+            },
+            {
+              "japanese": "先生",
+              "reading": "せんせい",
+              "translation": "teacher"
+            },
+            {
+              "japanese": "ケビン",
+              "reading": "ケビン",
+              "translation": "Kevin (katakana name)"
+            }
+          ]
+        },
+        {
+          "id": "self-intro-pattern",
+          "kind": "grammar-breakdown",
+          "title": "Polite identity pattern",
+          "japanese": "わたしは学生です。",
+          "reading": "わたしはがくせいです。",
+          "translation": "I am a student.",
+          "parts": [
+            {
+              "text": "わたし",
+              "reading": "わたし",
+              "meaning": "I; me"
+            },
+            {
+              "text": "は",
+              "reading": "は (wa)",
+              "meaning": "marks the topic"
+            },
+            {
+              "text": "学生",
+              "reading": "がくせい",
+              "meaning": "student"
+            },
+            {
+              "text": "です",
+              "reading": "です",
+              "meaning": "polite sentence ending"
+            }
+          ]
+        },
+        {
+          "id": "self-intro-name-example",
+          "kind": "japanese-example",
+          "japanese": "わたしはケビンです。",
+          "reading": "わたしはケビンです。",
+          "translation": "I am Kevin."
+        },
+        {
+          "id": "self-intro-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "self-intro-guided-topic",
+              "type": "multiple-choice",
+              "prompt": "In わたしは学生です, which part marks the topic?",
+              "options": [
+                "は",
+                "です",
+                "学生"
+              ],
+              "answer": "は",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "は follows わたし and marks the topic; here it is pronounced wa."
+              }
+            },
+            {
+              "id": "self-intro-guided-ending",
+              "type": "cloze",
+              "prompt": "Complete the polite sentence.",
+              "before": "わたしは学生",
+              "after": "。",
+              "answer": "です",
+              "explanation": "です completes this polite identity statement.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "です completes this polite identity statement."
+              }
+            }
+          ]
+        },
+        {
+          "id": "self-intro-starter-phrase",
+          "kind": "callout",
+          "title": "First meeting",
+          "text": "はじめまして。 is a set polite expression used when meeting someone for the first time. It is often followed by an introduction."
+        },
+        {
+          "id": "self-intro-sentences",
+          "kind": "sentence-ref",
+          "sentenceId": "sentence-self-student"
+        },
+        {
+          "id": "self-intro-kevin-sentence",
+          "kind": "sentence-ref",
+          "sentenceId": "sentence-self-kevin"
+        },
+        {
+          "id": "self-intro-retrieval",
+          "kind": "exercise-slot",
+          "title": "Recall",
+          "exercises": [
+            {
+              "id": "self-intro-retrieval-order",
+              "type": "sentence-order",
+              "prompt": "Build I am a student.",
+              "chunks": [
+                {
+                  "id": "topic",
+                  "japanese": "わたしは",
+                  "reading": "わたしは",
+                  "meaning": "As for me"
+                },
+                {
+                  "id": "person",
+                  "japanese": "学生",
+                  "reading": "がくせい",
+                  "meaning": "student"
+                },
+                {
+                  "id": "ending",
+                  "japanese": "です。",
+                  "reading": "です。",
+                  "meaning": "polite sentence ending"
+                }
+              ],
+              "answerOrder": [
+                "topic",
+                "person",
+                "ending"
+              ],
+              "explanation": "Use topic, description, then です.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "わたしは学生です。 is a polite way to say I am a student."
+              }
+            },
+            {
+              "id": "self-intro-retrieval-name",
+              "type": "short-text",
+              "prompt": "Write Kevin's name in katakana.",
+              "answer": "ケビン",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "Names from outside Japan are commonly written in katakana."
+              }
+            }
+          ]
+        },
+        {
+          "id": "self-intro-review",
+          "kind": "callout",
+          "title": "Review",
+          "text": "Vocabulary, phrase, and grammar cards from this lesson are added to spaced review."
+        }
+      ]
     }
   ],
   "concepts": [
@@ -6217,6 +6426,42 @@
       "display": "ー",
       "reading": "long vowel mark",
       "translation": "Katakana ー"
+    },
+    {
+      "id": "identity-watashi",
+      "display": "わたし",
+      "reading": "わたし",
+      "translation": "I; me"
+    },
+    {
+      "id": "identity-topic-marker",
+      "display": "は (topic marker)",
+      "reading": "は",
+      "translation": "marks what the sentence is about; pronounced wa here"
+    },
+    {
+      "id": "identity-student",
+      "display": "学生",
+      "reading": "がくせい",
+      "translation": "student"
+    },
+    {
+      "id": "identity-teacher",
+      "display": "先生",
+      "reading": "せんせい",
+      "translation": "teacher"
+    },
+    {
+      "id": "identity-polite-copula",
+      "display": "です",
+      "reading": "です",
+      "translation": "polite sentence ending, like am/is in this pattern"
+    },
+    {
+      "id": "identity-kevin",
+      "display": "ケビン",
+      "reading": "ケビン",
+      "translation": "Kevin, written in katakana"
     }
   ],
   "sentences": [
@@ -6237,6 +6482,98 @@
           "conceptIds": [
             "kana-hira-a",
             "kana-hira-i"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sentence-self-student",
+      "display": "わたしは学生です。",
+      "reading": "わたしはがくせいです。",
+      "translation": "I am a student.",
+      "requires": [
+        "identity-watashi",
+        "identity-topic-marker",
+        "identity-student",
+        "identity-polite-copula"
+      ],
+      "segments": [
+        {
+          "japanese": "わたし",
+          "reading": "わたし",
+          "meaning": "I; me",
+          "conceptIds": [
+            "identity-watashi"
+          ]
+        },
+        {
+          "japanese": "は",
+          "reading": "は (wa)",
+          "meaning": "topic marker",
+          "conceptIds": [
+            "identity-topic-marker"
+          ]
+        },
+        {
+          "japanese": "学生",
+          "reading": "がくせい",
+          "meaning": "student",
+          "conceptIds": [
+            "identity-student"
+          ]
+        },
+        {
+          "japanese": "です。",
+          "reading": "です。",
+          "meaning": "polite sentence ending",
+          "conceptIds": [
+            "identity-polite-copula"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sentence-self-kevin",
+      "display": "わたしはケビンです。",
+      "reading": "わたしはケビンです。",
+      "translation": "I am Kevin.",
+      "requires": [
+        "identity-watashi",
+        "identity-topic-marker",
+        "identity-kevin",
+        "identity-polite-copula"
+      ],
+      "segments": [
+        {
+          "japanese": "わたし",
+          "reading": "わたし",
+          "meaning": "I; me",
+          "conceptIds": [
+            "identity-watashi"
+          ]
+        },
+        {
+          "japanese": "は",
+          "reading": "は (wa)",
+          "meaning": "topic marker",
+          "conceptIds": [
+            "identity-topic-marker"
+          ]
+        },
+        {
+          "japanese": "ケビン",
+          "reading": "ケビン",
+          "meaning": "Kevin",
+          "conceptIds": [
+            "identity-kevin"
+          ]
+        },
+        {
+          "japanese": "です。",
+          "reading": "です。",
+          "meaning": "polite sentence ending",
+          "conceptIds": [
+            "identity-polite-copula"
           ]
         }
       ]

@@ -28,4 +28,8 @@ export const phraseFixtures: readonly PhraseConcept[] = [
     learningMode: "compositional", formality: "polite", usageNotes: ["Ask what an object is; replace これ with another thing being discussed."],
     grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-ka-question")],
   },
+  {
+    id: id("phrase-hajimemashite"), japanese: "はじめまして。", reading: "はじめまして。", meaning: "How do you do? (said when meeting for the first time)",
+    learningMode: "memorized", formality: "polite", usageNotes: ["A set polite greeting for a first meeting; commonly followed by a self-introduction."], grammarIds: [],
+  },
 ];
