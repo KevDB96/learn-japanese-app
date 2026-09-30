@@ -58,4 +58,31 @@ describe("session composer", () => {
     expect(plan.items.find((item) => item.kind === "lesson")).toMatchObject({ kind: "lesson", lessonId: lesson.id });
     expect(plan.summary.newConceptCount).toBe(25);
   });
+
+  it("orders most overdue cards first with a stable card-id tie break", () => {
+    const cards = [
+      { ...due("later")[0]!, overdueMs: 10 },
+      { ...due("oldest")[0]!, overdueMs: 50 },
+      { ...due("same-b")[0]!, overdueMs: 50 },
+    ];
+    const plan = composeSession({ dueReviews: cards, weakConceptIds: [], newMaterialCap: 0, reviewLimit: 2 });
+    expect(plan.items.map((item) => item.kind === "review" ? item.cardId : "")).toEqual(["oldest--kana-glyph-to-sound", "same-b--kana-glyph-to-sound"]);
+  });
+
+  it("balances remediation and contrast work under a shared cap without repeats", () => {
+    const plan = composeSession({ dueReviews: due("already"), weakConceptIds: [cid("already"), cid("weak-a"), cid("weak-b")], contrastGroups: [
+      { conceptIds: [cid("weak-a"), cid("weak-b")], glyphs: ["あ", "お"] },
+      { conceptIds: [cid("kana-a"), cid("kana-o")], glyphs: ["あ", "お"] },
+    ], remediationLimit: 2, newMaterialCap: 0 });
+    expect(plan.items.filter((item) => item.kind === "remediation" || item.kind === "contrast")).toEqual([
+      { kind: "remediation", conceptId: cid("weak-a") },
+      { kind: "remediation", conceptId: cid("weak-b") },
+    ]);
+  });
+
+  it.each([[1, true], [2, false], [3, false], [6, false]] as const)("throttles new concepts at failure load %i", (recentFailureCount, includesLesson) => {
+    const adjustedLesson: Lesson = { ...lesson, introduces: Array.from({ length: 4 }, (_, index) => cid(`new-${index}`)) };
+    const plan = composeSession({ dueReviews: [], weakConceptIds: [], currentLesson: adjustedLesson, newMaterialCap: 5, recentFailureCount });
+    expect(plan.summary.includesLesson).toBe(includesLesson);
+  });
 });

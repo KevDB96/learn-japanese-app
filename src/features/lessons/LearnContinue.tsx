@@ -17,6 +17,7 @@ import { generateVocabularyReviewCards } from "../../lib/content/vocabulary.ts";
 import { generatePhraseReviewCards } from "../../lib/content/phrases.ts";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { generateGrammarClozeReviewCards } from "../../lib/content/grammar.ts";
+import { selectWeakConcepts } from "../review/weakness.ts";
 
 type LearnState = { readonly plan: SessionPlan; readonly lessonId?: string; readonly contrast?: Extract<SessionPlan["items"][number], { kind: "contrast" }> };
 const NEW_MATERIAL_CAP = 5;
@@ -32,21 +33,25 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
     let cancelled = false;
     void openLocalRepositories(undefined, profileId).then(async (repos) => {
       try {
-        const [progress, concepts, due, events] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(Date.now()), repos.reviews.list()]);
+        const now = Date.now();
+        const [progress, concepts, due, events] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(now), repos.reviews.list()]);
         const lesson = getContinueLesson(contentCatalog, progress, concepts);
         const lessonMode = progress.some((item) => item.lessonId === lesson?.id && item.status === "in-progress") ? "resume" : "new";
         const availableKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
         const cards = generateKanaReviewCards(availableKana, KANA_REVIEW_FORMS);
         const allCards = [...cards, ...generateVocabularyReviewCards(vocabularyFixtures), ...generatePhraseReviewCards(phraseFixtures), ...generateGrammarClozeReviewCards(grammarFixtures)];
         const cardForms = new Map(allCards.map((card) => [card.id, card.formId]));
-        const dueReviews = due.flatMap((candidate) => {
+        const dueReviews = due.slice().sort((a, b) => b.overdueMs - a.overdueMs || a.cardId.localeCompare(b.cardId)).flatMap((candidate) => {
           const exactFormId = cardForms.get(candidate.cardId);
           if (exactFormId) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: exactFormId }];
           // Preserve cards created by earlier concept-level releases as glyph-to-sound reviews.
           if (availableKana.some((item) => item.id === candidate.conceptId)) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: "kana-glyph-to-sound" }];
           return [];
         });
-        const plan = composeSession({ dueReviews, reviewLimit: 10, weakConceptIds: [], contrastGroups: targetedContrastGroups(events, availableKana).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP, allowOversizedLesson: true });
+        const weakConcepts = selectWeakConcepts(events, now);
+        const failureCutoff = now - 30 * 86_400_000;
+        const failureLoad = events.filter((event) => event.kind === "scheduled-review" && event.rating === "again" && Date.parse(event.reviewedAt) >= failureCutoff && Date.parse(event.reviewedAt) <= now).length;
+        const plan = composeSession({ dueReviews, reviewLimit: 10, weakConceptIds: weakConcepts.map((concept) => concept.conceptId as ContentId), remediationLimit: 3, contrastGroups: targetedContrastGroups(events, availableKana).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP, recentFailureCount: failureLoad, allowOversizedLesson: failureLoad < 3 });
         if (!cancelled) setState({ plan, lessonId: lesson?.id, contrast: plan.items.find((item): item is Extract<typeof item, { kind: "contrast" }> => item.kind === "contrast") });
       } catch {
         if (!cancelled) setError(true);
