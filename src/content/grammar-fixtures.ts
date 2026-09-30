@@ -153,4 +153,23 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
       { id: id("grammar-existence-location-cloze"), type: "cloze", prompt: "Complete ‘There is a shop at the school.’", before: "学校___店があります。", after: "", answer: "に", explanation: "に marks the place where something exists.", feedback: { success: "Correct.", explanation: "学校に店があります uses に for location." } },
     ],
   },
+  {
+    id: id("grammar-polite-verb-past"),
+    display: "Everyday polite present and past",
+    requires: [id("grammar-places-and-existence"), id("grammar-likes-and-requests")],
+    shortExplanation: "Use familiar ます forms for polite everyday actions; change ます to ました to say the action happened.",
+    fullExplanation: "This beginner lesson uses a few useful polite forms as ready-to-use patterns: 行きます (いきます, go), 食べます (たべます, eat), 飲みます (のみます, drink), and 勉強します (べんきょうします, study). For their simple positive past, change ます to ました: 行きました, 食べました, 飲みました, 勉強しました. Do not derive these from dictionary forms yet. For common い-adjectives, add です for a polite present description and replace the final い with かった before です for a polite past: おいしいです (it is tasty), おいしかったです (it was tasty). This lesson covers positive statements only; it does not teach negative, question, casual, or verb-group forms. Japanese often leaves out わたし when context makes the subject clear. Reuse を for what is eaten or drunk, へ for a destination, and で for where an action happens.",
+    examples: [
+      { id: id("grammar-routine-go-example"), japanese: "学校へ行きます。", reading: "がっこうへいきます。", translation: "I go to school.", grammarIds: [id("grammar-polite-verb-past")] },
+      { id: id("grammar-routine-eat-past-example"), japanese: "朝ごはんを食べました。", reading: "あさごはんをたべました。", translation: "I ate breakfast.", grammarIds: [id("grammar-polite-verb-past")] },
+      { id: id("grammar-routine-study-past-example"), japanese: "うちで勉強しました。", reading: "うちでべんきょうしました。", translation: "I studied at home.", grammarIds: [id("grammar-polite-verb-past")] },
+      { id: id("grammar-routine-adjective-past-example"), japanese: "おいしかったです。", reading: "おいしかったです。", translation: "It was tasty.", grammarIds: [id("grammar-polite-verb-past")] },
+    ],
+    commonMistakes: ["Keeping ます when describing a completed action; use ました for this polite past pattern.", "Keeping the final い in an い-adjective past; change it to かった before です.", "Adding an English-style subject to every Japanese sentence; omit it when context is clear."],
+    relatedConceptIds: [id("grammar-places-and-existence"), id("grammar-likes-and-requests")],
+    exercises: [
+      { id: id("grammar-routine-polite-past-choice"), type: "multiple-choice", prompt: "Choose the polite past of 食べます (eat).", options: ["食べました", "食べます", "食べです"], answer: "食べました", feedback: { success: "Correct.", explanation: "Change ます to ました for this simple polite past form." } },
+      { id: id("grammar-routine-adjective-cloze"), type: "cloze", prompt: "Complete the polite past: おいし___です。", before: "おいし", after: "です。", answer: "かった", explanation: "Replace the final い in this い-adjective with かった.", feedback: { success: "Correct.", explanation: "おいしかったです means “It was tasty.”" } },
+    ],
+  },
 ];

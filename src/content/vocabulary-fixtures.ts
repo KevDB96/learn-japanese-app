@@ -68,4 +68,12 @@ export const vocabularyFixtures: readonly VocabularyConcept[] = [
   { id: id("vocab-soko"), written: "そこ", reading: "そこ", meanings: ["there; that place near the listener"], partOfSpeech: "place word", tags: ["places", "demonstratives", "beginner"] },
   { id: id("vocab-asoko"), written: "あそこ", reading: "あそこ", meanings: ["over there"], partOfSpeech: "place word", tags: ["places", "demonstratives", "beginner"] },
   { id: id("vocab-doko"), written: "どこ", reading: "どこ", meanings: ["where"], partOfSpeech: "question word", tags: ["places", "demonstratives", "beginner"] },
+  { id: id("vocab-iku"), written: "行く", reading: "いく", meanings: ["go"], partOfSpeech: "verb", tags: ["routines", "beginner"], examples: [{ written: "学校へ行きます。", reading: "がっこうへいきます。", meaning: "I go to school." }] },
+  { id: id("vocab-taberu"), written: "食べる", reading: "たべる", meanings: ["eat"], partOfSpeech: "verb", tags: ["routines", "beginner"], examples: [{ written: "ごはんを食べます。", reading: "ごはんをたべます。", meaning: "I eat a meal." }] },
+  { id: id("vocab-nomu"), written: "飲む", reading: "のむ", meanings: ["drink"], partOfSpeech: "verb", tags: ["routines", "beginner"], examples: [{ written: "水を飲みます。", reading: "みずをのみます。", meaning: "I drink water." }] },
+  { id: id("vocab-benkyou-suru"), written: "勉強する", reading: "べんきょうする", meanings: ["study"], partOfSpeech: "verb", tags: ["routines", "beginner"], examples: [{ written: "うちで勉強します。", reading: "うちでべんきょうします。", meaning: "I study at home." }] },
+  { id: id("vocab-oishii"), written: "おいしい", reading: "おいしい", meanings: ["tasty", "delicious"], partOfSpeech: "i-adjective", tags: ["descriptions", "beginner"] },
+  { id: id("vocab-isogashii"), written: "忙しい", reading: "いそがしい", meanings: ["busy"], partOfSpeech: "i-adjective", tags: ["descriptions", "beginner"] },
+  { id: id("vocab-tanoshii"), written: "楽しい", reading: "たのしい", meanings: ["fun", "enjoyable"], partOfSpeech: "i-adjective", tags: ["descriptions", "beginner"] },
+  { id: id("vocab-asagohan"), written: "朝ごはん", reading: "あさごはん", meanings: ["breakfast"], partOfSpeech: "noun", tags: ["food", "routines", "beginner"] },
 ];

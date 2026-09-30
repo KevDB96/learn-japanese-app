@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": 1,
-    "contentVersion": "0.7.0"
+    "contentVersion": "0.8.0"
   },
   "courses": [
     {
@@ -19,7 +19,8 @@
         "people-and-family",
         "numbers-and-time",
         "food-and-requests",
-        "places-and-location"
+        "places-and-location",
+        "everyday-routines"
       ],
       "startLessonIds": [
         "introduction"
@@ -119,7 +120,8 @@
       ]
     },
     {"id":"food-and-requests","display":"Food and simple requests","lessonIds":["lesson-food-and-requests"]},
-    {"id":"places-and-location","display":"Places and location","lessonIds":["lesson-places-and-location"]}
+    {"id":"places-and-location","display":"Places and location","lessonIds":["lesson-places-and-location"]},
+    {"id":"everyday-routines","display":"Everyday routines","lessonIds":["lesson-everyday-routines"]}
   ],
   "lessons": [
     {
@@ -5560,6 +5562,280 @@
           ]
         }
       ]
+    },
+    {
+      "id": "lesson-everyday-routines",
+      "display": "Everyday verbs and adjectives",
+      "requires": [
+        "lesson-places-and-location"
+      ],
+      "introduces": [
+        "routine-verbs-adjectives",
+        "grammar-polite-verb-past"
+      ],
+      "reinforces": [
+        "identity-topic-marker",
+        "identity-polite-copula",
+        "food-likes",
+        "place-school",
+        "place-home",
+        "time-question"
+      ],
+      "blocks": [
+        {
+          "id": "routine-title",
+          "kind": "heading",
+          "text": "Everyday verbs and adjectives"
+        },
+        {
+          "id": "routine-intro",
+          "kind": "paragraph",
+          "text": "Learn a few useful words for a normal day. Japanese often leaves out “I” when the person is clear; use わたしは when you want to name the topic."
+        },
+        {
+          "id": "routine-vocabulary",
+          "kind": "vocabulary-list",
+          "title": "Useful words",
+          "items": [
+            {
+              "japanese": "行きます",
+              "reading": "いきます",
+              "translation": "go; will go"
+            },
+            {
+              "japanese": "食べます",
+              "reading": "たべます",
+              "translation": "eat; will eat"
+            },
+            {
+              "japanese": "飲みます",
+              "reading": "のみます",
+              "translation": "drink; will drink"
+            },
+            {
+              "japanese": "勉強します",
+              "reading": "べんきょうします",
+              "translation": "study; will study"
+            },
+            {
+              "japanese": "おいしい",
+              "reading": "おいしい",
+              "translation": "tasty; delicious"
+            },
+            {
+              "japanese": "忙しい",
+              "reading": "いそがしい",
+              "translation": "busy"
+            },
+            {
+              "japanese": "楽しい",
+              "reading": "たのしい",
+              "translation": "fun; enjoyable"
+            }
+          ]
+        },
+        {
+          "id": "routine-polite-forms",
+          "kind": "paragraph",
+          "text": "Use the polite ます form for everyday statements. For a simple past statement, change ます to ました: 行きます → 行きました (go → went), 食べます → 食べました (eat → ate). The same pattern works for 勉強します → 勉強しました. You do not need to learn verb groups or casual forms yet."
+        },
+        {
+          "id": "routine-adjectives",
+          "kind": "grammar-breakdown",
+          "title": "Describe how something is",
+          "japanese": "おいしいです。おいしかったです。",
+          "reading": "おいしいです。おいしかったです。",
+          "translation": "It is tasty. It was tasty.",
+          "parts": [
+            {
+              "text": "おいしい",
+              "reading": "おいしい",
+              "meaning": "tasty (i-adjective)"
+            },
+            {
+              "text": "です",
+              "reading": "です",
+              "meaning": "polite present ending"
+            },
+            {
+              "text": "おいしかった",
+              "reading": "おいしかった",
+              "meaning": "was tasty: change final い to かった"
+            },
+            {
+              "text": "です",
+              "reading": "です",
+              "meaning": "keeps the statement polite"
+            }
+          ]
+        },
+        {
+          "id": "routine-time-note",
+          "kind": "callout",
+          "title": "Present and past",
+          "text": "ます and い-adjective + です describe now or a general fact. ました and い-adjective + かったです describe the past. This lesson practices positive statements only."
+        },
+        {
+          "id": "routine-examples",
+          "kind": "grammar-breakdown",
+          "title": "A simple routine",
+          "japanese": "わたしは朝ごはんを食べます。学校へ行きます。",
+          "reading": "わたしはあさごはんをたべます。がっこうへいきます。",
+          "translation": "I eat breakfast. I go to school.",
+          "parts": [
+            {
+              "text": "わたしは",
+              "reading": "わたしは",
+              "meaning": "as for me"
+            },
+            {
+              "text": "朝ごはんを",
+              "reading": "あさごはんを",
+              "meaning": "breakfast (を marks what is eaten)"
+            },
+            {
+              "text": "食べます",
+              "reading": "たべます",
+              "meaning": "eat (polite present)"
+            },
+            {
+              "text": "学校へ",
+              "reading": "がっこうへ",
+              "meaning": "to school (へ marks direction)"
+            },
+            {
+              "text": "行きます",
+              "reading": "いきます",
+              "meaning": "go (polite present)"
+            }
+          ]
+        },
+        {
+          "id": "routine-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "routine-read-eat",
+              "type": "multiple-choice",
+              "prompt": "What does 食べました mean?",
+              "options": [
+                "ate",
+                "will go",
+                "is tasty"
+              ],
+              "answer": "ate",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "食べます means “eat”; 食べました is its polite past form, “ate.”"
+              }
+            },
+            {
+              "id": "routine-cloze-past",
+              "type": "cloze",
+              "prompt": "Complete the polite past: “I studied.”",
+              "before": "勉強し",
+              "after": "。",
+              "answer": "ました",
+              "explanation": "Change the polite present ending ます to ました for this simple past form.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "勉強します → 勉強しました means “study” → “studied.”"
+              }
+            },
+            {
+              "id": "routine-cloze-adjective",
+              "type": "cloze",
+              "prompt": "Complete “It was tasty.”",
+              "before": "おいし",
+              "after": "です。",
+              "answer": "かった",
+              "explanation": "For this i-adjective past pattern, replace its final い with かった.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "おいしいです → おいしかったです."
+              }
+            }
+          ]
+        },
+        {
+          "id": "routine-retrieval",
+          "kind": "exercise-slot",
+          "title": "Recall and build",
+          "exercises": [
+            {
+              "id": "routine-produce-go",
+              "type": "short-text",
+              "prompt": "Write “I go to school.” in Japanese.",
+              "answer": "学校へ行きます。",
+              "acceptedAnswers": [
+                "がっこうへいきます。",
+                "学校へ行きます"
+              ],
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "学校へ行きます。 means “I go to school”; the subject can be understood from context."
+              }
+            },
+            {
+              "id": "routine-order-daily",
+              "type": "sentence-order",
+              "prompt": "Build “I drink water.”",
+              "chunks": [
+                {
+                  "id": "routine-water",
+                  "japanese": "水を",
+                  "reading": "みずを",
+                  "meaning": "water (を marks what is drunk)"
+                },
+                {
+                  "id": "routine-drink",
+                  "japanese": "飲みます。",
+                  "reading": "のみます。",
+                  "meaning": "drink (polite present)"
+                }
+              ],
+              "answerOrder": [
+                "routine-water",
+                "routine-drink"
+              ],
+              "explanation": "Put the item marked with を before the polite verb.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "水を飲みます。 means “I drink water.”"
+              }
+            },
+            {
+              "id": "routine-order-past",
+              "type": "sentence-order",
+              "prompt": "Build “I studied at home.”",
+              "chunks": [
+                {
+                  "id": "routine-home",
+                  "japanese": "うちで",
+                  "reading": "うちで",
+                  "meaning": "at home (で marks where an action happens)"
+                },
+                {
+                  "id": "routine-study",
+                  "japanese": "勉強しました。",
+                  "reading": "べんきょうしました。",
+                  "meaning": "studied (polite past)"
+                }
+              ],
+              "answerOrder": [
+                "routine-home",
+                "routine-study"
+              ],
+              "explanation": "Place the action location before the verb; ました marks past time.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "うちで勉強しました。 means “I studied at home.”"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "concepts": [
@@ -7082,7 +7358,9 @@
     {"id":"place-store","display":"店","reading":"みせ","translation":"shop; store"},
     {"id":"place-demonstratives","display":"これ・それ・あれ・どれ","reading":"これ・それ・あれ・どれ","translation":"this; that; that over there; which thing"},
     {"id":"place-location-words","display":"ここ・そこ・あそこ・どこ","reading":"ここ・そこ・あそこ・どこ","translation":"here; there; over there; where"},
-    {"id":"place-existence","display":"に・あります・います","reading":"に・あります・います","translation":"location and polite existence expressions"}
+    {"id":"place-existence","display":"に・あります・います","reading":"に・あります・います","translation":"location and polite existence expressions"},
+    {"id":"routine-verbs-adjectives","display":"Everyday verbs and adjectives","reading":"まいにちの どうし・けいようし","translation":"common actions and descriptions for daily routines"},
+    {"id":"grammar-polite-verb-past","display":"Polite present and past statements","reading":"ます・ました","translation":"simple positive polite statements for now and the past"}
   ],
   "sentences": [
     {
