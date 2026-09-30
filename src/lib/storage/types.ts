@@ -52,6 +52,8 @@ export interface ReviewEvent extends ProfileScopedRecord {
   readonly responseTimeMs?: number;
   /** The kana selected instead of the reviewed/asked kana, when identifiable. */
   readonly confusedConceptId?: string;
+  /** The competing concept tested by a successful contrast response, when known. */
+  readonly contrastConceptId?: string;
 }
 
 export interface ReviewCardState extends ProfileScopedRecord {

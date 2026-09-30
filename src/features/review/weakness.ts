@@ -12,7 +12,58 @@ export const WEAKNESS_POLICY = {
   slowResponseMs: 12_000,
   slowResponseWeight: 1,
   weaknessScoreThreshold: 4,
+  confusionWindowDays: 60,
+  confusionMinimumErrors: 2,
+  confusionRecoveryStreak: 3,
 } as const;
+
+export type ConceptFamily = "kana" | "vocabulary" | "grammar" | "phrase";
+export interface ConceptConfusion {
+  readonly conceptIds: readonly [string, string];
+  /** Counts retain target -> selected direction; the pair itself is symmetric. */
+  readonly directionalErrors: Readonly<Record<string, number>>;
+  readonly errorCount: number;
+  readonly recoveryStreak: number;
+  readonly active: boolean;
+}
+
+/** Infer meaningful concept pairs from recorded answer choices, never from a static hint list. */
+export function inferConceptConfusions(
+  events: readonly ReviewEvent[], families: ReadonlyMap<string, ConceptFamily>, now: number,
+): ConceptConfusion[] {
+  if (!Number.isFinite(now)) throw new RangeError("Current time must be finite");
+  const cutoff = now - WEAKNESS_POLICY.confusionWindowDays * 86_400_000;
+  const pairs = new Map<string, { ids: [string, string]; errors: Map<string, number>; streak: number; active: boolean }>();
+  const ordered = events.filter((event) => {
+    const at = Date.parse(event.reviewedAt);
+    return Number.isFinite(at) && at >= cutoff && at <= now;
+  }).slice().sort((a, b) => a.reviewedAt.localeCompare(b.reviewedAt) || a.id.localeCompare(b.id));
+  for (const event of ordered) {
+    const otherId = event.confusedConceptId ?? event.contrastConceptId;
+    if (!otherId || otherId === event.conceptId) continue;
+    const aFamily = families.get(event.conceptId), bFamily = families.get(otherId);
+    if (!aFamily || aFamily !== bFamily) continue;
+    const ids: [string, string] = [event.conceptId, otherId].sort() as [string, string];
+    const key = `${ids[0]}|${ids[1]}`;
+    const pair = pairs.get(key) ?? { ids, errors: new Map<string, number>(), streak: 0, active: false };
+    if (event.confusedConceptId) {
+      const direction = `${event.conceptId}->${otherId}`;
+      pair.errors.set(direction, (pair.errors.get(direction) ?? 0) + 1);
+      pair.streak = 0;
+      pair.active = [...pair.errors.values()].reduce((sum, count) => sum + count, 0) >= WEAKNESS_POLICY.confusionMinimumErrors;
+    } else if (event.contrastConceptId && (event.rating === "good" || event.rating === "easy")) {
+      pair.streak += 1;
+      if (pair.streak >= WEAKNESS_POLICY.confusionRecoveryStreak) pair.active = false;
+    }
+    pairs.set(key, pair);
+  }
+  return [...pairs.values()].map((pair) => ({
+    conceptIds: pair.ids, directionalErrors: Object.fromEntries(pair.errors),
+    errorCount: [...pair.errors.values()].reduce((sum, count) => sum + count, 0),
+    recoveryStreak: pair.streak, active: pair.active,
+  })).filter((pair) => pair.errorCount > 0)
+    .sort((a, b) => Number(b.active) - Number(a.active) || b.errorCount - a.errorCount || a.conceptIds[0].localeCompare(b.conceptIds[0]));
+}
 
 export interface ConceptWeakness {
   readonly conceptId: string;
