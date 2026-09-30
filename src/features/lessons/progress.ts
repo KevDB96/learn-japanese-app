@@ -1,7 +1,7 @@
 import type { ContentCatalog, ContentId, Lesson } from "../../lib/content/types.ts";
 import type { ConceptLifecycle, ConceptState, LessonProgress, StoredRecord } from "../../lib/storage/types.ts";
 import { reviewCardsForConcept } from "../../lib/content/kana.ts";
-import { kanaFixtures } from "../../content/kana-fixtures.ts";
+import { kanaFixtures, katakanaFixtures } from "../../content/kana-fixtures.ts";
 
 export type ProgressRepositories = {
   lessonProgress: { get(id: string): Promise<LessonProgress | undefined>; put(value: LessonProgress): Promise<void>; list(): Promise<LessonProgress[]> };
@@ -51,7 +51,7 @@ export async function completeLesson(repos: ProgressRepositories, catalog: Conte
   if (existing?.status === "completed") return;
   const updatedAt = stamp(now);
   for (const conceptId of new Set([...lesson.introduces, ...lesson.reinforces])) {
-    const kana = kanaFixtures.find((item) => item.id === conceptId);
+    const kana = [...kanaFixtures, ...katakanaFixtures].find((item) => item.id === conceptId);
     const cards = kana ? reviewCardsForConcept(kana) : [];
     if (cards.length) for (const card of cards) await repos.reviews?.introduce(conceptId, Date.parse(updatedAt), card.id);
     else await repos.reviews?.introduce(conceptId, Date.parse(updatedAt));

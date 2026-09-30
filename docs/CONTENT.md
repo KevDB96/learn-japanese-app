@@ -24,4 +24,4 @@ The same validator is used by the runtime registry and unit tests. Keep tests to
 
 Kana concepts use immutable content IDs and record script, glyph, Hepburn-style romanization, row/order, form (`base`, `marked`, `contracted`, or `small`), and component IDs. Review forms are reusable templates (`kana-glyph-to-sound`, `kana-sound-to-glyph`, and `kana-audio-to-glyph`); generated review-card IDs combine the kana concept ID and template ID, so review memory belongs to the concept/card pair. Audio IDs are logical references resolved through a versioned pronunciation manifest. Missing audio is reported by coverage and does not invalidate kana or review behavior. Browser speech synthesis is an optional pronunciation provider only.
 
-The small representative fixtures live in `src/content/kana-fixtures.ts`; they establish the contract and are not a complete Hiragana course. `npm run content:validate` validates them alongside the main catalog.
+Kana review fixtures live in `src/content/kana-fixtures.ts`. The base Hiragana and Katakana inventories are used to generate review cards; `npm run content:validate` validates both alongside the main catalog.

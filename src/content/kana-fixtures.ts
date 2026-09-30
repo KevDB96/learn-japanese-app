@@ -53,4 +53,24 @@ const yoon: KanaConcept[] = yoonBase.flatMap((roman) => [
     form: "contracted" as const, componentIds: [base.id, id(`kana-hira-small-${suffix}`)], reviewEligible: false };
 }));
 export const kanaFixtures: readonly KanaConcept[] = [...bases, ...marked, ...small, ...yoon];
+
+const katakanaRows = [
+  { name: "a", codes: [0x30a2, 0x30a4, 0x30a6, 0x30a8, 0x30aa], sounds: ["a", "i", "u", "e", "o"] },
+  { name: "k", codes: [0x30ab, 0x30ad, 0x30af, 0x30b1, 0x30b3], sounds: ["ka", "ki", "ku", "ke", "ko"] },
+  { name: "s", codes: [0x30b5, 0x30b7, 0x30b9, 0x30bb, 0x30bd], sounds: ["sa", "shi", "su", "se", "so"] },
+  { name: "t", codes: [0x30bf, 0x30c1, 0x30c4, 0x30c6, 0x30c8], sounds: ["ta", "chi", "tsu", "te", "to"] },
+  { name: "n", codes: [0x30ca, 0x30cb, 0x30cc, 0x30cd, 0x30ce], sounds: ["na", "ni", "nu", "ne", "no"] },
+  { name: "h", codes: [0x30cf, 0x30d2, 0x30d5, 0x30d8, 0x30db], sounds: ["ha", "hi", "fu", "he", "ho"] },
+  { name: "m", codes: [0x30de, 0x30df, 0x30e0, 0x30e1, 0x30e2], sounds: ["ma", "mi", "mu", "me", "mo"] },
+  { name: "y", codes: [0x30e4, 0x30e6, 0x30e8], sounds: ["ya", "yu", "yo"] },
+  { name: "r", codes: [0x30e9, 0x30ea, 0x30eb, 0x30ec, 0x30ed], sounds: ["ra", "ri", "ru", "re", "ro"] },
+  { name: "w", codes: [0x30ef, 0x30f2, 0x30f3], sounds: ["wa", "wo", "n"] },
+] as const;
+
+export const katakanaFixtures: readonly KanaConcept[] = katakanaRows.flatMap(({ name, codes, sounds }) =>
+  codes.map((code, order) => ({
+    id: id(`kana-kata-${sounds[order]}`), script: "katakana" as const, glyph: kana(code),
+    romanization: sounds[order]!, row: `${name}-row`, order, form: "base" as const, componentIds: [],
+  })),
+);
 export const kanaAudioManifest: PronunciationManifest = { version: 1, entries: [] };

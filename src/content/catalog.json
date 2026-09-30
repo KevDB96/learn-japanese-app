@@ -1,7 +1,7 @@
 {
   "metadata": {
     "schemaVersion": 1,
-    "contentVersion": "0.2.0"
+    "contentVersion": "0.3.0"
   },
   "courses": [
     {
@@ -11,7 +11,9 @@
         "stage-0-introduction",
         "hiragana-foundations",
         "hiragana-n-through-n",
-        "hiragana-marks-and-combinations"
+        "hiragana-marks-and-combinations",
+        "katakana-foundations",
+        "katakana-through-n"
       ],
       "startLessonIds": [
         "introduction"
@@ -56,6 +58,28 @@
         "hiragana-contracted-sounds",
         "hiragana-small-tsu",
         "hiragana-long-vowels"
+      ]
+    },
+    {
+      "id": "katakana-foundations",
+      "display": "Katakana foundations",
+      "lessonIds": [
+        "katakana-a-row",
+        "katakana-k-row",
+        "katakana-s-row",
+        "katakana-t-row"
+      ]
+    },
+    {
+      "id": "katakana-through-n",
+      "display": "Katakana: remaining rows",
+      "lessonIds": [
+        "katakana-n-row",
+        "katakana-h-row",
+        "katakana-m-row",
+        "katakana-y-row",
+        "katakana-r-row",
+        "katakana-w-row"
       ]
     }
   ],
@@ -2451,6 +2475,1658 @@
           ]
         }
       ]
+    },
+    {
+      "id": "katakana-a-row",
+      "display": "Katakana A row",
+      "requires": [
+        "introduction"
+      ],
+      "introduces": [
+        "kana-kata-a",
+        "kana-kata-i",
+        "kana-kata-u",
+        "kana-kata-e",
+        "kana-kata-o"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-a-row-title",
+          "kind": "heading",
+          "text": "Katakana: A row"
+        },
+        {
+          "id": "katakana-a-row-teach",
+          "kind": "paragraph",
+          "text": "Start with the five steady vowel sounds. Katakana uses the same sounds as Hiragana, with a different shape, and commonly writes loanwords, many foreign names, and emphasis."
+        },
+        {
+          "id": "katakana-a-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ア",
+              "reading": "a"
+            },
+            {
+              "kana": "イ",
+              "reading": "i"
+            },
+            {
+              "kana": "ウ",
+              "reading": "u"
+            },
+            {
+              "kana": "エ",
+              "reading": "e"
+            },
+            {
+              "kana": "オ",
+              "reading": "o"
+            }
+          ]
+        },
+        {
+          "id": "katakana-a-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-a-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose ア (a).",
+              "options": [
+                "ア",
+                "イ",
+                "ウ"
+              ],
+              "answer": "ア",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ア is read a."
+              }
+            },
+            {
+              "id": "katakana-a-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose イ (i).",
+              "options": [
+                "イ",
+                "ウ",
+                "エ"
+              ],
+              "answer": "イ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "イ is read i."
+              }
+            },
+            {
+              "id": "katakana-a-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ウ (u).",
+              "options": [
+                "ウ",
+                "エ",
+                "オ"
+              ],
+              "answer": "ウ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ウ is read u."
+              }
+            },
+            {
+              "id": "katakana-a-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose エ (e).",
+              "options": [
+                "エ",
+                "オ",
+                "ア"
+              ],
+              "answer": "エ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "エ is read e."
+              }
+            },
+            {
+              "id": "katakana-a-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose オ (o).",
+              "options": [
+                "オ",
+                "ア",
+                "イ"
+              ],
+              "answer": "オ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "オ is read o."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-a-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-a-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-a-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ア.",
+              "answer": "a",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ア is read a."
+              }
+            },
+            {
+              "id": "katakana-a-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for オ.",
+              "answer": "o",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "オ is read o."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-k-row",
+      "display": "Katakana K row",
+      "requires": [
+        "katakana-a-row"
+      ],
+      "introduces": [
+        "kana-kata-ka",
+        "kana-kata-ki",
+        "kana-kata-ku",
+        "kana-kata-ke",
+        "kana-kata-ko"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-k-row-title",
+          "kind": "heading",
+          "text": "Katakana: K row"
+        },
+        {
+          "id": "katakana-k-row-teach",
+          "kind": "paragraph",
+          "text": "Add k before each vowel: ka, ki, ku, ke, ko."
+        },
+        {
+          "id": "katakana-k-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "カ",
+              "reading": "ka"
+            },
+            {
+              "kana": "キ",
+              "reading": "ki"
+            },
+            {
+              "kana": "ク",
+              "reading": "ku"
+            },
+            {
+              "kana": "ケ",
+              "reading": "ke"
+            },
+            {
+              "kana": "コ",
+              "reading": "ko"
+            }
+          ]
+        },
+        {
+          "id": "katakana-k-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-k-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose カ (ka).",
+              "options": [
+                "カ",
+                "キ",
+                "ク"
+              ],
+              "answer": "カ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "カ is read ka."
+              }
+            },
+            {
+              "id": "katakana-k-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose キ (ki).",
+              "options": [
+                "キ",
+                "ク",
+                "ケ"
+              ],
+              "answer": "キ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "キ is read ki."
+              }
+            },
+            {
+              "id": "katakana-k-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ク (ku).",
+              "options": [
+                "ク",
+                "ケ",
+                "コ"
+              ],
+              "answer": "ク",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ク is read ku."
+              }
+            },
+            {
+              "id": "katakana-k-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose ケ (ke).",
+              "options": [
+                "ケ",
+                "コ",
+                "カ"
+              ],
+              "answer": "ケ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ケ is read ke."
+              }
+            },
+            {
+              "id": "katakana-k-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose コ (ko).",
+              "options": [
+                "コ",
+                "カ",
+                "キ"
+              ],
+              "answer": "コ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "コ is read ko."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-k-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-k-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-k-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for カ.",
+              "answer": "ka",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "カ is read ka."
+              }
+            },
+            {
+              "id": "katakana-k-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for コ.",
+              "answer": "ko",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "コ is read ko."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-s-row",
+      "display": "Katakana S row",
+      "requires": [
+        "katakana-k-row"
+      ],
+      "introduces": [
+        "kana-kata-sa",
+        "kana-kata-shi",
+        "kana-kata-su",
+        "kana-kata-se",
+        "kana-kata-so"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-s-row-title",
+          "kind": "heading",
+          "text": "Katakana: S row"
+        },
+        {
+          "id": "katakana-s-row-teach",
+          "kind": "paragraph",
+          "text": "Most sounds add s before the vowel. シ is irregular: read it shi, not si."
+        },
+        {
+          "id": "katakana-s-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "サ",
+              "reading": "sa"
+            },
+            {
+              "kana": "シ",
+              "reading": "shi"
+            },
+            {
+              "kana": "ス",
+              "reading": "su"
+            },
+            {
+              "kana": "セ",
+              "reading": "se"
+            },
+            {
+              "kana": "ソ",
+              "reading": "so"
+            }
+          ]
+        },
+        {
+          "id": "katakana-s-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-s-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose サ (sa).",
+              "options": [
+                "サ",
+                "シ",
+                "ス"
+              ],
+              "answer": "サ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "サ is read sa."
+              }
+            },
+            {
+              "id": "katakana-s-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose シ (shi).",
+              "options": [
+                "シ",
+                "ス",
+                "セ"
+              ],
+              "answer": "シ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "シ is read shi."
+              }
+            },
+            {
+              "id": "katakana-s-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ス (su).",
+              "options": [
+                "ス",
+                "セ",
+                "ソ"
+              ],
+              "answer": "ス",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ス is read su."
+              }
+            },
+            {
+              "id": "katakana-s-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose セ (se).",
+              "options": [
+                "セ",
+                "ソ",
+                "サ"
+              ],
+              "answer": "セ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "セ is read se."
+              }
+            },
+            {
+              "id": "katakana-s-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose ソ (so).",
+              "options": [
+                "ソ",
+                "サ",
+                "シ"
+              ],
+              "answer": "ソ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ソ is read so."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-s-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "アイス",
+          "reading": "aisu",
+          "translation": "ice cream"
+        },
+        {
+          "id": "katakana-s-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-s-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-s-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for サ.",
+              "answer": "sa",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "サ is read sa."
+              }
+            },
+            {
+              "id": "katakana-s-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for ソ.",
+              "answer": "so",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ソ is read so."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-t-row",
+      "display": "Katakana T row",
+      "requires": [
+        "katakana-s-row"
+      ],
+      "introduces": [
+        "kana-kata-ta",
+        "kana-kata-chi",
+        "kana-kata-tsu",
+        "kana-kata-te",
+        "kana-kata-to"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-t-row-title",
+          "kind": "heading",
+          "text": "Katakana: T row"
+        },
+        {
+          "id": "katakana-t-row-teach",
+          "kind": "paragraph",
+          "text": "Most sounds add t before the vowel. チ is chi and ツ is tsu, not ti and tu."
+        },
+        {
+          "id": "katakana-t-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "タ",
+              "reading": "ta"
+            },
+            {
+              "kana": "チ",
+              "reading": "chi"
+            },
+            {
+              "kana": "ツ",
+              "reading": "tsu"
+            },
+            {
+              "kana": "テ",
+              "reading": "te"
+            },
+            {
+              "kana": "ト",
+              "reading": "to"
+            }
+          ]
+        },
+        {
+          "id": "katakana-t-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-t-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose タ (ta).",
+              "options": [
+                "タ",
+                "チ",
+                "ツ"
+              ],
+              "answer": "タ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "タ is read ta."
+              }
+            },
+            {
+              "id": "katakana-t-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose チ (chi).",
+              "options": [
+                "チ",
+                "ツ",
+                "テ"
+              ],
+              "answer": "チ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "チ is read chi."
+              }
+            },
+            {
+              "id": "katakana-t-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ツ (tsu).",
+              "options": [
+                "ツ",
+                "テ",
+                "ト"
+              ],
+              "answer": "ツ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ツ is read tsu."
+              }
+            },
+            {
+              "id": "katakana-t-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose テ (te).",
+              "options": [
+                "テ",
+                "ト",
+                "タ"
+              ],
+              "answer": "テ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "テ is read te."
+              }
+            },
+            {
+              "id": "katakana-t-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose ト (to).",
+              "options": [
+                "ト",
+                "タ",
+                "チ"
+              ],
+              "answer": "ト",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ト is read to."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-t-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "テスト",
+          "reading": "tesuto",
+          "translation": "test"
+        },
+        {
+          "id": "katakana-t-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-t-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-t-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for タ.",
+              "answer": "ta",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "タ is read ta."
+              }
+            },
+            {
+              "id": "katakana-t-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for ト.",
+              "answer": "to",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ト is read to."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-n-row",
+      "display": "Katakana N row",
+      "requires": [
+        "katakana-t-row"
+      ],
+      "introduces": [
+        "kana-kata-na",
+        "kana-kata-ni",
+        "kana-kata-nu",
+        "kana-kata-ne",
+        "kana-kata-no"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-n-row-title",
+          "kind": "heading",
+          "text": "Katakana: N row"
+        },
+        {
+          "id": "katakana-n-row-teach",
+          "kind": "paragraph",
+          "text": "Add n before each vowel to make na, ni, nu, ne, no."
+        },
+        {
+          "id": "katakana-n-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ナ",
+              "reading": "na"
+            },
+            {
+              "kana": "ニ",
+              "reading": "ni"
+            },
+            {
+              "kana": "ヌ",
+              "reading": "nu"
+            },
+            {
+              "kana": "ネ",
+              "reading": "ne"
+            },
+            {
+              "kana": "ノ",
+              "reading": "no"
+            }
+          ]
+        },
+        {
+          "id": "katakana-n-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-n-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose ナ (na).",
+              "options": [
+                "ナ",
+                "ニ",
+                "ヌ"
+              ],
+              "answer": "ナ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ナ is read na."
+              }
+            },
+            {
+              "id": "katakana-n-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose ニ (ni).",
+              "options": [
+                "ニ",
+                "ヌ",
+                "ネ"
+              ],
+              "answer": "ニ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ニ is read ni."
+              }
+            },
+            {
+              "id": "katakana-n-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ヌ (nu).",
+              "options": [
+                "ヌ",
+                "ネ",
+                "ノ"
+              ],
+              "answer": "ヌ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヌ is read nu."
+              }
+            },
+            {
+              "id": "katakana-n-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose ネ (ne).",
+              "options": [
+                "ネ",
+                "ノ",
+                "ナ"
+              ],
+              "answer": "ネ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ネ is read ne."
+              }
+            },
+            {
+              "id": "katakana-n-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose ノ (no).",
+              "options": [
+                "ノ",
+                "ナ",
+                "ニ"
+              ],
+              "answer": "ノ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ノ is read no."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-n-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-n-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-n-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ナ.",
+              "answer": "na",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ナ is read na."
+              }
+            },
+            {
+              "id": "katakana-n-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for ノ.",
+              "answer": "no",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ノ is read no."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-h-row",
+      "display": "Katakana H row",
+      "requires": [
+        "katakana-n-row"
+      ],
+      "introduces": [
+        "kana-kata-ha",
+        "kana-kata-hi",
+        "kana-kata-fu",
+        "kana-kata-he",
+        "kana-kata-ho"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-h-row-title",
+          "kind": "heading",
+          "text": "Katakana: H row"
+        },
+        {
+          "id": "katakana-h-row-teach",
+          "kind": "paragraph",
+          "text": "Add h before each vowel. フ is conventionally romanized fu; its Japanese sound is made with the lips rather than a strong English f."
+        },
+        {
+          "id": "katakana-h-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ハ",
+              "reading": "ha"
+            },
+            {
+              "kana": "ヒ",
+              "reading": "hi"
+            },
+            {
+              "kana": "フ",
+              "reading": "fu"
+            },
+            {
+              "kana": "ヘ",
+              "reading": "he"
+            },
+            {
+              "kana": "ホ",
+              "reading": "ho"
+            }
+          ]
+        },
+        {
+          "id": "katakana-h-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-h-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose ハ (ha).",
+              "options": [
+                "ハ",
+                "ヒ",
+                "フ"
+              ],
+              "answer": "ハ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ハ is read ha."
+              }
+            },
+            {
+              "id": "katakana-h-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose ヒ (hi).",
+              "options": [
+                "ヒ",
+                "フ",
+                "ヘ"
+              ],
+              "answer": "ヒ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヒ is read hi."
+              }
+            },
+            {
+              "id": "katakana-h-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose フ (fu).",
+              "options": [
+                "フ",
+                "ヘ",
+                "ホ"
+              ],
+              "answer": "フ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "フ is read fu."
+              }
+            },
+            {
+              "id": "katakana-h-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose ヘ (he).",
+              "options": [
+                "ヘ",
+                "ホ",
+                "ハ"
+              ],
+              "answer": "ヘ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヘ is read he."
+              }
+            },
+            {
+              "id": "katakana-h-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose ホ (ho).",
+              "options": [
+                "ホ",
+                "ハ",
+                "ヒ"
+              ],
+              "answer": "ホ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ホ is read ho."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-h-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-h-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-h-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ハ.",
+              "answer": "ha",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ハ is read ha."
+              }
+            },
+            {
+              "id": "katakana-h-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for ホ.",
+              "answer": "ho",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ホ is read ho."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-m-row",
+      "display": "Katakana M row",
+      "requires": [
+        "katakana-h-row"
+      ],
+      "introduces": [
+        "kana-kata-ma",
+        "kana-kata-mi",
+        "kana-kata-mu",
+        "kana-kata-me",
+        "kana-kata-mo"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-m-row-title",
+          "kind": "heading",
+          "text": "Katakana: M row"
+        },
+        {
+          "id": "katakana-m-row-teach",
+          "kind": "paragraph",
+          "text": "Add m before each vowel to make ma, mi, mu, me, mo."
+        },
+        {
+          "id": "katakana-m-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "マ",
+              "reading": "ma"
+            },
+            {
+              "kana": "ミ",
+              "reading": "mi"
+            },
+            {
+              "kana": "ム",
+              "reading": "mu"
+            },
+            {
+              "kana": "メ",
+              "reading": "me"
+            },
+            {
+              "kana": "モ",
+              "reading": "mo"
+            }
+          ]
+        },
+        {
+          "id": "katakana-m-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-m-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose マ (ma).",
+              "options": [
+                "マ",
+                "ミ",
+                "ム"
+              ],
+              "answer": "マ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "マ is read ma."
+              }
+            },
+            {
+              "id": "katakana-m-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose ミ (mi).",
+              "options": [
+                "ミ",
+                "ム",
+                "メ"
+              ],
+              "answer": "ミ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ミ is read mi."
+              }
+            },
+            {
+              "id": "katakana-m-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ム (mu).",
+              "options": [
+                "ム",
+                "メ",
+                "モ"
+              ],
+              "answer": "ム",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ム is read mu."
+              }
+            },
+            {
+              "id": "katakana-m-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose メ (me).",
+              "options": [
+                "メ",
+                "モ",
+                "マ"
+              ],
+              "answer": "メ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "メ is read me."
+              }
+            },
+            {
+              "id": "katakana-m-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose モ (mo).",
+              "options": [
+                "モ",
+                "マ",
+                "ミ"
+              ],
+              "answer": "モ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "モ is read mo."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-m-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "メモ",
+          "reading": "memo",
+          "translation": "memo"
+        },
+        {
+          "id": "katakana-m-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-m-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-m-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for マ.",
+              "answer": "ma",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "マ is read ma."
+              }
+            },
+            {
+              "id": "katakana-m-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for モ.",
+              "answer": "mo",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "モ is read mo."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-y-row",
+      "display": "Katakana Y row",
+      "requires": [
+        "katakana-m-row"
+      ],
+      "introduces": [
+        "kana-kata-ya",
+        "kana-kata-yu",
+        "kana-kata-yo"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-y-row-title",
+          "kind": "heading",
+          "text": "Katakana: Y row"
+        },
+        {
+          "id": "katakana-y-row-teach",
+          "kind": "paragraph",
+          "text": "The y row has three base kana: ya, yu, and yo. There is no base yi or ye kana."
+        },
+        {
+          "id": "katakana-y-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ヤ",
+              "reading": "ya"
+            },
+            {
+              "kana": "ユ",
+              "reading": "yu"
+            },
+            {
+              "kana": "ヨ",
+              "reading": "yo"
+            }
+          ]
+        },
+        {
+          "id": "katakana-y-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-y-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose ヤ (ya).",
+              "options": [
+                "ヤ",
+                "ユ",
+                "ヨ"
+              ],
+              "answer": "ヤ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヤ is read ya."
+              }
+            },
+            {
+              "id": "katakana-y-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose ユ (yu).",
+              "options": [
+                "ユ",
+                "ヨ",
+                "ヤ"
+              ],
+              "answer": "ユ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ユ is read yu."
+              }
+            },
+            {
+              "id": "katakana-y-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ヨ (yo).",
+              "options": [
+                "ヨ",
+                "ヤ",
+                "ユ"
+              ],
+              "answer": "ヨ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヨ is read yo."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-y-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-y-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-y-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ヤ.",
+              "answer": "ya",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヤ is read ya."
+              }
+            },
+            {
+              "id": "katakana-y-row-recall-3",
+              "type": "short-text",
+              "prompt": "Type the sound for ヨ.",
+              "answer": "yo",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヨ is read yo."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-r-row",
+      "display": "Katakana R row",
+      "requires": [
+        "katakana-y-row"
+      ],
+      "introduces": [
+        "kana-kata-ra",
+        "kana-kata-ri",
+        "kana-kata-ru",
+        "kana-kata-re",
+        "kana-kata-ro"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-r-row-title",
+          "kind": "heading",
+          "text": "Katakana: R row"
+        },
+        {
+          "id": "katakana-r-row-teach",
+          "kind": "paragraph",
+          "text": "The Japanese r sound is a light tap, between English r and l."
+        },
+        {
+          "id": "katakana-r-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ラ",
+              "reading": "ra"
+            },
+            {
+              "kana": "リ",
+              "reading": "ri"
+            },
+            {
+              "kana": "ル",
+              "reading": "ru"
+            },
+            {
+              "kana": "レ",
+              "reading": "re"
+            },
+            {
+              "kana": "ロ",
+              "reading": "ro"
+            }
+          ]
+        },
+        {
+          "id": "katakana-r-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-r-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose ラ (ra).",
+              "options": [
+                "ラ",
+                "リ",
+                "ル"
+              ],
+              "answer": "ラ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ラ is read ra."
+              }
+            },
+            {
+              "id": "katakana-r-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose リ (ri).",
+              "options": [
+                "リ",
+                "ル",
+                "レ"
+              ],
+              "answer": "リ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "リ is read ri."
+              }
+            },
+            {
+              "id": "katakana-r-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ル (ru).",
+              "options": [
+                "ル",
+                "レ",
+                "ロ"
+              ],
+              "answer": "ル",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ル is read ru."
+              }
+            },
+            {
+              "id": "katakana-r-row-guided-4",
+              "type": "character-selection",
+              "prompt": "Choose レ (re).",
+              "options": [
+                "レ",
+                "ロ",
+                "ラ"
+              ],
+              "answer": "レ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "レ is read re."
+              }
+            },
+            {
+              "id": "katakana-r-row-guided-5",
+              "type": "character-selection",
+              "prompt": "Choose ロ (ro).",
+              "options": [
+                "ロ",
+                "ラ",
+                "リ"
+              ],
+              "answer": "ロ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ロ is read ro."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-r-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "カメラ",
+          "reading": "kamera",
+          "translation": "camera"
+        },
+        {
+          "id": "katakana-r-row-example-2",
+          "kind": "japanese-example",
+          "japanese": "ホテル",
+          "reading": "hoteru",
+          "translation": "hotel"
+        },
+        {
+          "id": "katakana-r-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-r-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-r-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ラ.",
+              "answer": "ra",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ラ is read ra."
+              }
+            },
+            {
+              "id": "katakana-r-row-recall-5",
+              "type": "short-text",
+              "prompt": "Type the sound for ロ.",
+              "answer": "ro",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ロ is read ro."
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "katakana-w-row",
+      "display": "Katakana W row",
+      "requires": [
+        "katakana-r-row"
+      ],
+      "introduces": [
+        "kana-kata-wa",
+        "kana-kata-wo",
+        "kana-kata-n"
+      ],
+      "reinforces": [],
+      "blocks": [
+        {
+          "id": "katakana-w-row-title",
+          "kind": "heading",
+          "text": "Katakana: W row"
+        },
+        {
+          "id": "katakana-w-row-teach",
+          "kind": "paragraph",
+          "text": "The remaining base kana are ワ and the rare ヲ, followed by ン. ヲ is conventionally romanized wo, but in modern Japanese it is mainly the object particle and is pronounced like オ (o). ン is the standalone moraic n; its sound shifts slightly with the following consonant."
+        },
+        {
+          "id": "katakana-w-row-readout",
+          "kind": "kana-grid",
+          "title": "Look, say, remember",
+          "characters": [
+            {
+              "kana": "ワ",
+              "reading": "wa"
+            },
+            {
+              "kana": "ヲ",
+              "reading": "wo"
+            },
+            {
+              "kana": "ン",
+              "reading": "n"
+            }
+          ]
+        },
+        {
+          "id": "katakana-w-row-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "katakana-w-row-guided-1",
+              "type": "character-selection",
+              "prompt": "Choose ワ (wa).",
+              "options": [
+                "ワ",
+                "ヲ",
+                "ン"
+              ],
+              "answer": "ワ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ワ is read wa."
+              }
+            },
+            {
+              "id": "katakana-w-row-guided-2",
+              "type": "character-selection",
+              "prompt": "Choose ヲ (wo).",
+              "options": [
+                "ヲ",
+                "ン",
+                "ワ"
+              ],
+              "answer": "ヲ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ヲ is read wo."
+              }
+            },
+            {
+              "id": "katakana-w-row-guided-3",
+              "type": "character-selection",
+              "prompt": "Choose ン (n).",
+              "options": [
+                "ン",
+                "ワ",
+                "ヲ"
+              ],
+              "answer": "ン",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ン is read n."
+              }
+            }
+          ]
+        },
+        {
+          "id": "katakana-w-row-example-1",
+          "kind": "japanese-example",
+          "japanese": "ワイン",
+          "reading": "wain",
+          "translation": "wine"
+        },
+        {
+          "id": "katakana-w-row-retrieval-note",
+          "kind": "callout",
+          "title": "Read without romaji",
+          "text": "Cover the readings above. Recall each sound from the katakana alone."
+        },
+        {
+          "id": "katakana-w-row-retrieval",
+          "kind": "exercise-slot",
+          "title": "Quick recall",
+          "exercises": [
+            {
+              "id": "katakana-w-row-recall-1",
+              "type": "short-text",
+              "prompt": "Type the sound for ワ.",
+              "answer": "wa",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ワ is read wa."
+              }
+            },
+            {
+              "id": "katakana-w-row-recall-3",
+              "type": "short-text",
+              "prompt": "Type the sound for ン.",
+              "answer": "n",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ン is read n."
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "concepts": [
@@ -3101,6 +4777,282 @@
       "display": "ょ",
       "reading": "yo",
       "translation": "Small ょ"
+    },
+    {
+      "id": "kana-kata-a",
+      "display": "ア",
+      "reading": "a",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-i",
+      "display": "イ",
+      "reading": "i",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-u",
+      "display": "ウ",
+      "reading": "u",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-e",
+      "display": "エ",
+      "reading": "e",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-o",
+      "display": "オ",
+      "reading": "o",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ka",
+      "display": "カ",
+      "reading": "ka",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ki",
+      "display": "キ",
+      "reading": "ki",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ku",
+      "display": "ク",
+      "reading": "ku",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ke",
+      "display": "ケ",
+      "reading": "ke",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ko",
+      "display": "コ",
+      "reading": "ko",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-sa",
+      "display": "サ",
+      "reading": "sa",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-shi",
+      "display": "シ",
+      "reading": "shi",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-su",
+      "display": "ス",
+      "reading": "su",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-se",
+      "display": "セ",
+      "reading": "se",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-so",
+      "display": "ソ",
+      "reading": "so",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ta",
+      "display": "タ",
+      "reading": "ta",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-chi",
+      "display": "チ",
+      "reading": "chi",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-tsu",
+      "display": "ツ",
+      "reading": "tsu",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-te",
+      "display": "テ",
+      "reading": "te",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-to",
+      "display": "ト",
+      "reading": "to",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-na",
+      "display": "ナ",
+      "reading": "na",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ni",
+      "display": "ニ",
+      "reading": "ni",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-nu",
+      "display": "ヌ",
+      "reading": "nu",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ne",
+      "display": "ネ",
+      "reading": "ne",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-no",
+      "display": "ノ",
+      "reading": "no",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ha",
+      "display": "ハ",
+      "reading": "ha",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-hi",
+      "display": "ヒ",
+      "reading": "hi",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-fu",
+      "display": "フ",
+      "reading": "fu",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-he",
+      "display": "ヘ",
+      "reading": "he",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ho",
+      "display": "ホ",
+      "reading": "ho",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ma",
+      "display": "マ",
+      "reading": "ma",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-mi",
+      "display": "ミ",
+      "reading": "mi",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-mu",
+      "display": "ム",
+      "reading": "mu",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-me",
+      "display": "メ",
+      "reading": "me",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-mo",
+      "display": "モ",
+      "reading": "mo",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ya",
+      "display": "ヤ",
+      "reading": "ya",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-yu",
+      "display": "ユ",
+      "reading": "yu",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-yo",
+      "display": "ヨ",
+      "reading": "yo",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ra",
+      "display": "ラ",
+      "reading": "ra",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ri",
+      "display": "リ",
+      "reading": "ri",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ru",
+      "display": "ル",
+      "reading": "ru",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-re",
+      "display": "レ",
+      "reading": "re",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-ro",
+      "display": "ロ",
+      "reading": "ro",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-wa",
+      "display": "ワ",
+      "reading": "wa",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-wo",
+      "display": "ヲ",
+      "reading": "wo",
+      "translation": "Katakana kana"
+    },
+    {
+      "id": "kana-kata-n",
+      "display": "ン",
+      "reading": "n",
+      "translation": "Katakana kana"
     }
   ],
   "sentences": []
