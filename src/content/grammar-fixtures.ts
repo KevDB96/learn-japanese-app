@@ -133,4 +133,24 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
       ], answerOrder: ["water", "request"], explanation: "Put the requested item with を before お願いします.", feedback: { success: "Correct.", explanation: "水をお願いします is a courteous way to request water." } },
     ],
   },
+  {
+    id: id("grammar-places-and-existence"),
+    display: "Demonstratives, places, and existence",
+    requires: [id("grammar-likes-and-requests")],
+    shortExplanation: "Use これ・それ・あれ・どれ for things, ここ・そこ・あそこ・どこ for places, and [place] に [thing] が あります／います for existence.",
+    fullExplanation: "The ko-so-a-do sets show the speaker's and listener's relationship to a thing or place: こ is near the speaker, そ near the listener or already mentioned, あ away from both, and ど asks a question. これ・それ・あれ・どれ stand alone for things; ここ・そこ・あそこ・どこ name places. Reuse は, です, and か to say or ask about a place, as in ここは学校です and 駅はどこですか. To say what exists at a place, use [place] に [thing] が あります for nonliving things and [place] に [person or animal] が います for people and animals. に marks the location and が marks what exists. あります and います are polite present forms, not forms of the copula です. This lesson uses only positive present statements and familiar noun vocabulary.",
+    examples: [
+      { id: id("grammar-place-demonstrative-example"), japanese: "これは何ですか。あれは店です。", reading: "これはなんですか。あれはみせです。", translation: "What is this? That over there is a shop.", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-ka-question"), id("grammar-places-and-existence")] },
+      { id: id("grammar-place-location-example"), japanese: "駅はどこですか。", reading: "えきはどこですか。", translation: "Where is the station?", grammarIds: [id("grammar-topic-wa"), id("grammar-ka-question"), id("grammar-places-and-existence")] },
+      { id: id("grammar-existence-animal-example"), japanese: "うちにねこがいます。", reading: "うちにねこがいます。", translation: "There is a cat at home.", grammarIds: [id("grammar-places-and-existence")] },
+      { id: id("grammar-existence-object-example"), japanese: "学校に店があります。", reading: "がっこうにみせがあります。", translation: "There is a shop at the school.", grammarIds: [id("grammar-places-and-existence")] },
+    ],
+    commonMistakes: ["Using これ for a place; use ここ・そこ・あそこ・どこ when naming or asking about places.", "Using どれ for ‘where’; どれ asks which thing, while どこ asks which place.", "Using あります for an animal or person; use います for people and animals.", "Omitting に before the place or が before the thing that exists."],
+    relatedConceptIds: [id("grammar-likes-and-requests"), id("grammar-ka-question")],
+    exercises: [
+      { id: id("grammar-place-set-choice"), type: "multiple-choice", prompt: "Which word asks ‘where?’", options: ["どこ", "どれ", "それ"], answer: "どこ", feedback: { success: "Correct.", explanation: "どこ asks which place; どれ asks which thing." } },
+      { id: id("grammar-existence-verb-choice"), type: "multiple-choice", prompt: "Which polite existence form fits a cat?", options: ["います", "あります", "です"], answer: "います", feedback: { success: "Correct.", explanation: "Use います for people and animals." } },
+      { id: id("grammar-existence-location-cloze"), type: "cloze", prompt: "Complete ‘There is a shop at the school.’", before: "学校___店があります。", after: "", answer: "に", explanation: "に marks the place where something exists.", feedback: { success: "Correct.", explanation: "学校に店があります uses に for location." } },
+    ],
+  },
 ];

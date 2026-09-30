@@ -6,7 +6,7 @@ const ids = (...values: string[]) => values.map((value) => value as ContentId);
 
 describe("grammar mini-lessons", () => {
   it("provides stable beginner lessons with explanation, examples, mistakes, and practice", () => {
-    expect(grammarFixtures.map(({ id }) => id)).toEqual(["grammar-topic-wa", "grammar-desu-copula", "grammar-ka-question", "grammar-self-introduction", "grammar-family-terms", "grammar-time-and-counters", "grammar-likes-and-requests"]);
+    expect(grammarFixtures.map(({ id }) => id)).toEqual(["grammar-topic-wa", "grammar-desu-copula", "grammar-ka-question", "grammar-self-introduction", "grammar-family-terms", "grammar-time-and-counters", "grammar-likes-and-requests", "grammar-places-and-existence"]);
     expect(validateGrammarContent(grammarFixtures)).toEqual([]);
     for (const lesson of grammarFixtures) {
       expect(lesson.shortExplanation.length).toBeGreaterThan(0);

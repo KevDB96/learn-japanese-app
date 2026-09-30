@@ -18,7 +18,8 @@
         "self-introduction",
         "people-and-family",
         "numbers-and-time",
-        "food-and-requests"
+        "food-and-requests",
+        "places-and-location"
       ],
       "startLessonIds": [
         "introduction"
@@ -117,7 +118,8 @@
         "lesson-numbers-and-time"
       ]
     },
-    {"id":"food-and-requests","display":"Food and simple requests","lessonIds":["lesson-food-and-requests"]}
+    {"id":"food-and-requests","display":"Food and simple requests","lessonIds":["lesson-food-and-requests"]},
+    {"id":"places-and-location","display":"Places and location","lessonIds":["lesson-places-and-location"]}
   ],
   "lessons": [
     {
@@ -5277,7 +5279,288 @@
         ]}
       ]
     },
-    {"id":"lesson-food-and-requests","display":"Food and simple requests","requires":["lesson-numbers-and-time"],"introduces":["food-rice-meal","food-bread","food-sushi","food-ramen","food-tea","food-coffee","food-likes","food-simple-request"],"reinforces":["identity-topic-marker","identity-polite-copula","time-question"],"blocks":[{"id":"food-title","kind":"heading","text":"Food and simple requests"},{"id":"food-bridge","kind":"paragraph","text":"Reuse the polite endings です and ですか from earlier lessons to talk about what you like and ask for food."},{"id":"food-words","kind":"vocabulary-list","title":"Food and drinks","items":[{"japanese":"ご飯","reading":"ごはん","translation":"rice; meal"},{"japanese":"パン","reading":"パン","translation":"bread"},{"japanese":"寿司","reading":"すし","translation":"sushi"},{"japanese":"ラーメン","reading":"ラーメン","translation":"ramen"},{"japanese":"お茶","reading":"おちゃ","translation":"tea"},{"japanese":"コーヒー","reading":"コーヒー","translation":"coffee"},{"japanese":"水","reading":"みず","translation":"water (from an earlier lesson)"}]},{"id":"food-like-pattern","kind":"grammar-breakdown","title":"Say what you like","japanese":"わたしは寿司が好きです。","reading":"わたしはすしがすきです。","translation":"I like sushi.","parts":[{"text":"わたしは","reading":"わたしは","meaning":"as for me; は marks the topic (wa)"},{"text":"寿司が","reading":"すしが","meaning":"sushi; が marks the thing liked"},{"text":"好きです","reading":"すきです","meaning":"like; polite form"}]},{"id":"food-marking-note","kind":"callout","title":"Marking matters","text":"好き (すき, like) and 嫌い (きらい, dislike) commonly use が for the thing liked or disliked: 寿司が好きです. Do not copy English order and add を; が marks the liked thing. は can mark the overall topic: わたしは寿司が好きです. The speaker can be left unstated when it is clear."},{"id":"food-dislike-example","kind":"japanese-example","japanese":"コーヒーが嫌いです。","reading":"コーヒーがきらいです。","translation":"I dislike coffee."},{"id":"food-request-pattern","kind":"grammar-breakdown","title":"Ask for something politely","japanese":"これをください。水をお願いします。","reading":"これをください。みずをおねがいします。","translation":"This, please. Water, please.","parts":[{"text":"これ・水","reading":"これ・みず","meaning":"this; water"},{"text":"を","reading":"を","meaning":"marks what is requested"},{"text":"ください・お願いします","reading":"ください・おねがいします","meaning":"please give me; a courteous request"}]},{"id":"food-politeness-note","kind":"callout","title":"Polite requests","text":"ください is a polite, practical request at a shop or restaurant. お願いします is another courteous option, as in 水をお願いします. Use すみません to get someone’s attention when appropriate."},{"id":"food-guided","kind":"exercise-slot","title":"Guided practice","exercises":[{"id":"food-like-choice","type":"multiple-choice","prompt":"Which particle marks sushi in the sentence 寿司___好きです。?","options":["が","を","に"],"answer":"が","feedback":{"success":"Correct.","explanation":"好き commonly marks the liked thing with が."}},{"id":"food-request-cloze","type":"cloze","prompt":"Complete ‘This, please.’","before":"これ","after":"ください。","answer":"を","explanation":"を marks the requested item before ください.","feedback":{"success":"Correct.","explanation":"これをください means ‘This, please.’"}},{"id":"food-comprehension","type":"multiple-choice","prompt":"What does 水をお願いします mean?","options":["Water, please.","I dislike water.","What is the water?"],"answer":"Water, please.","feedback":{"success":"Correct.","explanation":"水 is water; お願いします makes a courteous request."}}]},{"id":"food-retrieval","kind":"exercise-slot","title":"Recall and build","exercises":[{"id":"food-recall-sushi","type":"short-text","prompt":"Write ‘sushi’ in Japanese.","answer":"寿司","acceptedAnswers":["すし"],"feedback":{"success":"Correct.","explanation":"寿司 is read すし."}},{"id":"food-order-request","type":"sentence-order","prompt":"Build ‘Water, please.’","chunks":[{"id":"water","japanese":"水を","reading":"みずを","meaning":"water, marked as the request"},{"id":"request","japanese":"お願いします。","reading":"おねがいします。","meaning":"please; courteous request"}],"answerOrder":["water","request"],"explanation":"Put the item marked with を before お願いします.","feedback":{"success":"Correct.","explanation":"水をお願いします is a courteous request for water."}}]}]}
+    {"id":"lesson-food-and-requests","display":"Food and simple requests","requires":["lesson-numbers-and-time"],"introduces":["food-rice-meal","food-bread","food-sushi","food-ramen","food-tea","food-coffee","food-likes","food-simple-request"],"reinforces":["identity-topic-marker","identity-polite-copula","time-question"],"blocks":[{"id":"food-title","kind":"heading","text":"Food and simple requests"},{"id":"food-bridge","kind":"paragraph","text":"Reuse the polite endings です and ですか from earlier lessons to talk about what you like and ask for food."},{"id":"food-words","kind":"vocabulary-list","title":"Food and drinks","items":[{"japanese":"ご飯","reading":"ごはん","translation":"rice; meal"},{"japanese":"パン","reading":"パン","translation":"bread"},{"japanese":"寿司","reading":"すし","translation":"sushi"},{"japanese":"ラーメン","reading":"ラーメン","translation":"ramen"},{"japanese":"お茶","reading":"おちゃ","translation":"tea"},{"japanese":"コーヒー","reading":"コーヒー","translation":"coffee"},{"japanese":"水","reading":"みず","translation":"water (from an earlier lesson)"}]},{"id":"food-like-pattern","kind":"grammar-breakdown","title":"Say what you like","japanese":"わたしは寿司が好きです。","reading":"わたしはすしがすきです。","translation":"I like sushi.","parts":[{"text":"わたしは","reading":"わたしは","meaning":"as for me; は marks the topic (wa)"},{"text":"寿司が","reading":"すしが","meaning":"sushi; が marks the thing liked"},{"text":"好きです","reading":"すきです","meaning":"like; polite form"}]},{"id":"food-marking-note","kind":"callout","title":"Marking matters","text":"好き (すき, like) and 嫌い (きらい, dislike) commonly use が for the thing liked or disliked: 寿司が好きです. Do not copy English order and add を; が marks the liked thing. は can mark the overall topic: わたしは寿司が好きです. The speaker can be left unstated when it is clear."},{"id":"food-dislike-example","kind":"japanese-example","japanese":"コーヒーが嫌いです。","reading":"コーヒーがきらいです。","translation":"I dislike coffee."},{"id":"food-request-pattern","kind":"grammar-breakdown","title":"Ask for something politely","japanese":"これをください。水をお願いします。","reading":"これをください。みずをおねがいします。","translation":"This, please. Water, please.","parts":[{"text":"これ・水","reading":"これ・みず","meaning":"this; water"},{"text":"を","reading":"を","meaning":"marks what is requested"},{"text":"ください・お願いします","reading":"ください・おねがいします","meaning":"please give me; a courteous request"}]},{"id":"food-politeness-note","kind":"callout","title":"Polite requests","text":"ください is a polite, practical request at a shop or restaurant. お願いします is another courteous option, as in 水をお願いします. Use すみません to get someone’s attention when appropriate."},{"id":"food-guided","kind":"exercise-slot","title":"Guided practice","exercises":[{"id":"food-like-choice","type":"multiple-choice","prompt":"Which particle marks sushi in the sentence 寿司___好きです。?","options":["が","を","に"],"answer":"が","feedback":{"success":"Correct.","explanation":"好き commonly marks the liked thing with が."}},{"id":"food-request-cloze","type":"cloze","prompt":"Complete ‘This, please.’","before":"これ","after":"ください。","answer":"を","explanation":"を marks the requested item before ください.","feedback":{"success":"Correct.","explanation":"これをください means ‘This, please.’"}},{"id":"food-comprehension","type":"multiple-choice","prompt":"What does 水をお願いします mean?","options":["Water, please.","I dislike water.","What is the water?"],"answer":"Water, please.","feedback":{"success":"Correct.","explanation":"水 is water; お願いします makes a courteous request."}}]},{"id":"food-retrieval","kind":"exercise-slot","title":"Recall and build","exercises":[{"id":"food-recall-sushi","type":"short-text","prompt":"Write ‘sushi’ in Japanese.","answer":"寿司","acceptedAnswers":["すし"],"feedback":{"success":"Correct.","explanation":"寿司 is read すし."}},{"id":"food-order-request","type":"sentence-order","prompt":"Build ‘Water, please.’","chunks":[{"id":"water","japanese":"水を","reading":"みずを","meaning":"water, marked as the request"},{"id":"request","japanese":"お願いします。","reading":"おねがいします。","meaning":"please; courteous request"}],"answerOrder":["water","request"],"explanation":"Put the item marked with を before お願いします.","feedback":{"success":"Correct.","explanation":"水をお願いします is a courteous request for water."}}]}]},
+    {
+      "id": "lesson-places-and-location",
+      "display": "Places and location",
+      "requires": [
+        "lesson-food-and-requests"
+      ],
+      "introduces": [
+        "place-home",
+        "place-school",
+        "place-station",
+        "place-store",
+        "place-demonstratives",
+        "place-location-words",
+        "place-existence"
+      ],
+      "reinforces": [
+        "identity-topic-marker",
+        "identity-polite-copula",
+        "time-question"
+      ],
+      "blocks": [
+        {
+          "id": "places-title",
+          "kind": "heading",
+          "text": "Places and location"
+        },
+        {
+          "id": "places-bridge",
+          "kind": "paragraph",
+          "text": "You already know は for a topic, です for a polite statement, and か for a question. Reuse them to name a place and ask where something is."
+        },
+        {
+          "id": "places-words",
+          "kind": "vocabulary-list",
+          "title": "Common places",
+          "items": [
+            {
+              "japanese": "うち",
+              "reading": "うち",
+              "translation": "home"
+            },
+            {
+              "japanese": "学校",
+              "reading": "がっこう",
+              "translation": "school"
+            },
+            {
+              "japanese": "駅",
+              "reading": "えき",
+              "translation": "station"
+            },
+            {
+              "japanese": "店",
+              "reading": "みせ",
+              "translation": "shop; store"
+            }
+          ]
+        },
+        {
+          "id": "places-demonstratives",
+          "kind": "grammar-breakdown",
+          "title": "This, that, and which?",
+          "japanese": "これ・それ・あれ・どれ",
+          "reading": "これ・それ・あれ・どれ",
+          "translation": "this; that near you; that over there; which?",
+          "parts": [
+            {
+              "text": "これ",
+              "reading": "これ",
+              "meaning": "this thing near the speaker"
+            },
+            {
+              "text": "それ",
+              "reading": "それ",
+              "meaning": "that thing near the listener, or already mentioned"
+            },
+            {
+              "text": "あれ",
+              "reading": "あれ",
+              "meaning": "that thing away from both people"
+            },
+            {
+              "text": "どれ",
+              "reading": "どれ",
+              "meaning": "which thing? choose from known options"
+            }
+          ]
+        },
+        {
+          "id": "places-ko-so-a-do-note",
+          "kind": "callout",
+          "title": "Things and places",
+          "text": "これ・それ・あれ・どれ stand alone for things: これは何ですか。 asks “What is this?” To name a place, use ここ・そこ・あそこ・どこ: ここは学校です means “This place is a school.” The こ set is near the speaker, そ near the listener, あ away from both, and ど asks a question. Use どれ for “which thing?” and どこ for “where?”"
+        },
+        {
+          "id": "places-location-pattern",
+          "kind": "grammar-breakdown",
+          "title": "Name or ask about a place",
+          "japanese": "ここは学校です。駅はどこですか。",
+          "reading": "ここはがっこうです。えきはどこですか。",
+          "translation": "This is a school. Where is the station?",
+          "parts": [
+            {
+              "text": "ここ・駅",
+              "reading": "ここ・えき",
+              "meaning": "this place; station"
+            },
+            {
+              "text": "は",
+              "reading": "は (wa)",
+              "meaning": "marks the topic, as learned earlier"
+            },
+            {
+              "text": "学校・どこ",
+              "reading": "がっこう・どこ",
+              "meaning": "school; where"
+            },
+            {
+              "text": "です・ですか",
+              "reading": "です・ですか",
+              "meaning": "polite statement; polite question"
+            }
+          ]
+        },
+        {
+          "id": "places-existence-explain",
+          "kind": "paragraph",
+          "text": "To say that something exists at a place, use [place] に [thing] が あります. に marks the place where it exists; が marks the thing that exists. Use あります for things and います for people and animals. These are polite present forms; います is not the same as the copula です."
+        },
+        {
+          "id": "places-existence-example",
+          "kind": "grammar-breakdown",
+          "title": "Say what is at a place",
+          "japanese": "うちにねこがいます。学校に店があります。",
+          "reading": "うちにねこがいます。がっこうにみせがあります。",
+          "translation": "There is a cat at home. There is a shop at the school.",
+          "parts": [
+            {
+              "text": "うちに・学校に",
+              "reading": "うちに・がっこうに",
+              "meaning": "at home; at school (に marks the place)"
+            },
+            {
+              "text": "ねこが・店が",
+              "reading": "ねこが・みせが",
+              "meaning": "a cat; a shop (が marks what exists)"
+            },
+            {
+              "text": "います・あります",
+              "reading": "います・あります",
+              "meaning": "exists: use います for a cat/person, あります for a thing/place"
+            }
+          ]
+        },
+        {
+          "id": "places-guided",
+          "kind": "exercise-slot",
+          "title": "Guided practice",
+          "exercises": [
+            {
+              "id": "places-guided-thing",
+              "type": "multiple-choice",
+              "prompt": "Which word means “that thing near the listener”?",
+              "options": [
+                "それ",
+                "これ",
+                "あれ"
+              ],
+              "answer": "それ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "それ points to a thing near the listener, or one already mentioned."
+              }
+            },
+            {
+              "id": "places-guided-place",
+              "type": "multiple-choice",
+              "prompt": "You and the listener are away from a place. Which word points there?",
+              "options": [
+                "あそこ",
+                "ここ",
+                "そこ"
+              ],
+              "answer": "あそこ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "あそこ is a place away from both speaker and listener."
+              }
+            },
+            {
+              "id": "places-guided-existence",
+              "type": "cloze",
+              "prompt": "Complete “There is a cat at home.”",
+              "before": "うちにねこが",
+              "after": "。",
+              "answer": "います",
+              "explanation": "Use います for a living thing such as a cat.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "ねこ is an animal, so use います."
+              }
+            },
+            {
+              "id": "places-guided-location",
+              "type": "cloze",
+              "prompt": "Complete “There is a shop at the school.”",
+              "before": "学校",
+              "after": "店があります。",
+              "answer": "に",
+              "explanation": "に marks the place where the shop exists.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "に marks the place where something exists."
+              }
+            }
+          ]
+        },
+        {
+          "id": "places-retrieval",
+          "kind": "exercise-slot",
+          "title": "Recall and build",
+          "exercises": [
+            {
+              "id": "places-recall-where",
+              "type": "short-text",
+              "prompt": "Write “where?” in Japanese.",
+              "answer": "どこ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "どこ asks which place or where."
+              }
+            },
+            {
+              "id": "places-recall-which",
+              "type": "short-text",
+              "prompt": "Write “which thing?” in Japanese.",
+              "answer": "どれ",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "どれ asks which thing from a known set."
+              }
+            },
+            {
+              "id": "places-build-question",
+              "type": "sentence-order",
+              "prompt": "Build “Where is the station?”",
+              "chunks": [
+                {
+                  "id": "topic",
+                  "japanese": "駅は",
+                  "reading": "えきは",
+                  "meaning": "as for the station"
+                },
+                {
+                  "id": "where",
+                  "japanese": "どこ",
+                  "reading": "どこ",
+                  "meaning": "where"
+                },
+                {
+                  "id": "question",
+                  "japanese": "ですか。",
+                  "reading": "ですか。",
+                  "meaning": "polite question ending"
+                }
+              ],
+              "answerOrder": [
+                "topic",
+                "where",
+                "question"
+              ],
+              "explanation": "Use the familiar topic + どこ + polite question pattern.",
+              "feedback": {
+                "success": "Correct.",
+                "explanation": "駅はどこですか。 asks where the station is."
+              }
+            }
+          ]
+        }
+      ]
+    }
   ],
   "concepts": [
     {
@@ -6792,7 +7075,14 @@
     {"id":"food-tea","display":"お茶","reading":"おちゃ","translation":"tea"},
     {"id":"food-coffee","display":"コーヒー","reading":"コーヒー","translation":"coffee"},
     {"id":"food-likes","display":"好き・嫌い","reading":"すき・きらい","translation":"like; dislike"},
-    {"id":"food-simple-request","display":"ください・お願いします","reading":"ください・おねがいします","translation":"please give me; please"}
+    {"id":"food-simple-request","display":"ください・お願いします","reading":"ください・おねがいします","translation":"please give me; please"},
+    {"id":"place-home","display":"うち","reading":"うち","translation":"home"},
+    {"id":"place-school","display":"学校","reading":"がっこう","translation":"school"},
+    {"id":"place-station","display":"駅","reading":"えき","translation":"station"},
+    {"id":"place-store","display":"店","reading":"みせ","translation":"shop; store"},
+    {"id":"place-demonstratives","display":"これ・それ・あれ・どれ","reading":"これ・それ・あれ・どれ","translation":"this; that; that over there; which thing"},
+    {"id":"place-location-words","display":"ここ・そこ・あそこ・どこ","reading":"ここ・そこ・あそこ・どこ","translation":"here; there; over there; where"},
+    {"id":"place-existence","display":"に・あります・います","reading":"に・あります・います","translation":"location and polite existence expressions"}
   ],
   "sentences": [
     {
