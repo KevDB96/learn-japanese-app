@@ -38,6 +38,7 @@ export function validateContent(input: unknown): string[] {
       return value ? [value] : [];
     });
   }
+  const conceptIdsForValidation = (entities.concepts ?? []).map((v) => String(v.id));
 
   const displayFields = [...(entities.courses ?? []).map((v, i) => [`courses[${i}]`, v] as const),
     ...(entities.units ?? []).map((v, i) => [`units[${i}]`, v] as const),
@@ -51,6 +52,29 @@ export function validateContent(input: unknown): string[] {
       for (const field of ["reading", "translation"]) if (!string(value[field])) issues.push(`${path}.${field} is required`);
     });
   }
+  (entities.sentences ?? []).forEach((sentence, index) => {
+    const path = `sentences[${index}]`;
+    if (!Array.isArray(sentence.requires)) issues.push(`${path}.requires must be an array`);
+    else sentence.requires.forEach((id, j) => {
+      if (typeof id !== "string" || !CONTENT_ID_PATTERN.test(id)) issues.push(`${path}.requires[${j}] must be a valid content ID`);
+      else if (![...conceptIdsForValidation].includes(id)) issues.push(`${path}.requires references missing concept "${id}"`);
+    });
+    if (!Array.isArray(sentence.segments) || sentence.segments.length === 0) { issues.push(`${path}.segments must contain at least one segment`); return; }
+    const declaredRequirements = new Set(Array.isArray(sentence.requires) ? sentence.requires.filter((id): id is string => typeof id === "string") : []);
+    sentence.segments.forEach((raw, j) => {
+      const segmentPath = `${path}.segments[${j}]`;
+      if (!isRecord(raw)) { issues.push(`${segmentPath} must be an object`); return; }
+      for (const field of ["japanese", "reading", "meaning"]) if (!string(raw[field])) issues.push(`${segmentPath}.${field} is required`);
+      if (!Array.isArray(raw.conceptIds) || raw.conceptIds.length === 0) issues.push(`${segmentPath}.conceptIds must contain at least one concept`);
+      else raw.conceptIds.forEach((id, k) => {
+        if (typeof id !== "string" || !CONTENT_ID_PATTERN.test(id)) issues.push(`${segmentPath}.conceptIds[${k}] must be a valid content ID`);
+        else {
+          if (!conceptIdsForValidation.includes(id)) issues.push(`${segmentPath}.conceptIds references missing concept "${id}"`);
+          if (!declaredRequirements.has(id)) issues.push(`${segmentPath}.conceptIds concept "${id}" must be included in sentence requires`);
+        }
+      });
+    });
+  });
 
   const refs = (record: RecordValue, field: string, path: string): string[] => {
     if (!Array.isArray(record[field])) { issues.push(`${path}.${field} must be an array`); return []; }
@@ -89,6 +113,7 @@ export function validateContent(input: unknown): string[] {
   const lessonsById = new Map<string, RecordValue>((entities.lessons ?? []).filter((l) => typeof l.id === "string").map((l) => [String(l.id), l]));
   const conceptIds = (entities.concepts ?? []).map((v) => String(v.id));
   const sentenceIds = (entities.sentences ?? []).map((v) => String(v.id));
+  const sentenceRefs = new Map<string, string[]>();
   const lessonRequires = new Map<string, string[]>();
   for (const [i, lesson] of (entities.lessons ?? []).entries()) {
     const path = `lessons[${i}]`;
@@ -153,6 +178,7 @@ export function validateContent(input: unknown): string[] {
         if (typeof value.conceptId !== "string" || !conceptIds.includes(value.conceptId)) issues.push(`${blockPath}.conceptId references missing concept "${String(value.conceptId ?? "")}"`);
       } else if (value.kind === "sentence-ref") {
         if (typeof value.sentenceId !== "string" || !sentenceIds.includes(value.sentenceId)) issues.push(`${blockPath}.sentenceId references missing sentence "${String(value.sentenceId ?? "")}"`);
+        else sentenceRefs.set(value.sentenceId, [...(sentenceRefs.get(value.sentenceId) ?? []), id]);
       } else issues.push(`${blockPath}.kind "${value.kind}" is unknown`);
     });
     else issues.push(`${path}.blocks must be an array`);
@@ -195,5 +221,20 @@ export function validateContent(input: unknown): string[] {
     for (const id of idsInCourse) if (!reached.has(id)) issues.push(`course "${courseId}" cannot reach lesson "${id}" from its start lessons (missing prerequisite path)`);
   }
   for (const id of lessonsById.keys()) if (!assignedLessons.has(id)) issues.push(`lesson "${id}" is not assigned to any course`);
+  for (const sentence of entities.sentences ?? []) {
+    const refsToSentence = sentenceRefs.get(String(sentence.id)) ?? [];
+    if (refsToSentence.length === 0) issues.push(`sentence "${String(sentence.id)}" is unreachable from any lesson`);
+    for (const lessonId of refsToSentence) {
+      const availableLessons = new Set<string>();
+      const collect = (current: string) => { if (availableLessons.has(current)) return; availableLessons.add(current); for (const required of lessonRequires.get(current) ?? []) collect(required); };
+      collect(lessonId);
+      const availableConcepts = new Set<string>();
+      for (const current of availableLessons) {
+        const lesson = lessonsById.get(current);
+        if (lesson) for (const concept of [...(Array.isArray(lesson.introduces) ? lesson.introduces : []), ...(Array.isArray(lesson.reinforces) ? lesson.reinforces : [])]) if (typeof concept === "string") availableConcepts.add(concept);
+      }
+      for (const required of Array.isArray(sentence.requires) ? sentence.requires : []) if (typeof required === "string" && !availableConcepts.has(required)) issues.push(`sentence "${String(sentence.id)}" requires concept "${required}" unavailable in lesson "${lessonId}"`);
+    }
+  }
   return issues;
 }

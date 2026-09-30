@@ -144,6 +144,17 @@ export interface Sentence {
   readonly display: string;
   readonly reading: string;
   readonly translation: string;
+  /** Concepts needed to understand this sentence, including its grammar. */
+  readonly requires: readonly ContentId[];
+  readonly segments: readonly SentenceSegment[];
+}
+
+/** Aligned Japanese/reading/meaning chunk with explicit curriculum concepts. */
+export interface SentenceSegment {
+  readonly japanese: string;
+  readonly reading: string;
+  readonly meaning: string;
+  readonly conceptIds: readonly ContentId[];
 }
 
 export type LessonBlock =

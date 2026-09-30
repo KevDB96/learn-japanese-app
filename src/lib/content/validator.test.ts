@@ -13,7 +13,7 @@ const valid: ContentCatalog = {
     { id: id("lesson-two"), display: "Next", requires: [id("lesson-one")], introduces: [], reinforces: [id("sentence-one")], blocks: [{ id: id("block-two"), kind: "sentence-ref", sentenceId: id("sentence-one") }] },
   ],
   concepts: [{ id: id("concept-one"), display: "猫", reading: "ねこ", translation: "cat" }],
-  sentences: [{ id: id("sentence-one"), display: "猫です。", reading: "ねこです。", translation: "It is a cat." }],
+  sentences: [{ id: id("sentence-one"), display: "猫です。", reading: "ねこです。", translation: "It is a cat.", requires: [id("concept-one")], segments: [{ japanese: "猫", reading: "ねこ", meaning: "cat", conceptIds: [id("concept-one")] }, { japanese: "です。", reading: "です。", meaning: "is", conceptIds: [id("concept-one")] }] }],
 };
 
 const copy = (): ContentCatalog => structuredClone(valid);
@@ -61,6 +61,18 @@ describe("content validation and registry", () => {
     const fixture = copy();
     (fixture.units as Unit[])[0] = { ...fixture.units[0], lessonIds: [id("lesson-one")] };
     expect(validateContent(fixture)).toContain('lesson "lesson-two" is not assigned to any course');
+  });
+
+  it("requires annotated sentences to be reachable and curriculum-safe", () => {
+    const fixture = copy();
+    (fixture.sentences as NonNullable<ContentCatalog["sentences"]>[number][])[0] = {
+      ...fixture.sentences[0]!, requires: [id("concept-later")],
+      segments: [{ japanese: "猫", reading: "ねこ", meaning: "cat", conceptIds: [id("concept-later")] }],
+    };
+    const errors = validateContent(fixture).join("\n");
+    expect(errors).toContain('sentence "sentence-one" requires concept "concept-later" unavailable in lesson "lesson-two"');
+    (fixture.lessons as Lesson[])[1] = { ...fixture.lessons[1]!, blocks: [] };
+    expect(validateContent(fixture)).toContain('sentence "sentence-one" is unreachable from any lesson');
   });
 
   it("rejects unknown block kinds and missing required text fields", () => {
