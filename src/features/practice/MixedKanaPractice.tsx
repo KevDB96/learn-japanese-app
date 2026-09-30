@@ -3,6 +3,7 @@ import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
 import { getMixedKanaAvailability, recognitionQuestion, type PracticeMode } from "./mixed-kana.ts";
+import { KanaFluencyDrill } from "./KanaFluencyDrill.tsx";
 
 const allKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
 const modes: readonly { id: PracticeMode; label: string }[] = [
@@ -47,6 +48,7 @@ export function MixedKanaPractice({ profileId }: { profileId: LearnerProfileId }
   return <section className="mixed-practice" aria-label="Mixed kana practice">
     <h2>Mixed kana</h2>
     <p>Manual practice · no review schedule changes</p>
+    <KanaFluencyDrill kana={known} concepts={states.concepts} profileId={profileId} />
     <div className="practice-mode-list" role="group" aria-label="Practice mode">
       {modes.map((item) => <button key={item.id} type="button" aria-pressed={mode === item.id} onClick={() => { setMode(item.id); setIndex(0); setAnswer(undefined); }}>{item.label}</button>)}
     </div>
