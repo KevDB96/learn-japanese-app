@@ -4,11 +4,13 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, describe, expect, it } from "vitest";
 import { CloudSavePanel } from "../../features/sync/CloudSavePanel.tsx";
 import { openLocalRepositories } from "../storage/repositories.ts";
+import { STORAGE_DATABASE_NAME } from "../storage/types.ts";
 import { CLOUD_PROFILE_IDS, compareSaveMetadata, type CloudSaveAdapter, type CloudSaveDocument } from "./cloud-save.ts";
 
 class FakeCloud implements CloudSaveAdapter {
   document?: CloudSaveDocument;
   writes = 0;
+  events = new Map<string, Record<string, unknown>>();
   async read(profileId: string) { return this.document?.profileId === profileId ? this.document : undefined; }
   async write(document: CloudSaveDocument, expectedRevision: number) {
     if ((this.document?.revision ?? 0) !== expectedRevision) throw new Error("revision conflict");
@@ -16,9 +18,14 @@ class FakeCloud implements CloudSaveAdapter {
     this.document = { ...document, revision: expectedRevision + 1 };
     return this.document;
   }
+  async writeReviewEvents(_profileId: string, events: readonly Record<string, unknown>[]) { for (const event of events) this.events.set(String(event.id), event); return events.map((event) => String(event.id)); }
+  async readReviewEvents(_profileId: string, offset: number, limit: number) { return [...this.events.values()].slice(offset, offset + limit); }
 }
 
-afterEach(() => { cleanup(); window.localStorage.clear(); });
+afterEach(async () => {
+  cleanup(); window.localStorage.clear();
+  await new Promise<void>((resolve, reject) => { const request = indexedDB.deleteDatabase(STORAGE_DATABASE_NAME); request.onsuccess = () => resolve(); request.onerror = () => reject(request.error); });
+});
 
 describe("cloud convenience saves", () => {
   it("uses exactly two opaque fixed slots and compares metadata", () => {
@@ -38,6 +45,17 @@ describe("cloud convenience saves", () => {
     await waitFor(() => expect(adapter.writes).toBe(1), { timeout: 3000 });
     expect(adapter.document).toMatchObject({ profileId: CLOUD_PROFILE_IDS.kevin, revision: 1, schemaVersion: 1, state: { lessonProgress: [{ lessonId: "lesson-cloud-test" }] } });
     expect(screen.getByText("Saved")).toBeInTheDocument();
+  });
+
+  it("syncs review UUIDs separately from the bounded profile snapshot", async () => {
+    const adapter = new FakeCloud();
+    const repos = await openLocalRepositories();
+    const id = "00000000-0000-4000-8000-000000000042";
+    await repos.reviews.record({ id, conceptId: "kana-a", cardId: "kana-a", rating: "Got It", reviewedAt: "2026-01-01T00:00:00.000Z" });
+    repos.close();
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+    await waitFor(() => expect(adapter.events.has(id)).toBe(true));
+    expect(adapter.document).toBeUndefined();
   });
 
   it("merges local and cloud saves instead of replacing learner history", async () => {

@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
 import { CLOUD_PROFILE_IDS, CLOUD_SAVE_SCHEMA_VERSION, CloudSaveConflictError, compareSaveMetadata, configuredCloudSave, type CloudSaveAdapter, type CloudSaveDocument, type SyncState } from "../../lib/sync/cloud-save.ts";
 import { applyMergedProfileSnapshot, mergeProfileSnapshots, readProfileSnapshot, saveCloudMetadata, validateCloudDocument } from "../../lib/sync/profile-snapshot.ts";
+import { syncReviewEventHistory } from "../../lib/sync/review-event-sync.ts";
+import { openLocalRepositories } from "../../lib/storage/repositories.ts";
+
+function boundedCloudState(state: CloudSaveDocument["state"]): CloudSaveDocument["state"] {
+  return {
+    ...state,
+    reviewEvents: [],
+    pendingSync: (state.pendingSync ?? []).filter((item) => item.operation !== "review-event"),
+  };
+}
 
 export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfileId; adapter?: CloudSaveAdapter }) {
   const [cloudAdapter] = useState<CloudSaveAdapter | undefined>(() => adapter ?? configuredCloudSave());
@@ -14,7 +24,23 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
     if (!cloudAdapter) { setStatus("unavailable"); return; }
     let active = true;
     let timer: ReturnType<typeof setTimeout> | undefined;
+    let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let known: CloudSaveDocument | undefined;
+    let syncingEvents = false;
+    const syncEvents = async () => {
+      if (syncingEvents || !active || !navigator.onLine) return;
+      syncingEvents = true;
+      try {
+        const result = await syncReviewEventHistory(cloudAdapter, profileId);
+        if (active && result.remaining > 0) retryTimer = setTimeout(() => void syncEvents(), 2000);
+      } catch (error) {
+        if (active) {
+          setStatus(error instanceof TypeError ? "conflict" : "offline");
+          setMessage(error instanceof TypeError ? "Review history needs attention. Local reviews are preserved." : "");
+          retryTimer = setTimeout(() => void syncEvents(), 30000);
+        }
+      } finally { syncingEvents = false; }
+    };
     const refresh = async (allowWrite: boolean) => {
       try {
         const snapshot = await readProfileSnapshot(profileId);
@@ -29,7 +55,7 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
         if (!navigator.onLine) { setStatus("offline"); return; }
         if (allowWrite && snapshot.updatedAt) {
           setStatus("saving");
-          const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: snapshot.updatedAt, state: snapshot.state }, remote?.revision ?? 0);
+          const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: snapshot.updatedAt, state: boundedCloudState(snapshot.state) }, remote?.revision ?? 0);
           if (active) { saveCloudMetadata(profileId, written.revision, written.schemaVersion); known = written; setCloud(written); setStatus("saved"); }
         } else if (!remote && snapshot.updatedAt) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 800); }
         else setStatus("saved");
@@ -41,13 +67,15 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
       if (timer) clearTimeout(timer);
       setStatus(navigator.onLine ? "saving" : "offline");
       timer = setTimeout(() => void refresh(true), 800);
+      void syncEvents();
     };
-    const onOnline = () => void refresh(false);
+    const onOnline = () => { void refresh(false); void syncEvents(); };
     const onOffline = () => setStatus("offline");
     window.addEventListener("learn-japanese:state-changed", onChange);
     window.addEventListener("online", onOnline); window.addEventListener("offline", onOffline);
     void refresh(false);
-    return () => { active = false; if (timer) clearTimeout(timer); window.removeEventListener("learn-japanese:state-changed", onChange); window.removeEventListener("online", onOnline); window.removeEventListener("offline", onOffline); };
+    void syncEvents();
+    return () => { active = false; if (timer) clearTimeout(timer); if (retryTimer) clearTimeout(retryTimer); window.removeEventListener("learn-japanese:state-changed", onChange); window.removeEventListener("online", onOnline); window.removeEventListener("offline", onOffline); };
   }, [cloudAdapter, profileId]);
 
   async function mergeSaves() {
@@ -56,10 +84,19 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
     try {
       const merged = mergeProfileSnapshots(local, cloud, profileId);
       await applyMergedProfileSnapshot(profileId, merged);
+      const repos = await openLocalRepositories(undefined, profileId);
+      try {
+        for (const rawEvent of merged.state.reviewEvents ?? []) {
+          const event = { ...rawEvent, id: String(rawEvent.id).replace(/^(review|practice|confusion|fluency)-(?=[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$)/i, "") };
+          if (!(await repos.reviews.get(event.id))) await repos.reviews.append(event as never);
+        }
+      }
+      finally { repos.close(); }
+      await syncReviewEventHistory(cloudAdapter, profileId);
       const latest = await cloudAdapter.read(CLOUD_PROFILE_IDS[profileId]);
       const validLatest = latest ? validateCloudDocument(latest, profileId) : undefined;
       if (validLatest && validLatest.revision !== cloud.revision) throw new CloudSaveConflictError();
-      const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (validLatest?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: merged.updatedAt ?? new Date().toISOString(), state: merged.state }, validLatest?.revision ?? 0);
+      const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (validLatest?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: merged.updatedAt ?? new Date().toISOString(), state: boundedCloudState(merged.state) }, validLatest?.revision ?? 0);
       saveCloudMetadata(profileId, written.revision, written.schemaVersion);
       setLocal(await readProfileSnapshot(profileId)); setCloud(written); setStatus("saved"); setMessage("");
     } catch (error) { setStatus("conflict"); setMessage(error instanceof TypeError ? "Cloud save could not be merged. This device's data is preserved." : "Save changed during merge. Compare again."); }

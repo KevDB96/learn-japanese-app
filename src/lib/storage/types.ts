@@ -78,5 +78,5 @@ export interface DeviceMetadata extends StoredRecord {
   readonly registeredAt: string;
 }
 
-export const STORAGE_SCHEMA_VERSION = 3;
+export const STORAGE_SCHEMA_VERSION = 4;
 export const STORAGE_DATABASE_NAME = "learn-japanese-local";

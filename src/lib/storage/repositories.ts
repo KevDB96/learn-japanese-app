@@ -6,6 +6,7 @@ import { applyReviewEvent, createSrsState, rebuildSrsState, selectDueReviews, ty
 export interface Repository<T extends { readonly id: string }> {
   get(id: string): Promise<T | undefined>;
   put(value: T): Promise<void>;
+  delete(id: string): Promise<void>;
   list(): Promise<T[]>;
 }
 
@@ -18,6 +19,7 @@ function repository<T extends { readonly id: string; readonly profileId?: Learne
   return {
     async get(id) { const value = await withStore<T | undefined>(db, store, "readonly", (s) => s.get(scoped ? storageId(profileId, id) : id)); return value ? { ...value, id, ...(scoped ? { profileId } : {}) } : undefined; },
     async put(value) { await withStore(db, store, "readwrite", (s) => s.put(scoped ? { ...value, id: storageId(profileId, value.id), profileId } : value)); if (scoped) changed(profileId); },
+    async delete(id) { await withStore(db, store, "readwrite", (s) => s.delete(scoped ? storageId(profileId, id) : id)); if (scoped) changed(profileId); },
     async list() { const values = await withStore<T[]>(db, store, "readonly", (s) => s.getAll()); return (scoped ? values.filter((value) => value.profileId === profileId) : values).map((value) => scoped ? { ...value, id: value.id.slice(profileId.length + 2) } : value); },
   };
 }
@@ -33,9 +35,16 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
     deviceMetadata: repository<DeviceMetadata>(db, "deviceMetadata", profileId),
     reviews: {
       async get(id: string) { const event = await withStore<ReviewEvent | undefined>(db, "reviewEvents", "readonly", (s) => s.get(storageId(profileId, id))); return event ? { ...event, id } : undefined; },
+      async delete(id: string) { await withStore(db, "reviewEvents", "readwrite", (s) => s.delete(storageId(profileId, id))); changed(profileId); },
       async list() { return (await withStore<ReviewEvent[]>(db, "reviewEvents", "readonly", (s) => s.getAll())).filter((event) => event.profileId === profileId).map((event) => ({ ...event, id: event.id.slice(profileId.length + 2) })); },
       /** add() is intentionally used instead of put(): duplicate event IDs reject and never overwrite. */
-      async append(event: ReviewEvent) { await withStore(db, "reviewEvents", "readwrite", (s) => s.add({ ...event, id: storageId(profileId, event.id), profileId })); changed(profileId); },
+      async append(event: ReviewEvent, queueSync = true) {
+        const tx = db.transaction(queueSync ? ["reviewEvents", "pendingSync"] : ["reviewEvents"], "readwrite");
+        tx.objectStore("reviewEvents").add({ ...event, id: storageId(profileId, event.id), profileId });
+        if (queueSync) tx.objectStore("pendingSync").put({ id: storageId(profileId, `review-event::${event.id}`), profileId, recordVersion: 1, updatedAt: event.reviewedAt, operation: "review-event", entityId: event.id, payload: { ...event, profileId } });
+        await new Promise<void>((resolve, reject) => { tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error ?? new Error("Review append failed")); tx.onabort = () => reject(tx.error ?? new Error("Review append aborted")); });
+        changed(profileId);
+      },
       async getStates() { return (await withStore<ReviewCardState[]>(db, "reviewStates", "readonly", (s) => s.getAll())).filter((state) => state.profileId === profileId).map((state) => ({ ...state, id: state.id.slice(profileId.length + 2) })); },
       async due(now: number) { return selectDueReviews(await this.getStates(), now); },
       async introduce(conceptId: string, at: number, cardId = conceptId) {
@@ -46,14 +55,15 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
       },
       async record(input: { id: string; conceptId: string; cardId: string; rating: ReviewRating; reviewedAt: string; sessionId?: string; kind?: "scheduled-review" | "practice"; confusedConceptId?: string; contrastConceptId?: string; responseTimeMs?: number }) {
         const kind = input.kind ?? "scheduled-review";
+        const eventId = input.id.replace(/^(review|practice|confusion|fluency)-(?=[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$)/i, "");
         const event: ReviewEvent = {
-          id: storageId(profileId, input.id), profileId, recordVersion: 1, updatedAt: input.reviewedAt, conceptId: input.conceptId,
+          id: storageId(profileId, eventId), profileId, recordVersion: 1, updatedAt: input.reviewedAt, conceptId: input.conceptId,
           cardId: input.cardId, reviewedAt: input.reviewedAt,
           rating: ({ Forgot: "again", Hard: "hard", "Got It": "good", Easy: "easy" } as const)[input.rating],
           kind, ...(input.sessionId ? { sessionId: input.sessionId } : {}), ...(input.confusedConceptId ? { confusedConceptId: input.confusedConceptId } : {}), ...(input.contrastConceptId ? { contrastConceptId: input.contrastConceptId } : {}), ...(Number.isFinite(input.responseTimeMs) && input.responseTimeMs! > 0 ? { responseTimeMs: input.responseTimeMs } : {}),
         };
         const scheduled: SchedulingReviewEvent = { ...input, kind };
-        const tx = db.transaction(["reviewEvents", "reviewStates"], "readwrite");
+        const tx = db.transaction(["reviewEvents", "reviewStates", "pendingSync"], "readwrite");
         const events = tx.objectStore("reviewEvents");
         const states = tx.objectStore("reviewStates");
         const existing = events.get(event.id);
@@ -62,6 +72,7 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
           const stateRequest = states.get(storageId(profileId, input.cardId));
           stateRequest.onsuccess = () => {
             events.add(event);
+            tx.objectStore("pendingSync").put({ id: storageId(profileId, `review-event::${eventId}`), profileId, recordVersion: 1, updatedAt: input.reviewedAt, operation: "review-event", entityId: eventId, payload: { ...event, id: eventId, profileId } });
             const next: SrsState | undefined = applyReviewEvent(stateRequest.result?.state, scheduled);
             if (next) states.put({ id: storageId(profileId, input.cardId), profileId, recordVersion: 1, updatedAt: input.reviewedAt, conceptId: input.conceptId, cardId: input.cardId, state: next } satisfies ReviewCardState);
           };

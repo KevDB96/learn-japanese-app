@@ -45,6 +45,30 @@ export const migrations: Readonly<Record<number, Migration>> = {
       };
     }
   },
+  4(_db, transaction) {
+    const events = transaction.objectStore("reviewEvents");
+    const pending = transaction.objectStore("pendingSync");
+    const cursorRequest = events.openCursor();
+    cursorRequest.onsuccess = () => {
+      const cursor = cursorRequest.result;
+      if (!cursor) return;
+      const event = cursor.value as { id: string; profileId?: string };
+      if (event.profileId && event.profileId !== "kevin" && event.profileId !== "janne") {
+        cursor.continue(); return;
+      }
+      const profileId = event.profileId ?? "kevin";
+      const localId = event.id.slice(event.id.startsWith(`${profileId}::`) ? profileId.length + 2 : 0);
+      const eventId = localId.replace(/^(review|practice|confusion|fluency)-(?=[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$)/i, "");
+      if (event.id !== `${profileId}::${eventId}`) {
+        cursor.delete();
+        events.put({ ...event, id: `${profileId}::${eventId}`, profileId });
+      }
+      const payload = { ...event, id: eventId, profileId };
+      const id = `${profileId}::review-event::${eventId}`;
+      pending.put({ id, profileId, recordVersion: 1, updatedAt: (event as { reviewedAt?: string }).reviewedAt ?? new Date().toISOString(), operation: "review-event", entityId: eventId, payload });
+      cursor.continue();
+    };
+  },
 };
 
 export function openLocalDatabase(name = STORAGE_DATABASE_NAME): Promise<IDBDatabase> {

@@ -12,8 +12,17 @@ export async function readProfileSnapshot(profileId: LearnerProfileId): Promise<
   const repos = await openLocalRepositories(undefined, profileId);
   try {
     const values = await Promise.all([repos.settings.list(), repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.list(), repos.reviews.getStates(), repos.pendingSync.list()]);
-    const state = Object.fromEntries(PROFILE_STORES.map((name, index) => [name, values[index] as readonly Record<string, unknown>[]]));
-    const dates = values.flat().map((value) => Date.parse((value as { updatedAt?: string }).updatedAt ?? "")).filter(Number.isFinite);
+    const state = Object.fromEntries(PROFILE_STORES.map((name, index) => {
+      if (name === "reviewEvents") return [name, values[index] as readonly Record<string, unknown>[]];
+      if (name === "pendingSync") return [name, (values[index] as readonly Record<string, unknown>[]).filter((item) => item.operation !== "review-event")];
+      return [name, values[index] as readonly Record<string, unknown>[]];
+    }));
+    const dateRecords = values.flatMap((items, index): Record<string, unknown>[] => {
+      if (index === 3) return [];
+      const records = items as Record<string, unknown>[];
+      return index === 5 ? records.filter((item) => item.operation !== "review-event") : records;
+    });
+    const dates = dateRecords.map((value) => Date.parse((value as { updatedAt?: string }).updatedAt ?? "")).filter(Number.isFinite);
     const metadata = JSON.parse(localStorage.getItem(metadataKey(profileId)) ?? "null") as { revision?: number; schemaVersion?: number } | null;
     return { state, updatedAt: dates.length ? new Date(Math.max(...dates)).toISOString() : undefined, revision: metadata?.revision ?? 0, schemaVersion: metadata?.schemaVersion ?? CLOUD_SAVE_SCHEMA_VERSION };
   } finally { repos.close(); }
@@ -128,27 +137,26 @@ export async function replaceProfileSnapshot(profileId: LearnerProfileId, payloa
     const tx = repos.db.transaction([...PROFILE_STORES], "readwrite");
     for (const name of PROFILE_STORES) {
       const store = tx.objectStore(name);
+      if (name === "reviewEvents") continue;
       const request = store.openCursor();
-      const existingEventIds = new Set<string>();
-      const missingEvents: Record<string, unknown>[] = [];
       request.onsuccess = () => {
         const cursor = request.result;
         if (cursor) {
           if ((cursor.value as { profileId?: string }).profileId === profileId) {
-            if (name === "reviewEvents") existingEventIds.add((cursor.value as { id: string }).id.slice(profileId.length + 2));
-            else cursor.delete();
+            const value = cursor.value as { id: string; operation?: string };
+            if (name === "pendingSync" && value.operation === "review-event") { cursor.continue(); return; }
+            cursor.delete();
           }
           cursor.continue(); return;
         }
-        const records = name === "reviewEvents" ? missingEvents : payload[name] ?? [];
+        const records = payload[name] ?? [];
         for (const raw of records) {
           if (raw.profileId !== undefined && raw.profileId !== profileId) { tx.abort(); return; }
           const record = raw as { id: string };
-          if (name === "reviewEvents" && existingEventIds.has(record.id)) continue;
+          if (name === "pendingSync" && (raw as { operation?: string }).operation === "review-event") continue;
           store.put({ ...raw, id: `${profileId}::${record.id}`, profileId });
         }
       };
-      if (name === "reviewEvents") for (const event of payload.reviewEvents ?? []) missingEvents.push(event);
     }
     await new Promise<void>((resolve, reject) => { tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error ?? new TypeError("Snapshot profile mismatch")); });
   } finally { repos.close(); }

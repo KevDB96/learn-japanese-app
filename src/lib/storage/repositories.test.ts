@@ -24,7 +24,7 @@ afterEach(async () => {
 describe("local storage repositories", () => {
   it("initializes an empty database with all stores and default metadata", async () => {
     const { db, repos } = await fresh();
-    expect(STORAGE_SCHEMA_VERSION).toBe(3);
+    expect(STORAGE_SCHEMA_VERSION).toBe(4);
     expect([...db.objectStoreNames].sort()).toEqual(["appMetadata", "conceptStates", "deviceMetadata", "lessonProgress", "pendingSync", "profiles", "reviewEvents", "reviewStates", "settings"].sort());
     expect(await repos.appMetadata.get("app")).toMatchObject({ contentVersion: "0", contentSchemaVersion: 1 });
     expect(await repos.deviceMetadata.get("device")).toMatchObject({ deviceId: "" });
@@ -50,6 +50,7 @@ describe("local storage repositories", () => {
     await expect(repos.reviews.append({ ...event, rating: "easy" })).rejects.toBeTruthy();
     expect(await repos.reviews.get(event.id)).toEqual({ ...event, profileId: "kevin" });
     expect(await repos.reviews.list()).toEqual([{ ...event, profileId: "kevin" }]);
+    expect(await repos.pendingSync.list()).toMatchObject([{ entityId: event.id, operation: "review-event" }]);
   });
 
   it("applies an event idempotently, persists derived state offline, and rebuilds from the append-only log", async () => {
@@ -105,7 +106,7 @@ describe("local storage repositories", () => {
     expect(await janne.settings.list()).toEqual([]);
     expect(await janne.lessonProgress.list()).toEqual([]);
     expect(await janne.conceptStates.list()).toEqual([]);
-    expect(await janne.pendingSync.list()).toEqual([]);
+    expect(await janne.pendingSync.list()).toMatchObject([{ operation: "review-event", entityId: "same-event" }]);
     expect(await kevin.reviews.list()).toMatchObject([{ conceptId: "kana-kata-shi", confusedConceptId: "kana-kata-tsu" }]);
     expect(await janne.reviews.list()).toMatchObject([{ conceptId: "kana-kata-so", confusedConceptId: "kana-kata-n" }]);
     expect(await kevin.reviews.getStates()).toMatchObject([{ cardId: "same-card", state: { reviewCount: 1, lapseCount: 0 } }]);
@@ -136,5 +137,26 @@ describe("local storage repositories", () => {
     const reopened = await openLocalDatabase(name);
     opened.push(reopened);
     expect(await createRepositories(reopened, "kevin").lessonProgress.list()).toHaveLength(1);
+  });
+
+  it("backfills old review history into the UUID outbox and normalizes prefixed UUIDs", async () => {
+    const name = `${STORAGE_DATABASE_NAME}-test`;
+    const old = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open(name, 3);
+      request.onupgradeneeded = () => {
+        const db = request.result;
+        for (const store of ["profiles", "settings", "lessonProgress", "conceptStates", "reviewEvents", "pendingSync", "appMetadata", "deviceMetadata", "reviewStates"]) if (!db.objectStoreNames.contains(store)) db.createObjectStore(store, { keyPath: "id" });
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const eventId = "00000000-0000-4000-8000-000000000001";
+    old.transaction("reviewEvents", "readwrite").objectStore("reviewEvents").put({ id: `kevin::review-${eventId}`, profileId: "kevin", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z", reviewedAt: "2026-01-01T00:00:00.000Z", conceptId: "kana-a", cardId: "kana-a", rating: "good", kind: "scheduled-review" });
+    old.close();
+    const upgraded = await openLocalDatabase(name);
+    opened.push(upgraded);
+    const repos = createRepositories(upgraded);
+    expect(await repos.reviews.get(eventId)).toMatchObject({ id: eventId, profileId: "kevin" });
+    expect(await repos.pendingSync.get(`review-event::${eventId}`)).toMatchObject({ operation: "review-event", entityId: eventId, payload: { id: eventId } });
   });
 });

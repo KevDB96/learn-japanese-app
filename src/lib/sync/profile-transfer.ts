@@ -106,6 +106,19 @@ export async function importProfile(value: unknown, profileId: LearnerProfileId)
       tx.onerror = () => reject(tx.error ?? new Error("Profile import failed"));
       tx.onabort = () => reject(tx.error ?? new Error("Profile import was rolled back"));
     });
+    const events = await repos.reviews.list();
+    const sync = repos.db.transaction("pendingSync", "readwrite");
+    const pending = sync.objectStore("pendingSync");
+    const cursor = pending.openCursor();
+    cursor.onsuccess = () => {
+      const item = cursor.result;
+      if (item) {
+        if ((item.value as { profileId?: string; operation?: string }).profileId === profileId && (item.value as { operation?: string }).operation === "review-event") item.delete();
+        item.continue(); return;
+      }
+      for (const event of events) pending.put({ id: `${profileId}::review-event::${event.id}`, profileId, recordVersion: 1, updatedAt: event.reviewedAt, operation: "review-event", entityId: event.id, payload: { ...event, profileId } });
+    };
+    await new Promise<void>((resolve, reject) => { sync.oncomplete = () => resolve(); sync.onerror = () => reject(sync.error ?? new Error("Profile review queue failed")); sync.onabort = () => reject(sync.error ?? new Error("Profile review queue aborted")); });
   } finally { repos.close(); }
   window.dispatchEvent(new CustomEvent("learn-japanese:state-changed", { detail: { profileId, origin: "restore" } }));
 }

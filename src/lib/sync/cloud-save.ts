@@ -16,9 +16,16 @@ export interface CloudSaveDocument {
 export interface CloudSaveAdapter {
   read(profileId: string): Promise<CloudSaveDocument | undefined>;
   write(document: CloudSaveDocument, expectedRevision: number): Promise<CloudSaveDocument>;
+  writeReviewEvents?(profileId: string, events: readonly Record<string, unknown>[]): Promise<string[]>;
+  readReviewEvents?(profileId: string, offset: number, limit: number): Promise<Record<string, unknown>[]>;
 }
 export type SyncState = "saved" | "saving" | "offline" | "conflict" | "unavailable";
 export class CloudSaveConflictError extends Error { constructor() { super("Cloud save revision changed"); this.name = "CloudSaveConflictError"; } }
+function canonical(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonical);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, canonical(item)]));
+}
 
 export function compareSaveMetadata(local: { updatedAt?: string } | undefined, cloud: CloudSaveDocument | undefined): "local-only" | "cloud-only" | "same" | "local-newer" | "cloud-newer" | "conflict" {
   if (!local && !cloud) return "same";
@@ -49,6 +56,27 @@ export class SupabaseCloudSaveAdapter implements CloudSaveAdapter {
     const row = Array.isArray(data) ? data[0] : data;
     if (!row) throw new CloudSaveConflictError();
     return { profileId: row.profile_id, revision: row.revision, schemaVersion: row.schema_version, updatedAt: row.updated_at, state: row.state as CloudSavePayload };
+  }
+  async writeReviewEvents(profileId: string, events: readonly Record<string, unknown>[]) {
+    const client = await this.client;
+    if (events.length < 1 || events.length > 50 || new TextEncoder().encode(JSON.stringify(events)).byteLength > 65536) throw new TypeError("Review event batch exceeds cloud limits");
+    const rows = events.map((event) => ({ profile_id: profileId, event_id: event.id, reviewed_at: event.reviewedAt, event }));
+    const { error: writeError } = await client.from("profile_review_events").upsert(rows, { onConflict: "profile_id,event_id", ignoreDuplicates: true });
+    if (writeError) throw writeError;
+    const ids = events.map((event) => String(event.id));
+    const { data, error } = await client.from("profile_review_events").select("event_id,event").eq("profile_id", profileId).in("event_id", ids);
+    if (error) throw error;
+    if (!Array.isArray(data)) throw new TypeError("Invalid review event acknowledgement");
+    const expected = new Map(events.map((event) => [String(event.id), JSON.stringify(canonical(event))]));
+    for (const row of data) if (expected.get(row.event_id) !== JSON.stringify(canonical(row.event))) throw new TypeError(`Conflicting review event UUID: ${row.event_id}`);
+    return data.map((row) => row.event_id as string);
+  }
+  async readReviewEvents(profileId: string, offset: number, limit: number) {
+    const client = await this.client;
+    const { data, error } = await client.from("profile_review_events").select("event").eq("profile_id", profileId).order("reviewed_at").order("event_id").range(offset, offset + Math.min(100, limit) - 1);
+    if (error) throw error;
+    if (!Array.isArray(data) || data.some((row) => !row.event || typeof row.event !== "object" || Array.isArray(row.event))) throw new TypeError("Invalid cloud review events");
+    return data.map((row) => row.event as Record<string, unknown>);
   }
 }
 
