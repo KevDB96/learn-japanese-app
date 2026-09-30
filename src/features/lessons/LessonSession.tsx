@@ -11,7 +11,7 @@ import { identifyKanaConfusion } from "../progress/hiragana.ts";
 
 type SessionState = { readonly repos: ProgressRepositories; readonly index: number; readonly mismatch: boolean; readonly completed: boolean };
 
-export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId: LearnerProfileId }) {
+export function LessonSession({ lesson, profileId, onOpenLesson, reviewOnly = false, onExitReview }: { lesson: Lesson; profileId: LearnerProfileId; onOpenLesson?: (lessonId: string) => void; reviewOnly?: boolean; onExitReview?: () => void }) {
   const [session, setSession] = useState<SessionState>();
   const [storageError, setStorageError] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -23,12 +23,12 @@ export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId
       close = opened.close;
       const progress = await opened.lessonProgress.get(lesson.id);
       const resume = resolveLessonResume(progress, contentCatalog, lesson);
-      if (progress?.status !== "completed") await saveLessonPosition(opened, contentCatalog, lesson, resume.blockIndex);
-      if (!cancelled) setSession({ repos: opened, index: resume.blockIndex, mismatch: resume.kind === "content-changed", completed: progress?.status === "completed" });
+      if (!reviewOnly && progress?.status !== "completed") await saveLessonPosition(opened, contentCatalog, lesson, resume.blockIndex);
+      if (!cancelled) setSession({ repos: opened, index: reviewOnly ? 0 : resume.blockIndex, mismatch: !reviewOnly && resume.kind === "content-changed", completed: !reviewOnly && progress?.status === "completed" });
       else opened.close();
     }).catch(() => { if (!cancelled) setStorageError(true); });
     return () => { cancelled = true; close?.(); };
-  }, [lesson, profileId]);
+  }, [lesson, profileId, reviewOnly]);
 
   if (storageError) return <p role="status">Lesson progress is unavailable.</p>;
   if (!session) return <p role="status">Loading lesson…</p>;
@@ -44,11 +44,12 @@ export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId
     setBusy(true);
     try {
       if (session.index >= lesson.blocks.length - 1) {
+        if (reviewOnly) { onExitReview?.(); return; }
         await completeLesson(progress, contentCatalog, lesson);
         setSession({ ...session, completed: true });
       } else {
         const index = session.index + 1;
-        await saveLessonPosition(progress, contentCatalog, lesson, index);
+        if (!reviewOnly) await saveLessonPosition(progress, contentCatalog, lesson, index);
         setSession({ ...session, index });
       }
     } finally { setBusy(false); }
@@ -57,8 +58,8 @@ export function LessonSession({ lesson, profileId }: { lesson: Lesson; profileId
   return <section className="lesson-session" aria-label={lesson.display}>
     {session.mismatch && <p role="status">This lesson changed. Resume from the beginning.</p>}
     {session.completed ? <p role="status">Lesson complete</p> : <>
-      <LessonRenderer lesson={{ ...lesson, blocks: [lesson.blocks[session.index]!] }} onIncorrect={(exercise, answer) => { void recordConfusion(exercise, answer); }} />
-      <button type="button" disabled={busy} onClick={() => void finishOrContinue()}>{busy ? "Saving…" : session.index >= lesson.blocks.length - 1 ? "Complete lesson" : "Continue"}</button>
+      <LessonRenderer lesson={{ ...lesson, blocks: [lesson.blocks[session.index]!] }} onIncorrect={(exercise, answer) => { void recordConfusion(exercise, answer); }} catalog={contentCatalog} onOpenLesson={onOpenLesson} />
+      <button type="button" disabled={busy} onClick={() => void finishOrContinue()}>{busy ? "Saving…" : reviewOnly && session.index >= lesson.blocks.length - 1 ? "Return" : session.index >= lesson.blocks.length - 1 ? "Complete lesson" : "Continue"}</button>
     </>}
   </section>;
 }

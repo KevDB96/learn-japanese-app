@@ -462,6 +462,11 @@
               }
             }
           ]
+        },
+        {
+          "id": "hiragana-k-row-sentence-ai",
+          "kind": "sentence-ref",
+          "sentenceId": "sentence-ai"
         }
       ]
     },
@@ -6214,5 +6219,27 @@
       "translation": "Katakana ー"
     }
   ],
-  "sentences": []
+  "sentences": [
+    {
+      "id": "sentence-ai",
+      "display": "あい",
+      "reading": "あい",
+      "translation": "Love.",
+      "requires": [
+        "kana-hira-a",
+        "kana-hira-i"
+      ],
+      "segments": [
+        {
+          "japanese": "あい",
+          "reading": "あい",
+          "meaning": "love",
+          "conceptIds": [
+            "kana-hira-a",
+            "kana-hira-i"
+          ]
+        }
+      ]
+    }
+  ]
 }

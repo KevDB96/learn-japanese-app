@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import type { ExerciseDefinition, Lesson, LessonBlock } from "../../lib/content/types.ts";
+import type { ContentCatalog, ExerciseDefinition, Lesson, LessonBlock } from "../../lib/content/types.ts";
 import { ExerciseSlot } from "./ExerciseEngine.tsx";
 
-type Renderer<K extends LessonBlock["kind"]> = (props: { block: Extract<LessonBlock, { kind: K }>; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void }) => ReactNode;
+type RendererProps = { block: LessonBlock; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void; catalog?: ContentCatalog; onOpenLesson?: (lessonId: string) => void };
+type Renderer<K extends LessonBlock["kind"]> = (props: { block: Extract<LessonBlock, { kind: K }> } & Omit<RendererProps, "block">) => ReactNode;
 const renderers: { readonly [K in LessonBlock["kind"]]: Renderer<K> } = {
   heading: ({ block }) => block.level === 3 ? <h3>{block.text}</h3> : <h2>{block.text}</h2>,
   paragraph: ({ block }) => <p>{block.text}</p>,
@@ -17,7 +18,22 @@ const renderers: { readonly [K in LessonBlock["kind"]]: Renderer<K> } = {
   checkpoint: ({ block }) => <section><h2>{block.title}</h2><ul>{block.points.map((point, index) => <li key={`${point}-${index}`}>{point}</li>)}</ul></section>,
   text: ({ block }) => <p><span lang="ja">{block.display}</span> <span lang="en">{block.translation}</span></p>,
   "concept-ref": ({ block }) => <span data-content-reference={block.conceptId} />,
-  "sentence-ref": ({ block }) => <span data-content-reference={block.sentenceId} />,
+  "sentence-ref": ({ block, catalog, onOpenLesson }) => {
+    const sentence = catalog?.sentences.find((item) => item.id === block.sentenceId);
+    if (!sentence || !catalog) return <span data-content-reference={block.sentenceId} />;
+    return <details className="explain-panel" data-sentence-id={sentence.id}>
+      <summary>Explain</summary>
+      <p lang="ja"><span lang="ja">{sentence.display}</span> <span lang="ja-Latn">{sentence.reading}</span> <span lang="en">{sentence.translation}</span></p>
+      <ol>{sentence.segments.map((segment, index) => <li key={`${sentence.id}-${index}`}>
+        <span lang="ja">{segment.japanese}</span> <span lang="ja-Latn">{segment.reading}</span> <span lang="en">{segment.meaning}</span>
+        <ul>{segment.conceptIds.map((conceptId) => {
+          const concept = catalog.concepts.find((item) => item.id === conceptId);
+          const teachers = catalog.lessons.filter((lesson) => lesson.introduces.includes(conceptId));
+          return <li key={conceptId}><span>{concept?.display ?? conceptId}: {concept?.translation ?? ""}</span>{teachers.map((lesson) => <button key={lesson.id} type="button" onClick={() => onOpenLesson?.(lesson.id)}>Review {lesson.display}</button>)}</li>;
+        })}</ul>
+      </li>)}</ol>
+    </details>;
+  },
 };
 
 export class InvalidLessonBlockError extends Error {
@@ -27,12 +43,12 @@ export class InvalidLessonBlockError extends Error {
   }
 }
 
-export function renderLessonBlock(block: LessonBlock | (Omit<LessonBlock, "kind"> & { kind: string }), onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void): ReactNode {
-  const renderer = renderers[block.kind as LessonBlock["kind"]] as ((props: { block: never; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void }) => ReactNode) | undefined;
+export function renderLessonBlock(block: LessonBlock | (Omit<LessonBlock, "kind"> & { kind: string }), onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void, catalog?: ContentCatalog, onOpenLesson?: (lessonId: string) => void): ReactNode {
+  const renderer = renderers[block.kind as LessonBlock["kind"]] as ((props: RendererProps & { block: never }) => ReactNode) | undefined;
   if (!renderer) throw new InvalidLessonBlockError(block.id, block.kind);
-  return renderer({ block: block as never, onIncorrect });
+  return renderer({ block: block as never, onIncorrect, catalog, onOpenLesson });
 }
 
-export function LessonRenderer({ lesson, onIncorrect }: { lesson: Lesson; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void }) {
-  return <article className="lesson-content" aria-label={lesson.display}>{lesson.blocks.map((block) => <div key={block.id} data-block-id={block.id}>{renderLessonBlock(block, onIncorrect)}</div>)}</article>;
+export function LessonRenderer({ lesson, onIncorrect, catalog, onOpenLesson }: { lesson: Lesson; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void; catalog?: ContentCatalog; onOpenLesson?: (lessonId: string) => void }) {
+  return <article className="lesson-content" aria-label={lesson.display}>{lesson.blocks.map((block) => <div key={block.id} data-block-id={block.id}>{renderLessonBlock(block, onIncorrect, catalog, onOpenLesson)}</div>)}</article>;
 }

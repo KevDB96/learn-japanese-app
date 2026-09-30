@@ -26,6 +26,7 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   const [started, setStarted] = useState(false);
   const [contrastStarted, setContrastStarted] = useState(false);
   const [error, setError] = useState(false);
+  const [returnLessonId, setReturnLessonId] = useState<string>();
 
   useEffect(() => {
     let cancelled = false;
@@ -69,7 +70,15 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   if (contrastStarted && state.contrast) return <KanaContrastPractice glyphs={state.contrast.glyphs} onDone={() => setContrastStarted(false)} />;
   if (started && state.lessonId) {
     const lesson = contentCatalog.lessons.find((item) => item.id === state.lessonId)!;
-    return <LessonSession lesson={lesson} profileId={profileId} />;
+    return <LessonSession key={lesson.id} lesson={lesson} profileId={profileId} reviewOnly={Boolean(returnLessonId)} onOpenLesson={(lessonId) => {
+      if (contentCatalog.lessons.some((item) => item.id === lessonId)) {
+        setReturnLessonId((current) => current ?? state.lessonId);
+        setState((current) => current ? { ...current, lessonId } : current);
+      }
+    }} onExitReview={returnLessonId ? () => {
+      setState((current) => current ? { ...current, lessonId: returnLessonId } : current);
+      setReturnLessonId(undefined);
+    } : undefined} />;
   }
   const nextItem = state.plan.items.find((item) => item.kind === "lesson");
   if (!nextItem) return <div className="learn-continue">
