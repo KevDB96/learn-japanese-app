@@ -165,8 +165,9 @@ export function validateContent(input: unknown): string[] {
           if (!isRecord(feedback)) issues.push(`${exercisePath}.feedback must be an object`);
           else for (const field of ["success", "explanation"]) if (!string(feedback[field])) issues.push(`${exercisePath}.feedback.${field} is required`);
           if (exercise.type !== "sentence-order" && !string(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
-          if (exercise.type === "multiple-choice" || exercise.type === "character-selection") {
+          if (exercise.type === "multiple-choice" || exercise.type === "character-selection" || exercise.type === "audio-choice") {
             if (!Array.isArray(exercise.options) || exercise.options.length < 2 || exercise.options.some((option) => !string(option))) issues.push(`${exercisePath}.options must contain at least two non-empty strings`);
+            if (exercise.type === "audio-choice" && (!string(exercise.audioId) || !["glyph", "reading", "meaning"].includes(String(exercise.target)))) issues.push(`${exercisePath} audioId and target are required`);
           } else if (exercise.type === "short-text") {
             if (exercise.acceptedAnswers !== undefined && (!Array.isArray(exercise.acceptedAnswers) || exercise.acceptedAnswers.some((answer) => !string(answer)))) issues.push(`${exercisePath}.acceptedAnswers must contain non-empty strings`);
             if (exercise.normalizeWhitespace !== undefined && typeof exercise.normalizeWhitespace !== "boolean") issues.push(`${exercisePath}.normalizeWhitespace must be boolean`);

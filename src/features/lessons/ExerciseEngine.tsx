@@ -1,5 +1,7 @@
 import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import type { ExerciseDefinition } from "../../lib/content/types.ts";
+import { createBundledAudioProvider, playPronunciation } from "../../lib/content/pronunciation.ts";
+import { kanaAudioManifest } from "../../content/kana-fixtures.ts";
 
 export function normalizeExerciseAnswer(value: string, normalizeWhitespace = false): string {
   const trimmed = value.trim();
@@ -7,6 +9,7 @@ export function normalizeExerciseAnswer(value: string, normalizeWhitespace = fal
 }
 
 export function evaluateExerciseAnswer(exercise: ExerciseDefinition, answer: string): boolean {
+  if (exercise.type === "audio-choice") return exercise.answer === answer;
   if (exercise.type === "cloze") return evaluateClozeAnswer(exercise, answer);
   if (exercise.type === "sentence-order") return false;
   const normalize = (value: string) => normalizeExerciseAnswer(value, exercise.type === "short-text" && exercise.normalizeWhitespace === true);
@@ -121,12 +124,42 @@ function SentenceOrderExercise({ exercise, onComplete, onIncorrect }: ExerciseRe
   </section>;
 }
 
+function AudioChoiceExercise({ exercise, onComplete, onIncorrect }: ExerciseRendererProps) {
+  if (exercise.type !== "audio-choice") throw new Error("Non-audio exercise dispatched to audio renderer");
+  const [result, setResult] = useState<boolean | null>(null);
+  const [audioState, setAudioState] = useState<"ready" | "playing" | "missing">("ready");
+  const completed = useRef(false);
+  const play = async () => {
+    setAudioState("playing");
+    try {
+      const played = await playPronunciation(exercise.audioId, kanaAudioManifest, [createBundledAudioProvider()]);
+      setAudioState(played ? "ready" : "missing");
+    } catch { setAudioState("missing"); }
+  };
+  const submit = (answer: string) => {
+    if (result === true) return;
+    const correct = evaluateExerciseAnswer(exercise, answer);
+    setResult(correct);
+    if (!correct) onIncorrect?.(exercise, answer);
+    if (correct && !completed.current) { completed.current = true; onComplete?.(exercise.id); }
+  };
+  return <section aria-label={exercise.prompt}>
+    <h4>{exercise.prompt}</h4>
+    <button type="button" onClick={() => void play()} aria-label="Play audio">{audioState === "playing" ? "Replay audio" : "Play audio"}</button>
+    {audioState === "missing" && <p role="status">Audio unavailable</p>}
+    <div role="group" aria-label={exercise.prompt}>{exercise.options.map((option) => <button type="button" key={option} disabled={result === true} onClick={() => submit(option)}>{option}</button>)}</div>
+    {result !== null && <p role="status">{result ? exercise.feedback.success : exercise.feedback.explanation}</p>}
+    {result !== null && <button type="button" onClick={() => setResult(null)}>{result ? "Continue" : "Try again"}</button>}
+  </section>;
+}
+
 export const exerciseRenderers: Readonly<Record<ExerciseDefinition["type"], ExerciseRenderer>> = Object.freeze({
   "multiple-choice": ChoiceExercise,
   "character-selection": ChoiceExercise,
   "short-text": TextExercise,
   "cloze": ClozeExercise,
   "sentence-order": SentenceOrderExercise,
+  "audio-choice": AudioChoiceExercise,
 });
 
 export function ExerciseRendererView(props: ExerciseRendererProps) {

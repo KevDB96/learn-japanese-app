@@ -6,6 +6,8 @@ const root = 'dist'
 const base = process.argv[2]
 if (base !== '/learn-japanese-app/') throw new Error('Expected Pages base /learn-japanese-app/')
 const files = []
+const audioManifest = JSON.parse(await readFile('src/content/audio-manifest.json', 'utf8'))
+const offlineAudio = audioManifest.entries.filter((entry) => entry.provider === 'bundled' && entry.offline === true && entry.asset).map((entry) => `${base}${entry.asset.replace(/^\/+/, '')}`)
 
 async function collect(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -24,11 +26,12 @@ const cacheName = `learn-japanese-${hash.digest('hex').slice(0, 12)}`
 
 const source = `const CACHE_NAME = ${JSON.stringify(cacheName)};
 const PRECACHE_URLS = ${JSON.stringify(urls)};
+const OFFLINE_AUDIO_URLS = ${JSON.stringify(offlineAudio)};
 const SHELL_URL = new URL('./', self.registration.scope).pathname;
 const INDEX_URL = new URL('index.html', self.registration.scope).pathname;
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)).then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE_NAME).then(async (cache) => { await cache.addAll(PRECACHE_URLS); await Promise.all(OFFLINE_AUDIO_URLS.map(async (url) => { try { await cache.add(url); } catch {} })); }).then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', (event) => {
@@ -39,6 +42,7 @@ self.addEventListener('fetch', (event) => {
   const request = event.request;
   const url = new URL(request.url);
   if (request.method !== 'GET' || url.origin !== self.location.origin) return;
+  if (/\.(?:mp3|ogg|wav|m4a|aac|webm)$/i.test(url.pathname) && !OFFLINE_AUDIO_URLS.includes(url.pathname)) { event.respondWith(fetch(request)); return; }
   if (request.mode === 'navigate') {
     event.respondWith(fetch(request).catch(async () => (await caches.match(INDEX_URL)) ?? caches.match(SHELL_URL) ?? Response.error()));
     return;

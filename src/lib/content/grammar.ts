@@ -57,7 +57,8 @@ export function validateGrammarContent(lessons: readonly GrammarMiniLesson[]): s
       if (!nonEmpty(exercise.prompt)) issues.push(`${exercisePath}.prompt is required`);
       if (!nonEmpty(exercise.feedback.success) || !nonEmpty(exercise.feedback.explanation)) issues.push(`${exercisePath}.feedback must include success and explanation`);
       if (exercise.type !== "sentence-order" && !nonEmpty(exercise.answer)) issues.push(`${exercisePath}.answer is required`);
-      if ((exercise.type === "multiple-choice" || exercise.type === "character-selection") && (exercise.options.length < 2 || exercise.options.some((option) => !nonEmpty(option)))) issues.push(`${exercisePath}.options must contain at least two non-empty strings`);
+      if ((exercise.type === "multiple-choice" || exercise.type === "character-selection" || exercise.type === "audio-choice") && (exercise.options.length < 2 || exercise.options.some((option) => !nonEmpty(option)))) issues.push(`${exercisePath}.options must contain at least two non-empty strings`);
+      if (exercise.type === "audio-choice" && (!nonEmpty(exercise.audioId) || !["glyph", "reading", "meaning"].includes(exercise.target))) issues.push(`${exercisePath} audioId and target are required`);
       if (exercise.type === "cloze") {
         if (typeof exercise.before !== "string" || typeof exercise.after !== "string" || (!exercise.before && !exercise.after)) issues.push(`${exercisePath} must include cloze context around one blank`);
         if (!nonEmpty(exercise.explanation)) issues.push(`${exercisePath}.explanation is required`);

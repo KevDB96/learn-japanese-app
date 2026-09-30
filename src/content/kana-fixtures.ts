@@ -1,4 +1,5 @@
 import type { ContentId, KanaConcept, PronunciationManifest } from "../lib/content/types.ts";
+import audioManifest from "./audio-manifest.json" with { type: "json" };
 
 const id = (value: string) => value as ContentId;
 const kana = (code: number) => String.fromCodePoint(code);
@@ -120,4 +121,4 @@ export const katakanaAdvancedFixtures: readonly KanaConcept[] = [
   ...kataMarked, ...kataSmallKana, ...kataYoon, ...kataExtended,
   { id: id("kana-kata-long-vowel-mark"), script: "katakana", glyph: "\u30fc", romanization: "long vowel mark", row: "loanword-markers", order: 0, form: "marker", componentIds: [], reviewEligible: false },
 ];
-export const kanaAudioManifest: PronunciationManifest = { version: 1, entries: [] };
+export const kanaAudioManifest: PronunciationManifest = audioManifest;

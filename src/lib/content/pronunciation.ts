@@ -6,6 +6,19 @@ export interface PronunciationProvider {
   play(entry: PronunciationManifest["entries"][number]): Promise<void>;
 }
 
+/** Plays bundled clips only after an explicit user gesture; failed or absent clips return false. */
+export function createBundledAudioProvider(baseUrl = import.meta.env.BASE_URL): PronunciationProvider {
+  return {
+    id: "bundled",
+    canPlay: (entry) => !!entry.asset && typeof Audio !== "undefined",
+    async play(entry) {
+      if (!entry.asset || typeof Audio === "undefined") return;
+      const audio = new Audio(`${baseUrl}${entry.asset.replace(/^\/+/, "")}`);
+      await audio.play();
+    },
+  };
+}
+
 /** Logical IDs keep curriculum independent from bundled paths and provider implementation. */
 export async function playPronunciation(audioId: string, manifest: PronunciationManifest, providers: readonly PronunciationProvider[]): Promise<boolean> {
   const entry = manifest.entries.find((item) => item.id === audioId);

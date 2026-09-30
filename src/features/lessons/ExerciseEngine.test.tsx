@@ -14,6 +14,17 @@ const cloze: ExerciseDefinition = { id: 'cloze-check' as ExerciseDefinition['id'
 const sentenceOrder: Extract<ExerciseDefinition, { type: 'sentence-order' }> = { id: 'sentence-order-check' as ExerciseDefinition['id'], type: 'sentence-order', prompt: 'Build the sentence', chunks: [{ id: 'topic', japanese: '猫は', reading: 'ねこは', meaning: 'As for the cat' }, { id: 'description', japanese: '学生', reading: 'がくせい', meaning: 'student' }, { id: 'ending', japanese: 'です。', reading: 'です。', meaning: 'polite copula and ending' }], answerOrder: ['topic', 'description', 'ending'], acceptedOrders: [['description', 'topic', 'ending']], explanation: 'The topic comes first, followed by its description and the polite ending.', feedback }
 
 describe('lesson exercises', () => {
+  it("supports audio-led choices and reports missing clips while keeping answer controls available", async () => {
+    const audio: ExerciseDefinition = { id: 'audio-check' as ExerciseDefinition['id'], type: 'audio-choice', prompt: 'Choose the meaning', audioId: 'missing-audio', target: 'meaning', options: ['cat', 'water'], answer: 'cat', feedback }
+    const onComplete = vi.fn()
+    render(<ExerciseRendererView exercise={audio} onComplete={onComplete} />)
+    fireEvent.click(screen.getByRole('button', { name: 'cat' }))
+    expect(screen.getByRole('status')).toHaveTextContent('Good.')
+    expect(onComplete).toHaveBeenCalledOnce()
+    fireEvent.click(screen.getByRole('button', { name: 'Play audio' }))
+    expect(await screen.findByText('Audio unavailable')).toBeInTheDocument()
+  })
+
   it('dispatches all content-defined types and handles correct, incorrect, retry and one-time completion', () => {
     const onComplete = vi.fn()
     const { rerender } = render(<ExerciseRendererView exercise={choice} onComplete={onComplete} />)
