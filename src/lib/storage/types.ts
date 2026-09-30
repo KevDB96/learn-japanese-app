@@ -48,6 +48,8 @@ export interface ReviewEvent extends ProfileScopedRecord {
   readonly rating: "again" | "hard" | "good" | "easy";
   readonly kind: "scheduled-review" | "practice";
   readonly sessionId?: string;
+  /** Time from card display to first answer, when measured reliably. */
+  readonly responseTimeMs?: number;
   /** The kana selected instead of the reviewed/asked kana, when identifiable. */
   readonly confusedConceptId?: string;
 }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
 import { phraseFixtures } from "../../content/phrase-fixtures.ts";
 import { generateVocabularyReviewCards } from "../../lib/content/vocabulary.ts";
@@ -25,6 +25,9 @@ export function ConceptReviewSession({ item, nextLabel, onRated, profileId }: { 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   const [clozeCorrect, setClozeCorrect] = useState(false);
+  const shownAt = useRef(performance.now());
+  const [responseTimeMs, setResponseTimeMs] = useState<number>();
+  const markAnswered = () => setResponseTimeMs((current) => current ?? performance.now() - shownAt.current);
   const options = useMemo(() => {
     if (!card) return [];
     const pool = cards.filter((candidate) => candidate.id !== card.id && candidate.kind === card.kind).flatMap((candidate) => candidate.answers);
@@ -33,13 +36,13 @@ export function ConceptReviewSession({ item, nextLabel, onRated, profileId }: { 
   if (!card) return <p role="status">Review card unavailable.</p>;
   const language = card.kind === "meaning" ? "meaning" : "japanese";
   const correct = card.kind === "cloze" ? clozeCorrect : matchesRecallAnswer(answer, card.answers, language);
-  const check = () => setChecked(true);
+  const check = () => { markAnswered(); setChecked(true); };
   const rate = async (rating: ReviewRating) => {
     setSaving(true); setError(false);
     const repos = await openLocalRepositories(undefined, profileId).catch(() => undefined);
     if (!repos) { setSaving(false); setError(true); return; }
     try {
-      await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: item.conceptId, cardId: item.cardId, rating, reviewedAt: new Date().toISOString() });
+      await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: item.conceptId, cardId: item.cardId, rating, reviewedAt: new Date().toISOString(), ...(responseTimeMs ? { responseTimeMs } : {}) });
       onRated();
     } catch { setError(true); }
     finally { repos.close(); setSaving(false); }
@@ -48,13 +51,13 @@ export function ConceptReviewSession({ item, nextLabel, onRated, profileId }: { 
     {nextLabel && <p>{nextLabel}</p>}
     <p>Review · {card.kind === "meaning" ? "Meaning" : card.kind === "reading" ? "Reading" : card.kind === "cloze" ? "Cloze" : "Production"}</p>
     <h2 lang={card.kind === "production" ? "en" : "ja"}>{card.prompt}</h2>
-    {card.kind === "cloze" && card.exercise && <ExerciseRendererView exercise={card.exercise} onComplete={() => { setClozeCorrect(true); setChecked(true); }} onIncorrect={(exercise) => { setClozeCorrect(false); setChecked(true); setAnswer((exercise as Extract<ExerciseDefinition, { type: "cloze" }>).answer); }} />}
+    {card.kind === "cloze" && card.exercise && <ExerciseRendererView exercise={card.exercise} onComplete={() => { markAnswered(); setClozeCorrect(true); setChecked(true); }} onIncorrect={(exercise) => { markAnswered(); setClozeCorrect(false); setChecked(true); setAnswer((exercise as Extract<ExerciseDefinition, { type: "cloze" }>).answer); }} />}
     {card.kind !== "cloze" && !checked && !guided && <form onSubmit={(event) => { event.preventDefault(); check(); }}>
       <label>Answer <input autoComplete="off" value={answer} onChange={(event) => setAnswer(event.target.value)} /></label>
       <button type="submit" disabled={!answer.trim()}>Check</button>
       <button type="button" onClick={() => setGuided(true)}>Show choices</button>
     </form>}
-    {card.kind !== "cloze" && !checked && guided && <div role="group" aria-label="Guided choices">{options.map((option) => <button type="button" key={option} onClick={() => { setAnswer(option); setChecked(true); }}>{option}</button>)}<button type="button" onClick={() => setGuided(false)}>Recall without choices</button></div>}
+    {card.kind !== "cloze" && !checked && guided && <div role="group" aria-label="Guided choices">{options.map((option) => <button type="button" key={option} onClick={() => { markAnswered(); setAnswer(option); setChecked(true); }}>{option}</button>)}<button type="button" onClick={() => setGuided(false)}>Recall without choices</button></div>}
     {checked && card.kind !== "cloze" && <>
       <p role="status">{correct ? "Correct." : `Answer: ${card.answers.join(" / ")}`}</p>
       {card.kind !== "meaning" && <p lang="ja">{card.reading}</p>}

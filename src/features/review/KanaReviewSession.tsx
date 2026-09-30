@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { ReviewRating } from "./srs.ts";
@@ -21,6 +21,8 @@ export function KanaReviewSession({ item, nextLabel, onRated, profileId }: { ite
     return Array.from({ length: Math.min(4, source.length) }, (_, offset) => source[(start + offset) % source.length]!);
   }, [concept]);
   const [answer, setAnswer] = useState<string>();
+  const shownAt = useRef(performance.now());
+  const [responseTimeMs, setResponseTimeMs] = useState<number>();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
   if (!concept) return <p role="status">Review card unavailable.</p>;
@@ -34,7 +36,7 @@ export function KanaReviewSession({ item, nextLabel, onRated, profileId }: { ite
     const repos = await openLocalRepositories(undefined, profileId).catch(() => undefined);
     if (!repos) { setSaving(false); setError(true); return; }
     try {
-      await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: item.conceptId, cardId: item.cardId, rating, reviewedAt: new Date().toISOString(), ...(confusedConceptId && confusedConceptId !== item.conceptId ? { confusedConceptId } : {}) });
+      await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: item.conceptId, cardId: item.cardId, rating, reviewedAt: new Date().toISOString(), ...(responseTimeMs ? { responseTimeMs } : {}), ...(confusedConceptId && confusedConceptId !== item.conceptId ? { confusedConceptId } : {}) });
       onRated();
     } catch { setError(true); }
     finally { repos.close(); setSaving(false); }
@@ -43,7 +45,7 @@ export function KanaReviewSession({ item, nextLabel, onRated, profileId }: { ite
     {nextLabel && <p>{nextLabel}</p>}
     <p>Review · {form === "kana-sound-to-glyph" ? "Sound to kana" : "Kana to sound"}</p>
     <h2 lang={form === "kana-sound-to-glyph" ? "ja-Latn" : "ja"}>{prompt}</h2>
-    {!answer && <div role="group" aria-label="Review answers">{options.map((option, index) => <button type="button" key={`${option}-${index}`} onClick={() => setAnswer(option)} lang={form === "kana-sound-to-glyph" ? "ja" : "ja-Latn"}>{option}</button>)}</div>}
+    {!answer && <div role="group" aria-label="Review answers">{options.map((option, index) => <button type="button" key={`${option}-${index}`} onClick={() => { setResponseTimeMs(performance.now() - shownAt.current); setAnswer(option); }} lang={form === "kana-sound-to-glyph" ? "ja" : "ja-Latn"}>{option}</button>)}</div>}
     {answer && <>
       <p role="status">{correct ? "Correct." : `Answer: ${correctAnswer}`}</p>
       <div className="review-ratings" aria-label="Review rating">{ratings.map((rating) => <button key={rating} type="button" disabled={saving} onClick={() => void rate(rating)}>{rating}</button>)}</div>

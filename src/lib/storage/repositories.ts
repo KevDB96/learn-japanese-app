@@ -44,13 +44,13 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
         const existing = await withStore<ReviewCardState | undefined>(db, "reviewStates", "readonly", (s) => s.get(scopedCardId));
         if (!existing) { await withStore(db, "reviewStates", "readwrite", (s) => s.add({ id: scopedCardId, profileId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId, state } satisfies ReviewCardState)); changed(profileId); }
       },
-      async record(input: { id: string; conceptId: string; cardId: string; rating: ReviewRating; reviewedAt: string; sessionId?: string; kind?: "scheduled-review" | "practice"; confusedConceptId?: string }) {
+      async record(input: { id: string; conceptId: string; cardId: string; rating: ReviewRating; reviewedAt: string; sessionId?: string; kind?: "scheduled-review" | "practice"; confusedConceptId?: string; responseTimeMs?: number }) {
         const kind = input.kind ?? "scheduled-review";
         const event: ReviewEvent = {
           id: storageId(profileId, input.id), profileId, recordVersion: 1, updatedAt: input.reviewedAt, conceptId: input.conceptId,
           cardId: input.cardId, reviewedAt: input.reviewedAt,
           rating: ({ Forgot: "again", Hard: "hard", "Got It": "good", Easy: "easy" } as const)[input.rating],
-          kind, ...(input.sessionId ? { sessionId: input.sessionId } : {}), ...(input.confusedConceptId ? { confusedConceptId: input.confusedConceptId } : {}),
+          kind, ...(input.sessionId ? { sessionId: input.sessionId } : {}), ...(input.confusedConceptId ? { confusedConceptId: input.confusedConceptId } : {}), ...(Number.isFinite(input.responseTimeMs) && input.responseTimeMs! > 0 ? { responseTimeMs: input.responseTimeMs } : {}),
         };
         const scheduled: SchedulingReviewEvent = { ...input, kind };
         const tx = db.transaction(["reviewEvents", "reviewStates"], "readwrite");

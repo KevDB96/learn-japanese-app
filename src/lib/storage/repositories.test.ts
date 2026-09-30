@@ -54,10 +54,11 @@ describe("local storage repositories", () => {
 
   it("applies an event idempotently, persists derived state offline, and rebuilds from the append-only log", async () => {
     const { db, repos } = await fresh();
-    const input = { id: "review-1", conceptId: "kana-a", cardId: "kana-a", rating: "Forgot" as const, reviewedAt: "2026-01-01T00:00:00.000Z" };
+    const input = { id: "review-1", conceptId: "kana-a", cardId: "kana-a", rating: "Forgot" as const, reviewedAt: "2026-01-01T00:00:00.000Z", responseTimeMs: 2_450 };
     await repos.reviews.record(input);
     await repos.reviews.record(input);
     expect(await repos.reviews.list()).toHaveLength(1);
+    expect(await repos.reviews.get("review-1")).toMatchObject({ responseTimeMs: 2_450 });
     expect(await repos.reviews.getStates()).toMatchObject([{ id: "kana-a", state: { reviewCount: 1, lapseCount: 1, nextDueAt: "2026-01-01T00:01:00.000Z" } }]);
     db.close();
     const reopened = await openLocalDatabase(`${STORAGE_DATABASE_NAME}-test`);
