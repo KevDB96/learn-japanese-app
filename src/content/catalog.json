@@ -16,7 +16,8 @@
         "katakana-through-n",
         "katakana-voiced-and-combinations",
         "self-introduction",
-        "people-and-family"
+        "people-and-family",
+        "numbers-and-time"
       ],
       "startLessonIds": [
         "introduction"
@@ -106,6 +107,13 @@
       "display": "People and family",
       "lessonIds": [
         "lesson-people-and-family"
+      ]
+    },
+    {
+      "id": "numbers-and-time",
+      "display": "Numbers and time",
+      "lessonIds": [
+        "lesson-numbers-and-time"
       ]
     }
   ],
@@ -5238,6 +5246,34 @@
           ]
         }
       ]
+    },
+    {
+      "id": "lesson-numbers-and-time",
+      "display": "Numbers and time",
+      "requires": ["lesson-people-and-family"],
+      "introduces": ["number-0", "number-1", "number-2", "number-3", "number-4", "number-5", "number-6", "number-7", "number-8", "number-9", "number-10", "time-clock", "time-minute", "time-half", "time-question", "counter-people", "counter-tsu"],
+      "reinforces": ["identity-topic-marker", "identity-polite-copula", "sentence-family-mother"],
+      "blocks": [
+        {"id":"numbers-time-title","kind":"heading","text":"Numbers and time"},
+        {"id":"numbers-time-bridge","kind":"paragraph","text":"Build on the family lesson: use the numbers you learn here to say what time it is and how many people are there."},
+        {"id":"numbers-core","kind":"vocabulary-list","title":"Numbers 0–10","items":[
+          {"japanese":"零","reading":"れい","translation":"zero"},{"japanese":"一","reading":"いち","translation":"one"},{"japanese":"二","reading":"に","translation":"two"},{"japanese":"三","reading":"さん","translation":"three"},{"japanese":"四","reading":"よん","translation":"four (common counting form)"},{"japanese":"五","reading":"ご","translation":"five"},{"japanese":"六","reading":"ろく","translation":"six"},{"japanese":"七","reading":"なな","translation":"seven (common counting form)"},{"japanese":"八","reading":"はち","translation":"eight"},{"japanese":"九","reading":"きゅう","translation":"nine (common counting form)"},{"japanese":"十","reading":"じゅう","translation":"ten"}]},
+        {"id":"numbers-reading-note","kind":"callout","title":"Some numbers have more than one reading","text":"Four can be よん or し, seven can be なな or しち, and nine can be きゅう or く. Prefer よん, なな, and きゅう when counting by themselves. A counter can require another reading: 四時 is よじ, 七時 is しちじ, 九時 is くじ. Learn these useful combinations as whole forms."},
+        {"id":"clock-pattern","kind":"grammar-breakdown","title":"Ask and tell the time","japanese":"今、何時ですか。四時半です。","reading":"いま、なんじですか。よじはんです。","translation":"What time is it now? It is half past four.","parts":[{"text":"何時","reading":"なんじ","meaning":"what time"},{"text":"四時","reading":"よじ","meaning":"four o’clock; irregular reading"},{"text":"半","reading":"はん","meaning":"half past"},{"text":"ですか","reading":"ですか","meaning":"polite question ending"}]},
+        {"id":"time-useful","kind":"vocabulary-list","title":"Useful clock forms","items":[{"japanese":"一時","reading":"いちじ","translation":"one o’clock"},{"japanese":"四時","reading":"よじ","translation":"four o’clock"},{"japanese":"七時","reading":"しちじ","translation":"seven o’clock"},{"japanese":"九時","reading":"くじ","translation":"nine o’clock"},{"japanese":"三分","reading":"さんぷん","translation":"three minutes"},{"japanese":"十分","reading":"じゅっぷん","translation":"ten minutes"},{"japanese":"四時半","reading":"よじはん","translation":"half past four"}]},
+        {"id":"time-sound-changes","kind":"callout","title":"Minutes change sound","text":"分 is usually ふん or ぷん after a number. Remember these frequent clock readings: 一分 いっぷん, 三分 さんぷん, 四分 よんぷん, 六分 ろっぷん, 八分 はっぷん, 十分 じゅっぷん. The small っ holds the consonant briefly; ふ changes to ぷ in these forms."},
+        {"id":"number-guided","kind":"exercise-slot","title":"Guided practice","exercises":[
+          {"id":"number-guided-irregular-hour","type":"multiple-choice","prompt":"Choose the reading of 四時.","options":["よじ","よんじ","しじ"],"answer":"よじ","feedback":{"success":"Correct.","explanation":"四時 uses the set clock reading よじ."}},
+          {"id":"number-guided-minute","type":"multiple-choice","prompt":"How do you say three minutes?","options":["さんふん","さんぷん","みっぷん"],"answer":"さんぷん","feedback":{"success":"Correct.","explanation":"三分 is さんぷん; the counter changes to ぷん."}}
+        ]},
+        {"id":"people-counter","kind":"grammar-breakdown","title":"Count people","japanese":"一人、二人、三人","reading":"ひとり、ふたり、さんにん","translation":"one person, two people, three people","parts":[{"text":"一人","reading":"ひとり","meaning":"one person; special reading"},{"text":"二人","reading":"ふたり","meaning":"two people; special reading"},{"text":"三人","reading":"さんにん","meaning":"three people; number + にん"}]},
+        {"id":"counter-choice","kind":"callout","title":"One useful object counter","text":"For a small number of general objects, つ is a useful starting point: 一つ (ひとつ), 二つ (ふたつ), 三つ (みっつ). This counter has its own readings. Japanese uses many other counters too; learn one when a real situation calls for it."},
+        {"id":"number-retrieval","kind":"exercise-slot","title":"Recall and respond","exercises":[
+          {"id":"number-recall-seven","type":"short-text","prompt":"Write the common counting reading of 七.","answer":"なな","acceptedAnswers":["しち"],"feedback":{"success":"Correct.","explanation":"七 is often なな when counting; the clock form 七時 is しちじ."}},
+          {"id":"number-recall-people","type":"short-text","prompt":"Write ‘two people’ in kana.","answer":"ふたり","feedback":{"success":"Correct.","explanation":"二人 is the special form ふたり."}},
+          {"id":"number-build-time","type":"sentence-order","prompt":"Build ‘It is half past four.’","chunks":[{"id":"time","japanese":"四時半","reading":"よじはん","meaning":"half past four"},{"id":"ending","japanese":"です。","reading":"です。","meaning":"polite ending"}],"answerOrder":["time","ending"],"explanation":"Put the time expression before the familiar polite ending です.","feedback":{"success":"Correct.","explanation":"四時半です。 means ‘It is half past four.’"}}
+        ]}
+      ]
     }
   ],
   "concepts": [
@@ -6728,7 +6764,24 @@
       "display": "お母さん・お父さん",
       "reading": "おかあさん・おとうさん",
       "translation": "respectful terms for parents; also used in direct address"
-    }
+    },
+    {"id":"number-0","display":"零","reading":"れい","translation":"zero"},
+    {"id":"number-1","display":"一","reading":"いち","translation":"one"},
+    {"id":"number-2","display":"二","reading":"に","translation":"two"},
+    {"id":"number-3","display":"三","reading":"さん","translation":"three"},
+    {"id":"number-4","display":"四","reading":"よん","translation":"four; also し in some combinations"},
+    {"id":"number-5","display":"五","reading":"ご","translation":"five"},
+    {"id":"number-6","display":"六","reading":"ろく","translation":"six"},
+    {"id":"number-7","display":"七","reading":"なな","translation":"seven; also しち in some combinations"},
+    {"id":"number-8","display":"八","reading":"はち","translation":"eight"},
+    {"id":"number-9","display":"九","reading":"きゅう","translation":"nine; also く in some combinations"},
+    {"id":"number-10","display":"十","reading":"じゅう","translation":"ten"},
+    {"id":"time-clock","display":"時","reading":"じ","translation":"hour on a clock"},
+    {"id":"time-minute","display":"分","reading":"ふん・ぷん","translation":"minute counter; reading changes after some numbers"},
+    {"id":"time-half","display":"半","reading":"はん","translation":"half past"},
+    {"id":"time-question","display":"何時","reading":"なんじ","translation":"what time"},
+    {"id":"counter-people","display":"人","reading":"にん・ひとり・ふたり","translation":"people counter; one and two are special"},
+    {"id":"counter-tsu","display":"つ","reading":"つ","translation":"general counter for small numbers of objects"}
   ],
   "sentences": [
     {

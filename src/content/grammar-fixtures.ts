@@ -92,4 +92,23 @@ export const grammarFixtures: readonly GrammarMiniLesson[] = [
       ], answerOrder: ["family", "role", "ending"], explanation: "Reuse topic + noun description + です.", feedback: { success: "Correct.", explanation: "兄は学生です。 (あにはがくせいです。) means ‘My older brother is a student.’" } },
     ],
   },
+  {
+    id: id("grammar-time-and-counters"),
+    display: "Clock time and two counters",
+    requires: [id("grammar-family-terms"), id("grammar-ka-question")],
+    shortExplanation: "Use 時 (じ) for the hour and 分 (ふん / ぷん) for minutes. 人 (にん) counts people, with special forms for one and two.",
+    fullExplanation: "For clock time, say the number + 時 (じ), then the number + 分. Half past can use 半 (はん). A few readings change: 四時 is よじ (not よんじ), 七時 is しちじ, 九時 is くじ; for minutes, 1, 3, 4, 6, 8, and 10 minutes have familiar sound changes such as いっぷん, さんぷん, よんぷん, ろっぷん, はっぷん, and じゅっぷん. For people, use 一人 (ひとり) and 二人 (ふたり), then number + 人 (にん), as in 三人 (さんにん). For a small number of objects, つ is useful: 一つ (ひとつ), 二つ (ふたつ), 三つ (みっつ); learn more specific counters when needed.",
+    examples: [
+      { id: id("grammar-time-four-example"), japanese: "四時半です。", reading: "よじはんです。", translation: "It is half past four.", grammarIds: [id("grammar-topic-wa"), id("grammar-desu-copula"), id("grammar-time-and-counters")] },
+      { id: id("grammar-time-question-example"), japanese: "今、何時ですか。", reading: "いま、なんじですか。", translation: "What time is it now?", grammarIds: [id("grammar-ka-question"), id("grammar-time-and-counters")] },
+      { id: id("grammar-people-count-example"), japanese: "三人です。", reading: "さんにんです。", translation: "There are three people.", grammarIds: [id("grammar-desu-copula"), id("grammar-time-and-counters")] },
+    ],
+    commonMistakes: ["Using よんじ for 四時; the clock reading is よじ.", "Reading every minute as number + ふん; several minute readings change to ぷん or add a small っ.", "Using にん for 一人 and 二人; say ひとり and ふたり."],
+    relatedConceptIds: [id("grammar-time-and-counters")],
+    exercises: [
+      { id: id("grammar-time-four-choice"), type: "multiple-choice", prompt: "How do you read 四時?", options: ["よじ", "よんじ", "しじ"], answer: "よじ", feedback: { success: "Correct.", explanation: "四時 is the irregular clock reading よじ." } },
+      { id: id("grammar-time-minute-cloze"), type: "cloze", prompt: "Complete ‘3 minutes’: 三___", before: "三", after: "", answer: "ぷん", explanation: "三分 is さんぷん; the counter begins with p after the number three.", feedback: { success: "Correct.", explanation: "Three minutes is 三分 (さんぷん)." } },
+      { id: id("grammar-people-two-recall"), type: "short-text", prompt: "Write ‘two people’ in Japanese.", answer: "二人 (ふたり)", acceptedAnswers: ["二人", "ふたり"], feedback: { success: "Correct.", explanation: "二人 is read ふたり, a special form." } },
+    ],
+  },
 ];
