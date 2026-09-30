@@ -7,7 +7,9 @@ const repo = process.cwd()
 const branch = 'gh-pages'
 const run = (args, options = {}) => execFileSync('git', args, { cwd: repo, encoding: 'utf8', stdio: 'pipe', ...options }).trim()
 const isAncestor = (older, newer) => spawnSync('git', ['merge-base', '--is-ancestor', older, newer], { cwd: repo, stdio: 'ignore' }).status === 0
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm'
+const npmExecPath = process.env.npm_execpath
+if (!npmExecPath) throw new Error('npm_execpath is required for deterministic Pages validation')
+const runNpm = (args) => execFileSync(process.execPath, [npmExecPath, ...args], { cwd: repo, stdio: 'inherit' })
 const sourceSha = run(['rev-parse', 'HEAD'])
 if (run(['branch', '--show-current']) !== 'main') throw new Error('Pages publication must start from main')
 if (run(['status', '--porcelain', '--untracked-files=no'])) throw new Error('Commit tracked source changes before publishing')
@@ -33,7 +35,7 @@ for (const [label, args] of [
   ['production build', ['run', 'build']],
 ]) {
   process.stdout.write(`Pages gate: ${label}\n`)
-  execFileSync(npm, args, { cwd: repo, stdio: 'inherit' })
+  runNpm(args)
   if (run(['rev-parse', 'HEAD']) !== sourceSha) throw new Error('Source SHA changed during validation')
   if (run(['status', '--porcelain', '--untracked-files=no'])) throw new Error(`Tracked source changed during ${label}`)
 }
