@@ -114,6 +114,7 @@ export function validateContent(input: unknown): string[] {
   const conceptIds = (entities.concepts ?? []).map((v) => String(v.id));
   const sentenceIds = (entities.sentences ?? []).map((v) => String(v.id));
   const sentenceRefs = new Map<string, string[]>();
+  const conceptRefs = new Map<string, string[]>();
   const lessonRequires = new Map<string, string[]>();
   for (const [i, lesson] of (entities.lessons ?? []).entries()) {
     const path = `lessons[${i}]`;
@@ -189,6 +190,7 @@ export function validateContent(input: unknown): string[] {
       else if (value.kind === "checkpoint") { requiredString("title"); if (!Array.isArray(value.points) || value.points.some((point) => !string(point))) issues.push(`${blockPath}.points must be an array of non-empty strings`); }
       else if (value.kind === "concept-ref") {
         if (typeof value.conceptId !== "string" || !conceptIds.includes(value.conceptId)) issues.push(`${blockPath}.conceptId references missing concept "${String(value.conceptId ?? "")}"`);
+        else conceptRefs.set(value.conceptId, [...(conceptRefs.get(value.conceptId) ?? []), id]);
       } else if (value.kind === "sentence-ref") {
         if (typeof value.sentenceId !== "string" || !sentenceIds.includes(value.sentenceId)) issues.push(`${blockPath}.sentenceId references missing sentence "${String(value.sentenceId ?? "")}"`);
         else sentenceRefs.set(value.sentenceId, [...(sentenceRefs.get(value.sentenceId) ?? []), id]);
@@ -234,6 +236,17 @@ export function validateContent(input: unknown): string[] {
     for (const id of idsInCourse) if (!reached.has(id)) issues.push(`course "${courseId}" cannot reach lesson "${id}" from its start lessons (missing prerequisite path)`);
   }
   for (const id of lessonsById.keys()) if (!assignedLessons.has(id)) issues.push(`lesson "${id}" is not assigned to any course`);
+  for (const [conceptId, lessonIds] of conceptRefs) for (const lessonId of lessonIds) {
+    const availableLessons = new Set<string>();
+    const collect = (current: string) => { if (availableLessons.has(current)) return; availableLessons.add(current); for (const required of lessonRequires.get(current) ?? []) collect(required); };
+    collect(lessonId);
+    const availableConcepts = new Set<string>();
+    for (const current of availableLessons) {
+      const lesson = lessonsById.get(current);
+      if (lesson) for (const concept of [...(Array.isArray(lesson.introduces) ? lesson.introduces : []), ...(Array.isArray(lesson.reinforces) ? lesson.reinforces : [])]) if (typeof concept === "string") availableConcepts.add(concept);
+    }
+    if (!availableConcepts.has(conceptId)) issues.push(`concept "${conceptId}" is used before it is introduced or reinforced in lesson "${lessonId}"`);
+  }
   for (const sentence of entities.sentences ?? []) {
     const refsToSentence = sentenceRefs.get(String(sentence.id)) ?? [];
     if (refsToSentence.length === 0) issues.push(`sentence "${String(sentence.id)}" is unreachable from any lesson`);

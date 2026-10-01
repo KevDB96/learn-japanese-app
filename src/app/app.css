@@ -1,5 +1,5 @@
 :root {
-  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -15,7 +15,8 @@ body { margin: 0; min-width: 320px; min-height: 100vh; min-height: 100dvh; }
 button { font: inherit; }
 input, textarea, select { font-size: 16px; }
 input:focus, textarea:focus, select:focus { scroll-margin-block: 1rem 6rem; }
-button:focus-visible, a:focus-visible, [tabindex="-1"]:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex="-1"]:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+[lang="ja"] { font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif; font-synthesis: none; text-rendering: auto; -webkit-font-smoothing: auto; }
 .app-shell {
   --surface: #100d16; --surface-raised: #191521; --surface-card: #211a2b;
   --text: #f6f1fb; --text-muted: #c3b8d0; --accent: #d0b4ff; --accent-strong: #8654ca;
@@ -26,7 +27,7 @@ button:focus-visible, a:focus-visible, [tabindex="-1"]:focus-visible { outline: 
 }
 .app-shell[data-theme="janne"] {
   --surface: #fff8f6; --surface-raised: #fffdfb; --surface-card: #fff0f1;
-  --text: #403542; --text-muted: #6e606d; --accent: #87516e; --accent-strong: #9b5379;
+  --text: #403542; --text-muted: #5d4e5b; --accent: #87516e; --accent-strong: #9b5379;
   --success: #376d54; --focus-ring: #80415f; --card-border: #e7cbd4;
   --navigation-surface: #fffdfb; --navigation-active: #f7e3eb;
 }
@@ -40,7 +41,7 @@ button:focus-visible, a:focus-visible, [tabindex="-1"]:focus-visible { outline: 
 .page-content > section { position: relative; z-index: 1; }
 h1 { margin: .1rem 0 1.2rem; font-size: clamp(2rem, 8vw, 3.15rem); line-height: 1.08; letter-spacing: -.045em; }
 h2, h3, p { margin-top: 0; }
-.eyebrow, .course-kicker { margin: 0 0 .45rem; color: var(--accent); font-size: .72rem; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
+.eyebrow, .course-kicker { margin: 0 0 .45rem; color: var(--accent); font-size: .8rem; font-weight: 800; letter-spacing: .11em; text-transform: uppercase; }
 .page-eyebrow { margin-bottom: .35rem; }
 .profile-picker { display: grid; align-content: center; padding-top: 2rem; padding-bottom: 3rem; }
 .picker-content { width: min(100%, 34rem); margin-inline: auto; }
@@ -48,7 +49,7 @@ h2, h3, p { margin-top: 0; }
 .picker-intro, .section-lead { color: var(--text-muted); font-size: 1rem; }
 .profile-options { display: grid; gap: .9rem; margin-top: 1.65rem; }
 .profile-card { display: flex; align-items: center; gap: .9rem; width: 100%; min-height: 7.1rem; padding: .8rem; border: 1px solid var(--card-border); border-radius: 1.25rem; background: var(--surface-card); color: var(--text); text-align: left; box-shadow: 0 1rem 2.5rem #0002; cursor: pointer; touch-action: manipulation; }
-.profile-card-janne { --text: #493b46; --text-muted: #756573; --accent: #985078; --navigation-active: #f7e4ed; --card-border: #e7cbd7; border-color: var(--card-border); background: linear-gradient(120deg, #fff0f5, #fffdfb); color: var(--text); }
+.profile-card-janne { --text: #493b46; --text-muted: #5d4e5b; --accent: #985078; --navigation-active: #f7e4ed; --card-border: #e7cbd7; border-color: var(--card-border); background: linear-gradient(120deg, #fff0f5, #fffdfb); color: var(--text); }
 .profile-card > img { width: 5.2rem; height: 5.2rem; flex: 0 0 auto; border-radius: 1rem; object-fit: cover; }
 .profile-card-copy { display: grid; gap: .15rem; flex: 1; }
 .profile-card-copy strong { font-size: 1.25rem; }
@@ -111,6 +112,19 @@ h2, h3, p { margin-top: 0; }
 .nav-button[aria-current="page"] { background: var(--navigation-active); color: var(--accent); font-weight: 800; }
 .nav-icon { font-size: 1.1rem; line-height: 1.2; }
 .hiragana-progress { display: grid; gap: .7rem; margin-top: .3rem; }
+.progress-overview { display: grid; gap: .8rem; margin-bottom: .8rem; }
+.progress-overview > h2 { margin: .2rem 0 0; font-size: 1.35rem; }
+.progress-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .55rem; }
+.progress-metrics article, .progress-lists > section { display: grid; gap: .1rem; min-width: 0; padding: .75rem; border: 1px solid var(--card-border); border-radius: .85rem; background: var(--surface-raised); }
+.progress-metrics article > span, .progress-metrics article > small, .progress-lists p, .progress-lists time { color: var(--text-muted); font-size: .82rem; }
+.progress-metrics article strong { font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.progress-lists { display: grid; gap: .55rem; }
+.progress-lists h3, .progress-lists p { margin: 0; }
+.progress-lists h3 { font-size: .95rem; }
+.progress-lists ul { display: grid; gap: .35rem; margin: .2rem 0 0; padding-left: 1.15rem; }
+.progress-lists li { padding-left: .1rem; font-size: .85rem; }
+.progress-lists time { white-space: nowrap; }
+.progress-lists section:last-child li { display: flex; justify-content: space-between; gap: .5rem; }
 .hiragana-progress h2 { margin: .2rem 0 0; font-size: 1.25rem; }
 .hiragana-progress > p { margin: 0; color: var(--text-muted); font-size: .85rem; }
 .progress-kana-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .45rem; margin: .2rem 0 0; padding: 0; list-style: none; }
@@ -118,7 +132,7 @@ h2, h3, p { margin-top: 0; }
 .progress-kana-grid button { display: grid; justify-items: center; gap: .12rem; width: 100%; min-height: 4.5rem; padding: .3rem .1rem; border: 1px solid var(--card-border); border-radius: .75rem; background: var(--surface-raised); color: var(--text); cursor: pointer; touch-action: manipulation; }
 .progress-kana-grid button[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
 .progress-kana-grid [lang="ja"] { font-size: 1.55rem; line-height: 1.2; }
-.progress-kana-grid button span:last-child { max-width: 100%; overflow: hidden; color: var(--text-muted); font-size: .57rem; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.progress-kana-grid button span:last-child { max-width: 100%; overflow: hidden; color: var(--text-muted); font-size: .75rem; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
 .kana-progress-detail { display: grid; gap: .35rem; padding: .9rem; border: 1px solid var(--card-border); border-radius: .9rem; background: var(--surface-raised); }
 .kana-progress-detail h3, .kana-progress-detail p { margin: 0; }
 .kana-progress-detail h3 [lang="ja"] { font-size: 1.5rem; }
@@ -171,6 +185,7 @@ h2, h3, p { margin-top: 0; }
   .bottom-nav { left: 50%; transform: translateX(-50%); border-radius: 1rem 1rem 0 0; }
   .progress-kana-grid { grid-template-columns: repeat(10, minmax(0, 1fr)); }
 }
+@media (max-width: 47.99rem) { .progress-kana-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 370px) {
   .activity-card { grid-template-columns: 4.5rem 1fr; gap: .65rem; padding: .65rem; }
   .activity-card > img { width: 4.5rem; height: 4.5rem; }
@@ -178,3 +193,5 @@ h2, h3, p { margin-top: 0; }
   .brand-mark { font-size: .8rem; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+button { min-height: 2.75rem; }
+input:not([type="checkbox"]):not([type="radio"]), select, textarea { min-height: 2.75rem; }

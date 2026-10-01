@@ -37,14 +37,17 @@ describe("cloud convenience saves", () => {
     expect(compareSaveMetadata({ updatedAt: "2026-01-02T00:00:00.000Z" }, { profileId: CLOUD_PROFILE_IDS.kevin, revision: 1, schemaVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z", state: {} })).toBe("local-newer");
   });
 
-  it("debounces local durable changes and writes a versioned save through the fake adapter", async () => {
+  it("writes the selected profile's completed lesson progress in the cloud snapshot", async () => {
     const adapter = new FakeCloud();
-    const repos = await openLocalRepositories();
-    await repos.lessonProgress.put({ id: "lesson-cloud-test", lessonId: "lesson-cloud-test", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    const repos = await openLocalRepositories(undefined, "kevin");
+    await repos.lessonProgress.put({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
     repos.close();
     render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
     await waitFor(() => expect(adapter.writes).toBe(1), { timeout: 3000 });
-    expect(adapter.document).toMatchObject({ profileId: CLOUD_PROFILE_IDS.kevin, revision: 1, schemaVersion: 1, state: { lessonProgress: [{ lessonId: "lesson-cloud-test" }] } });
+    expect(adapter.document?.state.lessonProgress).toEqual(expect.arrayContaining([
+      expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" }),
+    ]));
+    expect(adapter.document).toMatchObject({ profileId: CLOUD_PROFILE_IDS.kevin, revision: 1, schemaVersion: 1 });
     expect(screen.getByText("Saved")).toBeInTheDocument();
   });
 

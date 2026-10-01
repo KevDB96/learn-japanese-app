@@ -36,11 +36,15 @@ export interface KanaValidationOptions {
 export function validateKanaContent(concepts: readonly KanaConcept[], forms: readonly KanaReviewForm[], manifest: PronunciationManifest, options: KanaValidationOptions = {}): string[] {
   const issues: string[] = [];
   const kanaById = new Map<string, KanaConcept>();
+  const glyphs = new Map<string, number>();
   concepts.forEach((concept, index) => {
     const path = `kana[${index}]`;
     if (!CONTENT_ID_PATTERN.test(concept.id)) issues.push(`${path}.id must be a valid content ID`);
     if (kanaById.has(concept.id)) issues.push(`${path}.id duplicates kana ID "${concept.id}"`);
     else kanaById.set(concept.id, concept);
+    const glyphKey = `${concept.script}:${concept.glyph}`;
+    if (glyphs.has(glyphKey)) issues.push(`${path}.glyph duplicates ${concept.script} glyph "${concept.glyph}" from kana[${glyphs.get(glyphKey)}]`);
+    else glyphs.set(glyphKey, index);
     const expectedScript = concept.script === "hiragana" ? /[\u3040-\u309f]/u : /[\u30a0-\u30ff]/u;
     if (!expectedScript.test(concept.glyph) || [...concept.glyph].some((char) => !expectedScript.test(char))) issues.push(`${path}.glyph is invalid for ${concept.script}`);
     if (!concept.romanization.trim()) issues.push(`${path}.romanization is required`);

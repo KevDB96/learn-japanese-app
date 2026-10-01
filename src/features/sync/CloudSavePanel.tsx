@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
 import { CLOUD_PROFILE_IDS, CLOUD_SAVE_SCHEMA_VERSION, CloudSaveConflictError, compareSaveMetadata, configuredCloudSave, type CloudSaveAdapter, type CloudSaveDocument, type SyncState } from "../../lib/sync/cloud-save.ts";
-import { applyMergedProfileSnapshot, mergeProfileSnapshots, readProfileSnapshot, saveCloudMetadata, validateCloudDocument } from "../../lib/sync/profile-snapshot.ts";
-import { syncReviewEventHistory } from "../../lib/sync/review-event-sync.ts";
+import { applyMergedProfileSnapshot, cloudSaveState, mergeProfileSnapshots, readProfileSnapshot, saveCloudMetadata, validateCloudDocument } from "../../lib/sync/profile-snapshot.ts";
+import { retryPendingReviewEvents, syncReviewEventHistory } from "../../lib/sync/review-event-sync.ts";
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 
 function boundedCloudState(state: CloudSaveDocument["state"]): CloudSaveDocument["state"] {
+  const completeState = cloudSaveState(state);
   return {
-    ...state,
+    ...completeState,
     reviewEvents: [],
-    pendingSync: (state.pendingSync ?? []).filter((item) => item.operation !== "review-event"),
+    pendingSync: (completeState.pendingSync ?? []).filter((item) => item.operation !== "review-event"),
   };
 }
 
@@ -19,6 +20,7 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
   const [cloud, setCloud] = useState<CloudSaveDocument>();
   const [local, setLocal] = useState<Awaited<ReturnType<typeof readProfileSnapshot>>>();
   const [message, setMessage] = useState("");
+  const [pendingReviews, setPendingReviews] = useState(0);
 
   useEffect(() => {
     if (!cloudAdapter) { setStatus("unavailable"); return; }
@@ -34,6 +36,7 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
       syncingEvents = true;
       try {
         const result = await syncReviewEventHistory(cloudAdapter, profileId, reconcile);
+        if (active) setPendingReviews(result.remaining);
         if (active && result.remaining > 0) retryTimer = setTimeout(() => void syncEvents(false), 2000);
       } catch (error) {
         if (active) {
@@ -107,8 +110,14 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
     } catch (error) { setStatus("conflict"); setMessage(error instanceof TypeError ? "Cloud save could not be merged. This device's data is preserved." : "Save changed during merge. Compare again."); }
   }
 
+  async function retryReviews() {
+    if (!cloudAdapter) return;
+    await retryPendingReviewEvents(profileId);
+    await syncReviewEventHistory(cloudAdapter, profileId, false).then((result) => setPendingReviews(result.remaining));
+  }
+
   const label = status === "saved" ? "Saved" : status === "saving" ? "Saving" : status === "offline" ? "Offline" : status === "conflict" ? "Conflict" : "Device only";
   return <section className="save-status" aria-live="polite">
-    <div><strong>{label}</strong>{status === "unavailable" && <p>Cloud saves are not configured.</p>}{status === "conflict" && <><p>Review histories will be merged when compatible.</p><div className="save-actions">{cloud && local && <button type="button" onClick={() => void mergeSaves()}>Merge saves</button>}</div></>}{message && <p role="alert">{message}</p>}</div>
+    <div><strong>{label}</strong>{status === "unavailable" && <p>Cloud saves are not configured.</p>}{status === "conflict" && <><p>Review histories will be merged when compatible.</p><div className="save-actions">{cloud && local && <button type="button" onClick={() => void mergeSaves()}>Merge saves</button>}</div></>}{pendingReviews > 0 && <button type="button" onClick={() => void retryReviews()}>Retry pending reviews</button>}{message && <p role="alert">{message}</p>}</div>
   </section>;
 }

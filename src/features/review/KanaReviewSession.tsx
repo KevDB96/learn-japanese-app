@@ -45,10 +45,14 @@ export function KanaReviewSession({ item, nextLabel, onRated, profileId }: { ite
     {nextLabel && <p>{nextLabel}</p>}
     <p>Review · {form === "kana-sound-to-glyph" ? "Sound to kana" : "Kana to sound"}</p>
     <h2 lang={form === "kana-sound-to-glyph" ? "ja-Latn" : "ja"}>{prompt}</h2>
-    {!answer && <div role="group" aria-label="Review answers">{options.map((option, index) => <button type="button" key={`${option}-${index}`} onClick={() => { setResponseTimeMs(performance.now() - shownAt.current); setAnswer(option); }} lang={form === "kana-sound-to-glyph" ? "ja" : "ja-Latn"}>{option}</button>)}</div>}
+    {!answer && <div role="group" aria-label="Review answers">{options.map((option, index) => {
+      const kana = allKana.find((item) => item.glyph === option || item.romanization === option);
+      const accessibleName = kana ? `${kana.glyph}, ${kana.romanization}` : option;
+      return <button type="button" key={`${option}-${index}`} aria-label={accessibleName} onClick={() => { setResponseTimeMs(performance.now() - shownAt.current); setAnswer(option); }} lang={form === "kana-sound-to-glyph" ? "ja" : "ja-Latn"}>{option}</button>;
+    })}</div>}
     {answer && <>
       <p role="status">{correct ? "Correct." : `Answer: ${correctAnswer}`}</p>
-      <div className="review-ratings" aria-label="Review rating">{ratings.map((rating) => <button key={rating} type="button" disabled={saving} onClick={() => void rate(rating)}>{rating}</button>)}</div>
+      <div className="review-ratings" role="group" aria-label="Review rating">{ratings.map((rating) => <button key={rating} type="button" disabled={saving} onClick={() => void rate(rating)}>{rating}</button>)}</div>
     </>}
     {error && <p role="alert">Review could not be saved.</p>}
   </section>;

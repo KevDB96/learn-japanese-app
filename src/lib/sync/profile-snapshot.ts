@@ -2,11 +2,17 @@ import type { LearnerProfileId } from "../storage/types.ts";
 import { openLocalRepositories } from "../storage/repositories.ts";
 import { CLOUD_PROFILE_IDS, CLOUD_SAVE_SCHEMA_VERSION, type CloudSaveDocument, type CloudSavePayload } from "./cloud-save.ts";
 import { rebuildSrsState } from "../../features/review/srs.ts";
+import { migrateProfileSave, PROFILE_SAVE_SCHEMA_VERSION } from "./save-schema.ts";
 
 export const PROFILE_STORES = ["settings", "lessonProgress", "conceptStates", "reviewEvents", "reviewStates", "pendingSync"] as const;
 export type ProfileSnapshot = { state: CloudSavePayload; updatedAt?: string; revision: number; schemaVersion: number };
 const snapshotKey = (profileId: LearnerProfileId) => `learn-japanese:last-known-good:${profileId}`;
 const metadataKey = (profileId: LearnerProfileId) => `learn-japanese:cloud-metadata:${profileId}`;
+
+/** Normalize the state at the cloud-write boundary so every save has every store. */
+export function cloudSaveState(state: CloudSavePayload): CloudSavePayload {
+  return migrateProfileSave(PROFILE_SAVE_SCHEMA_VERSION, state);
+}
 
 export async function readProfileSnapshot(profileId: LearnerProfileId): Promise<ProfileSnapshot> {
   const repos = await openLocalRepositories(undefined, profileId);
@@ -24,7 +30,8 @@ export async function readProfileSnapshot(profileId: LearnerProfileId): Promise<
     });
     const dates = dateRecords.map((value) => Date.parse((value as { updatedAt?: string }).updatedAt ?? "")).filter(Number.isFinite);
     const metadata = JSON.parse(localStorage.getItem(metadataKey(profileId)) ?? "null") as { revision?: number; schemaVersion?: number } | null;
-    return { state, updatedAt: dates.length ? new Date(Math.max(...dates)).toISOString() : undefined, revision: metadata?.revision ?? 0, schemaVersion: metadata?.schemaVersion ?? CLOUD_SAVE_SCHEMA_VERSION };
+    const schemaVersion = metadata?.schemaVersion ?? PROFILE_SAVE_SCHEMA_VERSION;
+    return { state: cloudSaveState(migrateProfileSave(schemaVersion, state)), updatedAt: dates.length ? new Date(Math.max(...dates)).toISOString() : undefined, revision: metadata?.revision ?? 0, schemaVersion: PROFILE_SAVE_SCHEMA_VERSION };
   } finally { repos.close(); }
 }
 
@@ -33,7 +40,9 @@ export function validateCloudDocument(value: unknown, profileId: LearnerProfileI
   const doc = value as Partial<CloudSaveDocument>;
   if (doc.profileId !== CLOUD_PROFILE_IDS[profileId]) throw new TypeError("Cloud save belongs to another profile");
   if (!Number.isSafeInteger(doc.revision) || (doc.revision ?? 0) < 1) throw new TypeError("Invalid cloud save revision");
-  if (doc.schemaVersion !== CLOUD_SAVE_SCHEMA_VERSION) throw new TypeError("Unsupported cloud save schema");
+  if (!Number.isSafeInteger(doc.schemaVersion) || (doc.schemaVersion ?? 0) < 1 || (doc.schemaVersion ?? 0) > PROFILE_SAVE_SCHEMA_VERSION) {
+    throw new TypeError("Profile save version is not supported. Data is preserved; export this profile and restore it with a compatible app version.");
+  }
   if (typeof doc.updatedAt !== "string" || !Number.isFinite(Date.parse(doc.updatedAt))) throw new TypeError("Invalid cloud save timestamp");
   if (!doc.state || typeof doc.state !== "object" || Array.isArray(doc.state)) throw new TypeError("Invalid cloud save state");
   const state = doc.state as Record<string, unknown>;
@@ -48,7 +57,7 @@ export function validateCloudDocument(value: unknown, profileId: LearnerProfileI
   if (settings && settings.some((item) => !Number.isFinite(item.dailyGoal) || !["kana", "romaji"].includes(String(item.preferredReading)))) throw new TypeError("Invalid cloud settings");
   const progress = state.lessonProgress as Record<string, unknown>[];
   if (progress && progress.some((item) => typeof item.lessonId !== "string" || !["not-started", "in-progress", "completed"].includes(String(item.status)))) throw new TypeError("Invalid cloud lesson progress");
-  return doc as CloudSaveDocument;
+  return { ...doc, schemaVersion: PROFILE_SAVE_SCHEMA_VERSION, state: migrateProfileSave(doc.schemaVersion!, doc.state as CloudSavePayload) } as CloudSaveDocument;
 }
 
 function canonicalValue(value: unknown): unknown {

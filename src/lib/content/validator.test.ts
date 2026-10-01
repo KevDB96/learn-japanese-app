@@ -75,6 +75,12 @@ describe("content validation and registry", () => {
     expect(validateContent(fixture)).toContain('sentence "sentence-one" is unreachable from any lesson');
   });
 
+  it("rejects concepts used in lesson blocks before the curriculum introduces them", () => {
+    const fixture = copy();
+    replaceLesson(fixture, 0, { ...fixture.lessons[0], introduces: [], blocks: [{ id: id("block-one"), kind: "concept-ref", conceptId: id("concept-one") }] });
+    expect(validateContent(fixture)).toContain('concept "concept-one" is used before it is introduced or reinforced in lesson "lesson-one"');
+  });
+
   it("rejects unknown block kinds and missing required text fields", () => {
     const fixture = copy();
     replaceLesson(fixture, 0, { ...fixture.lessons[0], blocks: [

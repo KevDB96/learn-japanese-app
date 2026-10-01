@@ -18,6 +18,8 @@ Run this offline before committing content changes:
 npm run content:validate
 ```
 
+The required GitHub Actions validation workflow also runs the full unit suite, typecheck, content and asset validators, and production build on pushes and pull requests to `main`. The content gate locks released kana inventory counts and review-form IDs/mappings, checks global IDs across fixture families (including intentional catalog mirrors), and checks that every bundled asset is represented by the asset manifest.
+
 The same validator is used by the runtime registry and unit tests. Keep tests to small fixtures; the catalog is the canonical curriculum source.
 
 ## Kana concepts and review forms

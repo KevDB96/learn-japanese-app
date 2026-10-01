@@ -84,30 +84,57 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
         });
       },
       async rebuild() {
-        const events = await this.list();
+        // Read the append-only source and repair its projection in one transaction, so
+        // a concurrent append cannot land between the history snapshot and the write.
+        const tx = db.transaction(["reviewEvents", "reviewStates"], "readwrite");
+        const eventStore = tx.objectStore("reviewEvents");
+        const stateStore = tx.objectStore("reviewStates");
         const grouped = new Map<string, ReviewEvent[]>();
-        for (const event of events) if (event.kind === "scheduled-review") {
-          const group = grouped.get(event.cardId) ?? [];
-          group.push(event); grouped.set(event.cardId, group);
-        }
-        const rebuilt: ReviewCardState[] = [];
-        for (const [cardId, group] of grouped) {
-          const first = group[0]!;
-          const domainEvents: SchedulingReviewEvent[] = group.map((event) => ({ ...event, rating: ({ again: "Forgot", hard: "Hard", good: "Got It", easy: "Easy" } as const)[event.rating] }));
-          const state = rebuildSrsState(domainEvents, first.conceptId, cardId);
-          if (state) rebuilt.push({ id: storageId(profileId, cardId), profileId, recordVersion: 1, updatedAt: state.lastReviewedAt ?? state.nextDueAt, conceptId: first.conceptId, cardId, state });
-        }
-        const existingStates = await withStore<ReviewCardState[]>(db, "reviewStates", "readonly", (s) => s.getAll());
-        const rebuiltById = new Map(rebuilt.map((state) => [state.cardId, state]));
-        for (const old of existingStates) if (old.profileId === profileId && !rebuiltById.has(old.cardId) && old.state.reviewCount === 0) rebuilt.push(old);
-        const tx = db.transaction("reviewStates", "readwrite");
-        const store = tx.objectStore("reviewStates");
-        for (const old of existingStates) if (old.profileId === profileId) store.delete(old.id);
-        for (const state of rebuilt) store.put(state);
+        let result: ReviewCardState[] = [];
+        const cursor = eventStore.openCursor();
+        cursor.onsuccess = () => {
+          const row = cursor.result;
+          if (row) {
+            const event = row.value as ReviewEvent;
+            if (event.profileId === profileId && event.kind === "scheduled-review") {
+              const group = grouped.get(event.cardId) ?? [];
+              group.push(event); grouped.set(event.cardId, group);
+            }
+            row.continue();
+            return;
+          }
+          const existingRequest = stateStore.getAll();
+          existingRequest.onsuccess = () => {
+            const existingStates = existingRequest.result as ReviewCardState[];
+            const rebuilt: ReviewCardState[] = [];
+            for (const [cardId, group] of grouped) {
+              const conceptId = group[0]!.conceptId;
+              if (group.some((event) => event.conceptId !== conceptId)) {
+                tx.abort();
+                return;
+              }
+              const domainEvents: SchedulingReviewEvent[] = group.map((event) => ({ ...event, rating: ({ again: "Forgot", hard: "Hard", good: "Got It", easy: "Easy" } as const)[event.rating] }));
+              const state = rebuildSrsState(domainEvents, conceptId, cardId);
+              if (state) rebuilt.push({ id: storageId(profileId, cardId), profileId, recordVersion: 1, updatedAt: state.lastReviewedAt ?? state.nextDueAt, conceptId, cardId, state });
+            }
+            const rebuiltById = new Map(rebuilt.map((state) => [state.id, state]));
+            for (const old of existingStates) {
+              if (old.profileId !== profileId) continue;
+              const next = rebuiltById.get(old.id);
+              if (next) {
+                if (JSON.stringify(old) !== JSON.stringify(next)) stateStore.put(next);
+              } else if (old.state.reviewCount > 0) stateStore.delete(old.id);
+              else rebuilt.push(old);
+            }
+            result = rebuilt;
+          };
+        };
         await new Promise<void>((resolve, reject) => {
-          tx.oncomplete = () => { changed(profileId); resolve(); }; tx.onerror = () => reject(tx.error); tx.onabort = () => reject(tx.error);
+          tx.oncomplete = () => { changed(profileId); resolve(); };
+          tx.onerror = () => reject(tx.error ?? new Error("Review rebuild failed"));
+          tx.onabort = () => reject(tx.error ?? new Error("Review rebuild aborted"));
         });
-        return rebuilt.map((state) => ({ ...state, id: state.cardId }));
+        return result.map((state) => ({ ...state, id: state.cardId }));
       },
     },
   };

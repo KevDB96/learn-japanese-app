@@ -102,7 +102,7 @@ export function selectDueReviews(states: readonly { readonly cardId: string; rea
 export function rebuildSrsState(events: readonly SchedulingReviewEvent[], conceptId: string, cardId: string): SrsState | undefined {
   let state: SrsState | undefined;
   const ordered = events.filter((event) => event.conceptId === conceptId && event.cardId === cardId && event.kind === 'scheduled-review')
-    .slice().sort((a, b) => a.reviewedAt.localeCompare(b.reviewedAt) || a.id.localeCompare(b.id));
+    .slice().sort((a, b) => Date.parse(a.reviewedAt) - Date.parse(b.reviewedAt) || a.id.localeCompare(b.id));
   for (const event of ordered) state = applyReviewEvent(state, event);
   return state;
 }

@@ -91,11 +91,11 @@ function LearnHome({ profileId }: { profileId: LearnerProfileId }) {
     <PlacementEntry profileId={profileId} />
     <section className="course-card featured-course" aria-label="Hiragana course">
       <img className="course-art" src={asset(`courses/${profileId}/hiragana.webp`)} alt="" />
-      <div className="course-content"><span className="course-kicker">YOUR FIRST COURSE</span><h2>Hiragana</h2><p>Read the sounds and symbols of Japanese.</p><span className="course-status"><span className="status-dot" /> Ready to learn</span></div>
+      <div className="course-content"><span className="course-kicker">YOUR FIRST COURSE</span><h2>Hiragana</h2><p>Read the sounds and symbols of Japanese.</p><span className="course-status"><span className="status-dot" aria-hidden="true" /> Ready to learn</span></div>
       <img className="course-status-art" src={asset(`status/learning-${profileId}.webp`)} alt="" />
     </section>
     <LearnContinue profileId={profileId} />
-    <img className="garden-motif learn-motif" src={asset(profileId === 'kevin' ? 'motifs/spirit-cat.webp' : 'motifs/faerie.webp')} alt="" />
+    <img className="garden-motif learn-motif" src={asset(profileId === 'kevin' ? 'motifs/spirit-cat.webp' : 'motifs/faerie.webp')} alt="" loading="lazy" decoding="async" />
   </div>
 }
 
@@ -103,15 +103,15 @@ function PracticeHome({ profileId, onProgress }: { profileId: LearnerProfileId; 
   return <div className="practice-stack">
     <p className="section-lead">Strengthen what you’ve already learned.</p>
     <section className="activity-card">
-      <img src={asset(`activities/practice-${profileId}.webp`)} alt="" />
+      <img src={asset(`activities/practice-${profileId}.webp`)} alt="" loading="lazy" decoding="async" />
       <div><span className="course-kicker">HIRAGANA</span><h2>Kana practice</h2><p>Choose a character from your progress to practise it again.</p><button className="secondary-action" type="button" onClick={onProgress}>Choose characters</button></div>
     </section>
     <MixedKanaPractice profileId={profileId} />
     <section className="activity-card activity-card-listening">
-      <img src={asset(`activities/listening-${profileId}.webp`)} alt="" />
+      <img src={asset(`activities/listening-${profileId}.webp`)} alt="" loading="lazy" decoding="async" />
       <div><span className="course-kicker">LISTENING</span><h2>Sound practice</h2><p>Listening activities will appear as they’re added to your course.</p><span className="coming-soon">Coming soon</span></div>
     </section>
-    <img className="garden-motif practice-motif" src={asset(profileId === 'kevin' ? 'motifs/sakura-book.webp' : 'motifs/joyful-cat.webp')} alt="" />
+    <img className="garden-motif practice-motif" src={asset(profileId === 'kevin' ? 'motifs/sakura-book.webp' : 'motifs/joyful-cat.webp')} alt="" loading="lazy" decoding="async" />
   </div>
 }
 
@@ -121,6 +121,6 @@ function MoreHome({ profileId, onProgress }: { profileId: LearnerProfileId; onPr
     <button className="more-link" type="button" onClick={onProgress}><span className="more-link-icon" aria-hidden="true">▥</span><span><strong>Your progress</strong><small>Review the hiragana you’ve learned</small></span><span aria-hidden="true">→</span></button>
     <CloudSavePanel profileId={profileId} />
     <ProfileTransferPanel profileId={profileId} />
-    <img className="garden-motif more-motif" src={asset(profileId === 'kevin' ? 'motifs/joyful-cat.webp' : 'motifs/faerie.webp')} alt="" />
+    <img className="garden-motif more-motif" src={asset(profileId === 'kevin' ? 'motifs/joyful-cat.webp' : 'motifs/faerie.webp')} alt="" loading="lazy" decoding="async" />
   </div>
 }

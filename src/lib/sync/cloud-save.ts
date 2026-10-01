@@ -1,10 +1,11 @@
 import type { LearnerProfileId } from "../storage/types.ts";
+import { PROFILE_SAVE_SCHEMA_VERSION } from "./save-schema.ts";
 
 export const CLOUD_PROFILE_IDS: Readonly<Record<LearnerProfileId, string>> = {
   kevin: "f32a6c14-8d1b-4b70-9a2e-61c5d9037f48",
   janne: "a91e5d27-3c84-46f0-bb12-72d8e4065a39",
 };
-export const CLOUD_SAVE_SCHEMA_VERSION = 1;
+export const CLOUD_SAVE_SCHEMA_VERSION = PROFILE_SAVE_SCHEMA_VERSION;
 export type CloudSavePayload = Readonly<Record<string, readonly Record<string, unknown>[]>>;
 export interface CloudSaveDocument {
   profileId: string;

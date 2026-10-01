@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { readFile, stat } from 'node:fs/promises';
+import { readFile, readdir, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -7,7 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const assetRoot = path.join(root, 'public', 'assets');
 const manifest = JSON.parse(await readFile(path.join(assetRoot, 'manifest.json'), 'utf8'));
 const expectedZipHash = 'd57352b48310801e94fc89e2fbcacbe50019bfe9b4cafe6d3a80b353a3e0d911';
-const maxAssetBytes = 2_000_000;
+const maxAssetBytes = 350_000;
 const requiredSlots = [
   'profile.avatar.kevin', 'profile.avatar.janne',
   ...['shared', 'kevin', 'janne'].flatMap((theme) => [512, 192, 180, 32, 16].map((size) => `pwa.icon.${theme}.${size}`)),
@@ -59,6 +59,13 @@ for (const slot of slotNames) if (!requiredSlots.includes(slot)) fail(`unexpecte
 const files = manifest.files ?? {};
 const referencedFiles = new Set(Object.values(manifest.slots));
 if (referencedFiles.size !== Object.keys(files).length) fail('unreferenced or duplicate production file');
+const walkFiles = async (directory) => (await Promise.all((await readdir(directory, { withFileTypes: true })).map(async (entry) => {
+  const target = path.join(directory, entry.name);
+  return entry.isDirectory() ? walkFiles(target) : [path.relative(assetRoot, target).split(path.sep).join('/')];
+}))).flat();
+const actualAssetFiles = new Set((await walkFiles(assetRoot)).filter((file) => file !== 'manifest.json'));
+for (const file of actualAssetFiles) if (!Object.hasOwn(files, file)) fail(`asset is missing from manifest: ${file}`);
+for (const file of Object.keys(files)) if (!actualAssetFiles.has(file)) fail(`manifest references missing asset: ${file}`);
 
 for (const [relative, record] of Object.entries(files)) {
   if (path.isAbsolute(relative) || relative.split(/[\\/]/).some((part) => part === '..' || part === '.' || part === '')) fail(`unsafe asset path ${relative}`);
@@ -67,6 +74,8 @@ for (const [relative, record] of Object.entries(files)) {
   const buffer = await readFile(target);
   const info = await stat(target);
   if (!info.isFile() || info.size > maxAssetBytes || info.size !== record.bytes) fail(`invalid size/file type for ${relative}`);
+  if (record.format === 'png' && !relative.startsWith('icons/')) fail(`source-sheet or non-icon PNG must not ship: ${relative}`);
+  if (path.extname(relative).slice(1) !== record.format) fail(`file extension does not match format for ${relative}`);
   const hash = createHash('sha256').update(buffer).digest('hex');
   if (hash !== record.sha256) fail(`SHA-256 mismatch for ${relative}`);
   const actual = dimensions(buffer, record.format);
@@ -84,4 +93,6 @@ for (const theme of ['shared', 'kevin', 'janne']) {
   }
 }
 
-console.log(`Assets valid (${referencedFiles.size} files, ${slotNames.length} slots).`);
+const totalBytes = Object.values(files).reduce((sum, record) => sum + record.bytes, 0);
+const largest = Math.max(...Object.values(files).map((record) => record.bytes));
+console.log(`Assets valid (${referencedFiles.size} files, ${slotNames.length} slots, ${totalBytes} bytes total, ${largest} byte maximum).`);

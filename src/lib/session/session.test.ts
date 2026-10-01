@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { ContentId, Lesson } from "../content/types.ts";
 import { composeSession } from "./session.ts";
+import { selectWeakConcepts } from "../../features/review/weakness.ts";
+import type { ReviewEvent } from "../storage/types.ts";
 
 const cid = (id: string) => id as ContentId;
 const due = (...ids: string[]) => ids.map((id) => ({ conceptId: cid(id), cardId: `${id}--kana-glyph-to-sound`, formId: "kana-glyph-to-sound" }));
@@ -8,6 +10,11 @@ const lesson: Lesson = {
   id: cid("lesson-a"), display: "Lesson A", requires: [], introduces: [cid("new-a"), cid("new-a")],
   reinforces: [cid("new-a"), cid("known-b")], blocks: [],
 };
+const scenarioNow = Date.parse("2026-09-30T12:00:00.000Z");
+const historyEvent = (id: string, profileId: "kevin" | "janne", conceptId: string, rating: ReviewEvent["rating"], daysAgo: number): ReviewEvent => ({
+  id, profileId, recordVersion: 1, updatedAt: new Date(scenarioNow - daysAgo * 86_400_000).toISOString(), conceptId, cardId: `${conceptId}--kana-glyph-to-sound`, rating,
+  kind: "scheduled-review", reviewedAt: new Date(scenarioNow - daysAgo * 86_400_000).toISOString(),
+});
 
 describe("session composer", () => {
   it("returns an empty serializable plan for a new learner with no candidates", () => {
@@ -84,5 +91,48 @@ describe("session composer", () => {
     const adjustedLesson: Lesson = { ...lesson, introduces: Array.from({ length: 4 }, (_, index) => cid(`new-${index}`)) };
     const plan = composeSession({ dueReviews: [], weakConceptIds: [], currentLesson: adjustedLesson, newMaterialCap: 5, recentFailureCount });
     expect(plan.summary.includesLesson).toBe(includesLesson);
+  });
+
+  it("builds distinct, repeatable sessions from isolated learner failure histories", () => {
+    const kevinHistory = [
+      historyEvent("k-1", "kevin", "weak-kana", "again", 2),
+      historyEvent("k-2", "kevin", "weak-kana", "again", 1),
+      historyEvent("k-3", "kevin", "weak-kana", "hard", 0),
+      historyEvent("k-4", "kevin", "other-kana", "again", 0),
+    ];
+    const janneHistory = [
+      historyEvent("j-1", "janne", "steady-kana", "good", 2),
+      historyEvent("j-2", "janne", "steady-kana", "good", 1),
+      historyEvent("j-3", "janne", "steady-kana", "easy", 0),
+    ];
+    const kevinDue = [
+      { conceptId: cid("due-kana"), cardId: "due-later", formId: "kana-glyph-to-sound", overdueMs: 1_000 },
+      { conceptId: cid("due-kana"), cardId: "due-oldest", formId: "kana-sound-to-glyph", overdueMs: 8_000 },
+      { conceptId: cid("due-kana"), cardId: "due-oldest", formId: "kana-sound-to-glyph", overdueMs: 8_000 },
+    ];
+    const build = (events: readonly ReviewEvent[], dueReviews: typeof kevinDue) => {
+      const recentFailureCount = events.filter((event) => event.rating === "again" && scenarioNow - Date.parse(event.reviewedAt) <= 30 * 86_400_000).length;
+      return composeSession({
+        dueReviews,
+        weakConceptIds: selectWeakConcepts(events, scenarioNow).map(({ conceptId }) => cid(conceptId)),
+        currentLesson: lesson,
+        newMaterialCap: 5,
+        recentFailureCount,
+        reviewLimit: 2,
+        remediationLimit: 3,
+      });
+    };
+
+    const kevinPlan = build(kevinHistory, kevinDue);
+    const jannePlan = build(janneHistory, []);
+    expect(build(kevinHistory, kevinDue)).toEqual(kevinPlan);
+    expect(build(janneHistory, [])).toEqual(jannePlan);
+    expect(kevinPlan.items.map((item) => item.kind === "review" ? item.cardId : item.kind)).toEqual([
+      "due-oldest", "due-later", "remediation",
+    ]);
+    expect(kevinPlan.summary).toMatchObject({ reviewCount: 2, remediationCount: 1, includesLesson: false });
+    expect(jannePlan.items.map((item) => item.kind)).toEqual(["lesson", "practice"]);
+    expect(jannePlan.summary).toMatchObject({ reviewCount: 0, remediationCount: 0, includesLesson: true });
+    expect(kevinPlan).not.toEqual(jannePlan);
   });
 });

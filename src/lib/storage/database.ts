@@ -86,7 +86,12 @@ export function openLocalDatabase(name = STORAGE_DATABASE_NAME): Promise<IDBData
       }
     };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error ?? new Error("Failed to open local database"));
+    request.onerror = () => {
+      const error = request.error;
+      if (error?.name === "VersionError") {
+        reject(new TypeError("This local profile was saved by a newer app version. Data is preserved; reopen it with a compatible app version or export it from that version."));
+      } else reject(error ?? new Error("Failed to open local database"));
+    };
     request.onblocked = () => reject(new Error("Local database upgrade is blocked by another connection"));
   });
 }

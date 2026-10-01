@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { readFile, readdir, writeFile } from 'node:fs/promises'
+import { readFile, readdir, stat, writeFile } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 
 const root = 'dist'
@@ -25,13 +25,18 @@ async function collect(directory) {
 await collect(root)
 files.sort()
 const audioPaths = new Set(Object.keys(offlineAudio).map((url) => new URL(url, 'https://local.invalid').pathname))
-const urls = files.map((file) => `${base}${relative(root, file).split(sep).join('/')}`).filter((url) => !audioPaths.has(new URL(url, 'https://local.invalid').pathname))
+const isInstallAsset = (url) => !url.includes('/assets/') || /\/assets\/(?:icons|avatars)\//.test(url)
+const installFiles = files.filter((file) => {
+  const url = `${base}${relative(root, file).split(sep).join('/')}`
+  return !audioPaths.has(new URL(url, 'https://local.invalid').pathname) && isInstallAsset(url)
+})
+const urls = installFiles.map((file) => `${base}${relative(root, file).split(sep).join('/')}`)
 const coreHash = createHash('sha256')
 coreHash.update(await readFile('package.json'))
 coreHash.update(await readFile('src/content/catalog.json'))
 for (const file of files) {
   const url = `${base}${relative(root, file).split(sep).join('/')}`
-  if (!audioPaths.has(new URL(url, 'https://local.invalid').pathname)) coreHash.update(await readFile(file))
+  if (!audioPaths.has(new URL(url, 'https://local.invalid').pathname) && isInstallAsset(url)) coreHash.update(await readFile(file))
 }
 const cacheName = `learn-japanese-core-${coreHash.digest('hex').slice(0, 12)}`
 const audioHash = createHash('sha256').update(await readFile('src/content/audio-manifest.json'))
@@ -88,3 +93,6 @@ self.addEventListener('fetch', (event) => {
 `
 
 await writeFile(join(root, 'sw.js'), source)
+const totalBytes = (await Promise.all(files.map(async (file) => (await stat(file)).size))).reduce((sum, bytes) => sum + bytes, 0)
+const precacheBytes = (await Promise.all(installFiles.map(async (file) => (await stat(file)).size))).reduce((sum, bytes) => sum + bytes, 0)
+console.log(`PWA payload: ${files.length} files, ${totalBytes} bytes; install precache: ${urls.length} files, ${precacheBytes} bytes; deferred media: ${files.length - urls.length} files, ${totalBytes - precacheBytes} bytes.`)

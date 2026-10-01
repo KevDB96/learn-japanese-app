@@ -66,6 +66,9 @@ export interface PendingSyncOperation extends ProfileScopedRecord {
   readonly operation: string;
   readonly entityId: string;
   readonly payload: Readonly<Record<string, unknown>>;
+  readonly attempts?: number;
+  readonly nextAttemptAt?: string;
+  readonly lastAttemptAt?: string;
 }
 
 export interface AppMetadata extends StoredRecord {

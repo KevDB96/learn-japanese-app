@@ -61,7 +61,7 @@ export function ConceptReviewSession({ item, nextLabel, onRated, profileId }: { 
     {checked && card.kind !== "cloze" && <>
       <p role="status">{correct ? "Correct." : `Answer: ${card.answers.join(" / ")}`}</p>
       {card.kind !== "meaning" && <p lang="ja">{card.reading}</p>}
-      <div className="review-ratings" aria-label="Review rating">{ratings.map((rating) => <button key={rating} type="button" disabled={saving} onClick={() => void rate(rating)}>{rating}</button>)}</div>
+      <div className="review-ratings" role="group" aria-label="Review rating">{ratings.map((rating) => <button key={rating} type="button" disabled={saving} onClick={() => void rate(rating)}>{rating}</button>)}</div>
     </>}
     {checked && card.kind === "cloze" && <div role="group" className="review-ratings" aria-label="Review rating">{ratings.map((rating) => <button key={rating} type="button" disabled={saving} onClick={() => void rate(rating)}>{rating}</button>)}</div>}
     {error && <p role="alert">Review could not be saved.</p>}

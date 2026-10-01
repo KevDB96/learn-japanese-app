@@ -44,6 +44,11 @@ describe("kana content model", () => {
     expect(issues).toContain('provider references unavailable provider "unknown"');
   });
 
+  it("rejects duplicate glyphs within a script", () => {
+    const duplicate = { ...kanaFixtures[0]!, id: "kana-hira-ka-copy" as ContentId };
+    expect(validateKanaContent([kanaFixtures[0]!, duplicate], KANA_REVIEW_FORMS, kanaAudioManifest).join("\n")).toContain('glyph duplicates hiragana glyph "か" from kana[0]');
+  });
+
   it("models all marked rows and legal yoon through component relationships without scheduling every combination", () => {
     expect(kanaFixtures.filter(({ form }) => form === "marked")).toHaveLength(25);
     expect(kanaFixtures.filter(({ form }) => form === "contracted")).toHaveLength(33);

@@ -76,6 +76,22 @@ describe("weak concept evidence", () => {
     expect(inferConceptConfusions([...errors, ...successes.slice(0, 2)], families, now)[0]?.active).toBe(true);
   });
 
+  it("keeps lapse evidence actionable through confusion recovery", () => {
+    const families = new Map([["kana-a", "kana"], ["kana-b", "kana"]] as const);
+    const lapses = [
+      event("hard", "kana-a", "hard", 5),
+      event("miss-1", "kana-a", "again", 4, { confusedConceptId: "kana-b" }),
+      event("miss-2", "kana-a", "again", 3, { confusedConceptId: "kana-b" }),
+    ];
+    expect(selectWeakConcepts(lapses, now).map(({ conceptId }) => conceptId)).toContain("kana-a");
+    expect(inferConceptConfusions(lapses, families, now)[0]).toMatchObject({ active: true, errorCount: 2 });
+
+    const recovered = [...lapses, ...[2, 1, 0].map((daysAgo, index) => event(`recovery-${index}`, "kana-a", "good", daysAgo, { contrastConceptId: "kana-b" }))];
+    expect(inferConceptConfusions(recovered, families, now)[0]).toMatchObject({ active: false, recoveryStreak: 3 });
+    // Correct contrast work clears the confusion drill; lapses still inform concept remediation.
+    expect(selectWeakConcepts(recovered, now).map(({ conceptId }) => conceptId)).toContain("kana-a");
+  });
+
   it("ignores sparse, stale, future, and unclassified confusion evidence", () => {
     const families = new Map([["phrase-a", "phrase"], ["phrase-b", "phrase"]] as const);
     const history = [event("old", "phrase-a", "again", 90, { confusedConceptId: "phrase-b" }), event("future", "phrase-a", "again", -1, { confusedConceptId: "phrase-b" })];

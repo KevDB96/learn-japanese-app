@@ -53,7 +53,7 @@ export function MixedKanaPractice({ profileId }: { profileId: LearnerProfileId }
       {modes.map((item) => <button key={item.id} type="button" aria-pressed={mode === item.id} onClick={() => { setMode(item.id); setIndex(0); setAnswer(undefined); }}>{item.label}</button>)}
     </div>
     {!available ? <p>Learn more kana to unlock this drill.</p> : <>
-      {mode === "recognition" && question && <><p>Choose the matching kana.</p><h3 lang="ja">{question.prompt.glyph}</h3><div className="practice-answer-grid">{question.options.map((item) => <button key={item.id} type="button" lang="ja" disabled={Boolean(answer)} onClick={() => choose(item.glyph)}>{item.glyph}</button>)}</div></>}
+      {mode === "recognition" && question && <><p>Choose the matching kana.</p><h3 lang="ja">{question.prompt.glyph}</h3><div className="practice-answer-grid">{question.options.map((item) => <button key={item.id} type="button" lang="ja" aria-label={`${item.glyph}, ${item.romanization}`} disabled={Boolean(answer)} onClick={() => choose(item.glyph)}>{item.glyph}</button>)}</div></>}
       {mode !== "recognition" && word && <><p>{mode === "reading" ? "Choose the reading." : "Choose the meaning."}</p><h3 lang="ja">{word.display}</h3><div className="practice-answer-grid">{options.map((item) => <button key={item} type="button" lang={mode === "reading" ? "ja" : undefined} disabled={Boolean(answer)} onClick={() => choose(item)}>{item}</button>)}</div></>}
       {answer && <><p role="status">{answer === expected ? "Correct." : `Answer: ${expected}`}</p><button type="button" onClick={next}>Next</button></>}
     </>}

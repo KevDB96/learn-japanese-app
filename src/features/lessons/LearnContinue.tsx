@@ -7,7 +7,6 @@ import { getContinueLesson } from "./progress.ts";
 import { LessonSession } from "./LessonSession.tsx";
 import { targetedContrastGroups } from "../progress/hiragana.ts";
 import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
-import { generateKanaReviewCards, KANA_REVIEW_FORMS } from "../../lib/content/kana.ts";
 import { KanaReviewSession } from "../review/KanaReviewSession.tsx";
 import { ConceptReviewSession } from "../review/ConceptReviewSession.tsx";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
@@ -17,10 +16,16 @@ import { generateVocabularyReviewCards } from "../../lib/content/vocabulary.ts";
 import { generatePhraseReviewCards } from "../../lib/content/phrases.ts";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { generateGrammarClozeReviewCards } from "../../lib/content/grammar.ts";
+import { generateKanaReviewCards, KANA_REVIEW_FORMS } from "../../lib/content/kana.ts";
 import { selectWeakConcepts } from "../review/weakness.ts";
 
 type LearnState = { readonly plan: SessionPlan; readonly lessonId?: string; readonly contrast?: Extract<SessionPlan["items"][number], { kind: "contrast" }> };
 const NEW_MATERIAL_CAP = 5;
+type RemediationCard = { readonly conceptId: string; readonly prompt: string; readonly answers: readonly string[] };
+const remediationCards: RemediationCard[] = [
+  ...[...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures].filter((kana) => kana.reviewEligible !== false).map((kana) => ({ conceptId: kana.id, prompt: kana.glyph, answers: [kana.romanization] })),
+  ...generateVocabularyReviewCards(vocabularyFixtures), ...generatePhraseReviewCards(phraseFixtures), ...generateGrammarClozeReviewCards(grammarFixtures),
+];
 
 export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   const [state, setState] = useState<LearnState>();
@@ -28,6 +33,8 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   const [contrastStarted, setContrastStarted] = useState(false);
   const [error, setError] = useState(false);
   const [returnLessonId, setReturnLessonId] = useState<string>();
+  const [activeRemediation, setActiveRemediation] = useState<string>();
+  const [activeRemediationLessonId, setActiveRemediationLessonId] = useState<string>();
 
   useEffect(() => {
     let cancelled = false;
@@ -66,11 +73,23 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
   if (!state) return <p role="status">Loading…</p>;
   const reviews = state.plan.items.filter((item): item is Extract<typeof item, { kind: "review" }> => item.kind === "review");
   const firstReview = reviews[0];
+  const remediationItems = state.plan.items.filter((item): item is Extract<typeof item, { kind: "remediation" }> => item.kind === "remediation");
+  const nextRemediation = remediationItems[0];
+  const remediationCard = nextRemediation && remediationCards.find((card) => card.conceptId === nextRemediation.conceptId);
+  const explanationLesson = nextRemediation && contentCatalog.lessons.find((item) => item.introduces.includes(nextRemediation.conceptId) || item.reinforces.includes(nextRemediation.conceptId));
   const nextLessonItem = state.plan.items.find((item): item is Extract<typeof item, { kind: "lesson" }> => item.kind === "lesson");
   const nextLessonLabel = nextLessonItem ? contentCatalog.lessons.find((item) => item.id === nextLessonItem.lessonId)?.display : undefined;
   if (firstReview) {
     const props = { key: `${profileId}:${firstReview.cardId}`, profileId, item: firstReview, nextLabel: nextLessonLabel ? `${reviews.length} reviews due · Next: ${nextLessonLabel}` : reviews.length > 1 ? `${reviews.length - 1} more reviews` : undefined, onRated: () => setState((current) => current ? ({ ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "review" || item.cardId !== firstReview.cardId), summary: { ...current.plan.summary, reviewCount: Math.max(0, current.plan.summary.reviewCount - 1) } } }) : current) };
     return firstReview.formId.startsWith("kana-") ? <KanaReviewSession {...props} /> : <ConceptReviewSession {...props} />;
+  }
+  if (activeRemediation && remediationCard) return <RemediationPractice card={remediationCard} onDone={() => {
+    setActiveRemediation(undefined);
+    setState((current) => current ? { ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "remediation" || item.conceptId !== activeRemediation), summary: { ...current.plan.summary, remediationCount: Math.max(0, current.plan.summary.remediationCount - 1) } } } : current);
+  }} />;
+  if (activeRemediationLessonId) {
+    const lesson = contentCatalog.lessons.find((item) => item.id === activeRemediationLessonId);
+    if (lesson) return <LessonSession key={lesson.id} lesson={lesson} profileId={profileId} reviewOnly onExitReview={() => setActiveRemediationLessonId(undefined)} />;
   }
   if (contrastStarted && state.contrast) return <KanaContrastPractice glyphs={state.contrast.glyphs} onDone={() => setContrastStarted(false)} />;
   if (started && state.lessonId) {
@@ -85,11 +104,17 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
       setReturnLessonId(undefined);
     } : undefined} />;
   }
+  if (nextRemediation) return <section className="learn-continue" aria-label="Focused review">
+    <h2>Review {contentCatalog.concepts.find((item) => item.id === nextRemediation.conceptId)?.display ?? nextRemediation.conceptId}</h2>
+    {explanationLesson && <button type="button" onClick={() => setActiveRemediationLessonId(explanationLesson.id)}>Explain</button>}
+    {remediationCard && <button type="button" onClick={() => setActiveRemediation(nextRemediation.conceptId)}>Practice</button>}
+    {!explanationLesson && !remediationCard && <p role="status">No focused review is available.</p>}
+  </section>;
   const nextItem = state.plan.items.find((item) => item.kind === "lesson");
   if (!nextItem) return <div className="learn-continue">
     {state.contrast && <section aria-label="Kana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
     {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
-    {!state.contrast && state.plan.summary.reviewCount === 0 && <section className="learning-empty"><img src={`/assets/states/all-caught-up-${profileId}.webp`} alt="" /><p>All caught up</p></section>}
+    {!state.contrast && state.plan.summary.reviewCount === 0 && <section className="learning-empty"><img src={`/assets/states/all-caught-up-${profileId}.webp`} alt="" loading="lazy" decoding="async" /><p>All caught up</p></section>}
   </div>;
   const lesson = contentCatalog.lessons.find((item) => item.id === nextItem.lessonId)!;
   return <div className="learn-continue">
@@ -98,6 +123,20 @@ export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
     <p>{lesson.display}</p>
     <button className="primary-action" type="button" onClick={() => setStarted(true)}>Continue</button>
   </div>;
+}
+
+function RemediationPractice({ card, onDone }: { card: RemediationCard; onDone: () => void }) {
+  const [answer, setAnswer] = useState("");
+  const [checked, setChecked] = useState(false);
+  const correct = card.answers.some((value) => value.trim().toLocaleLowerCase() === answer.trim().toLocaleLowerCase());
+  return <section className="learn-continue" aria-label="Focused practice">
+    <p>Practice</p><h2>{card.prompt}</h2>
+    <form onSubmit={(event) => { event.preventDefault(); setChecked(true); }}>
+      <label>Answer <input autoComplete="off" value={answer} onChange={(event) => { setAnswer(event.target.value); setChecked(false); }} /></label>
+      <button type="submit" disabled={!answer.trim() || checked}>Check</button>
+    </form>
+    {checked && <><p role="status">{correct ? "Correct." : `Answer: ${card.answers.join(" / ")}`}</p><button type="button" onClick={onDone}>Done</button></>}
+  </section>;
 }
 
 function KanaContrastPractice({ glyphs, onDone }: { glyphs: readonly string[]; onDone: () => void }) {

@@ -41,7 +41,18 @@ describe("profile save reconciliation", () => {
   });
   it("rejects malformed JSON shapes, unsupported schemas, and cross-profile documents", () => {
     expect(() => validateCloudDocument({ ...cloud, state: "not-json" }, "kevin")).toThrow(/state/);
-    expect(() => validateCloudDocument({ ...cloud, schemaVersion: 0 }, "kevin")).toThrow(/schema/);
+    expect(() => validateCloudDocument({ ...cloud, schemaVersion: 0 }, "kevin")).toThrow(/schema|version/);
     expect(() => validateCloudDocument({ ...cloud, profileId: CLOUD_PROFILE_IDS.janne }, "kevin")).toThrow(/another profile/);
+  });
+  it("migrates a shipped older cloud save before merging with a newer local snapshot", () => {
+    const older = { ...cloud, state: { settings: cloud.state.settings } };
+    const validated = validateCloudDocument(older, "kevin");
+    expect(validated.schemaVersion).toBe(CLOUD_SAVE_SCHEMA_VERSION);
+    expect(validated.state).toMatchObject({ settings: cloud.state.settings, lessonProgress: [], reviewEvents: [], pendingSync: [] });
+    expect(mergeProfileSnapshots(local, older, "kevin").state.reviewEvents).toHaveLength(1);
+  });
+  it("fails closed for future cloud versions with a profile recovery path", () => {
+    expect(() => validateCloudDocument({ ...cloud, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION + 1 }, "kevin"))
+      .toThrow(/Data is preserved.*export this profile.*compatible app version/);
   });
 });

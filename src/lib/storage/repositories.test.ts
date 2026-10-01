@@ -74,6 +74,51 @@ describe("local storage repositories", () => {
     expect(plan.summary.reviewCount).toBe(1);
   });
 
+  it("repairs derived state from long out-of-order history without changing source events", async () => {
+    const { repos } = await fresh();
+    const origin = Date.parse("2024-01-01T00:00:00.000Z");
+    const ratings = ["Got It", "Hard", "Forgot", "Easy"] as const;
+    const history = Array.from({ length: 240 }, (_, index) => ({
+      id: `history-${String(index).padStart(3, "0")}`,
+      conceptId: "kana-a", cardId: "kana-a", rating: ratings[index % ratings.length]!,
+      reviewedAt: new Date(origin + index * 3 * 86_400_000).toISOString(),
+    }));
+    for (const index of [...history.keys()].reverse()) {
+      const event = history[index]!;
+      await repos.reviews.append({
+        ...event, recordVersion: 1, updatedAt: event.reviewedAt,
+        rating: ({ "Got It": "good", Hard: "hard", Forgot: "again", Easy: "easy" } as const)[event.rating],
+        kind: "scheduled-review",
+      });
+    }
+    const sourceBefore = await repos.reviews.list();
+    const once = await repos.reviews.rebuild();
+    expect(once).toHaveLength(1);
+    expect(once[0]?.state).toMatchObject({ reviewCount: 240, lapseCount: 60, lastReviewedAt: history.at(-1)?.reviewedAt });
+    expect(await repos.reviews.list()).toEqual(sourceBefore);
+    expect(await repos.reviews.rebuild()).toEqual(once);
+    expect(await repos.reviews.list()).toEqual(sourceBefore);
+  });
+
+  it("repairs damaged projections and removes eventless reviewed states while preserving introduced cards", async () => {
+    const { db, repos } = await fresh();
+    await repos.reviews.introduce("new-card", Date.parse("2026-01-01T00:00:00.000Z"));
+    await repos.reviews.record({ id: "review-a", conceptId: "kana-a", cardId: "kana-a", rating: "Got It", reviewedAt: "2026-01-01T00:00:00.000Z" });
+    const state = (await repos.reviews.getStates()).find((item) => item.cardId === "kana-a")!;
+    const introduced = (await repos.reviews.getStates()).find((item) => item.cardId === "new-card")!;
+    const write = db.transaction("reviewStates", "readwrite");
+    write.objectStore("reviewStates").put({ ...state, id: "kevin::kana-a", state: { ...state.state, reviewCount: 99 } });
+    write.objectStore("reviewStates").put({ ...introduced, state: { ...introduced.state, reviewCount: 2 } });
+    await new Promise<void>((resolve, reject) => { write.oncomplete = () => resolve(); write.onerror = () => reject(write.error); });
+    await repos.reviews.rebuild();
+    const source = await repos.reviews.list();
+    expect(await repos.reviews.getStates()).toEqual(expect.arrayContaining([
+      expect.objectContaining({ cardId: "new-card", state: expect.objectContaining({ reviewCount: 0 }) }),
+      expect.objectContaining({ cardId: "kana-a", state: expect.objectContaining({ reviewCount: 1 }) }),
+    ]));
+    expect(await repos.reviews.list()).toEqual(source);
+  });
+
   it("records practice without creating scheduled state", async () => {
     const { repos } = await fresh();
     await repos.reviews.record({ id: "practice-1", conceptId: "kana-b", cardId: "kana-b", rating: "Got It", reviewedAt: "2026-01-01T00:00:00.000Z", kind: "practice" });
@@ -158,5 +203,32 @@ describe("local storage repositories", () => {
     const repos = createRepositories(upgraded);
     expect(await repos.reviews.get(eventId)).toMatchObject({ id: eventId, profileId: "kevin" });
     expect(await repos.pendingSync.get(`review-event::${eventId}`)).toMatchObject({ operation: "review-event", entityId: eventId, payload: { id: eventId } });
+  });
+
+  it("fails closed and preserves a database created by a newer app version", async () => {
+    const name = `${STORAGE_DATABASE_NAME}-test`;
+    const future = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open(name, STORAGE_SCHEMA_VERSION + 1);
+      request.onupgradeneeded = () => request.result.createObjectStore("futureData", { keyPath: "id" });
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const write = future.transaction("futureData", "readwrite");
+    write.objectStore("futureData").put({ id: "keep", value: "preserved" });
+    await new Promise<void>((resolve) => { write.oncomplete = () => resolve(); });
+    future.close();
+    await expect(openLocalDatabase(name)).rejects.toThrow(/Data is preserved.*compatible app version/);
+    const read = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open(name);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    const preserved = await new Promise<unknown>((resolve, reject) => {
+      const request = read.transaction("futureData").objectStore("futureData").get("keep");
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    expect(preserved).toEqual({ id: "keep", value: "preserved" });
+    read.close();
   });
 });
