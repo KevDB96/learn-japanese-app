@@ -87,4 +87,43 @@ describe("cloud convenience saves", () => {
     expect(window.localStorage.getItem("learn-japanese:last-known-good:kevin")).toContain("settings-local");
     expect(JSON.parse(window.localStorage.getItem("learn-japanese:cloud-metadata:kevin") ?? "{}")).toMatchObject({ revision: 5, schemaVersion: 1 });
   });
+
+  it("rejects malformed remote state while preserving the local profile and last known good snapshot", async () => {
+    const adapter = new FakeCloud();
+    adapter.document = { profileId: CLOUD_PROFILE_IDS.kevin, revision: 7, schemaVersion: 1, updatedAt: "2026-01-02T00:00:00.000Z", state: { settings: [{ id: "poison", dailyGoal: "invalid", preferredReading: "kana" }] } };
+    const repos = await openLocalRepositories(undefined, "kevin");
+    await repos.settings.put({ id: "safe-local", dailyGoal: 8, preferredReading: "romaji", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    repos.close();
+    const knownGood = JSON.stringify({ revision: 6, state: { settings: [{ id: "known-good" }] } });
+    window.localStorage.setItem("learn-japanese:last-known-good:kevin", knownGood);
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+
+    expect(await screen.findByText("Conflict")).toBeInTheDocument();
+    const check = await openLocalRepositories(undefined, "kevin");
+    expect(await check.settings.get("safe-local")).toMatchObject({ dailyGoal: 8, preferredReading: "romaji" });
+    expect(await check.settings.get("poison")).toBeUndefined();
+    check.close();
+    expect(adapter.writes).toBe(0);
+    expect(window.localStorage.getItem("learn-japanese:last-known-good:kevin")).toBe(knownGood);
+  });
+
+  it("stops a merge when the cloud revision changes after the comparison was loaded", async () => {
+    const adapter = new FakeCloud();
+    adapter.document = { profileId: CLOUD_PROFILE_IDS.kevin, revision: 4, schemaVersion: 1, updatedAt: "2026-01-02T00:00:00.000Z", state: { settings: [{ id: "remote-pref", recordVersion: 1, updatedAt: "2026-01-02T00:00:00.000Z", dailyGoal: 12, preferredReading: "kana" }] } };
+    const repos = await openLocalRepositories(undefined, "kevin");
+    await repos.settings.put({ id: "local-pref", dailyGoal: 8, preferredReading: "romaji", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    repos.close();
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+    expect(await screen.findByText("Conflict")).toBeInTheDocument();
+
+    adapter.document = { ...adapter.document, revision: 5, updatedAt: "2026-01-03T00:00:00.000Z" };
+    fireEvent.click(screen.getByRole("button", { name: "Merge saves" }));
+    await waitFor(() => expect(screen.getByText("Conflict")).toBeInTheDocument());
+    expect(adapter.writes).toBe(0);
+    expect(adapter.document.revision).toBe(5);
+    const check = await openLocalRepositories(undefined, "kevin");
+    expect(await check.settings.get("local-pref")).toMatchObject({ dailyGoal: 8 });
+    expect(await check.settings.get("remote-pref")).toMatchObject({ dailyGoal: 12 });
+    check.close();
+  });
 });
