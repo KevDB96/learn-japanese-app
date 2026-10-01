@@ -13,6 +13,8 @@
 * { box-sizing: border-box; }
 body { margin: 0; min-width: 320px; min-height: 100vh; min-height: 100dvh; }
 button { font: inherit; }
+input, textarea, select { font-size: 16px; }
+input:focus, textarea:focus, select:focus { scroll-margin-block: 1rem 6rem; }
 button:focus-visible, a:focus-visible, [tabindex="-1"]:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
 .app-shell {
   --surface: #100d16; --surface-raised: #191521; --surface-card: #211a2b;
@@ -34,7 +36,7 @@ button:focus-visible, a:focus-visible, [tabindex="-1"]:focus-visible { outline: 
 .profile-switch { display: inline-flex; align-items: center; gap: .45rem; min-height: 2.75rem; padding: .25rem .6rem .25rem .3rem; border: 1px solid var(--card-border); border-radius: 999px; background: var(--surface-raised); color: var(--text); font-weight: 700; cursor: pointer; touch-action: manipulation; }
 .profile-switch img { width: 2rem; height: 2rem; border-radius: 50%; object-fit: cover; }
 .profile-switch > span { margin-left: .1rem; color: var(--text-muted); }
-.page-content { position: relative; width: min(100%, 58rem); flex: 1; margin-inline: auto; padding: 1.6rem 1.1rem 6.5rem; overflow: hidden; }
+.page-content { position: relative; width: min(100%, 58rem); flex: 1; margin-inline: auto; padding: 1.6rem 1.1rem calc(5.5rem + env(safe-area-inset-bottom, 0px)); min-width: 0; }
 .page-content > section { position: relative; z-index: 1; }
 h1 { margin: .1rem 0 1.2rem; font-size: clamp(2rem, 8vw, 3.15rem); line-height: 1.08; letter-spacing: -.045em; }
 h2, h3, p { margin-top: 0; }
@@ -104,7 +106,7 @@ h2, h3, p { margin-top: 0; }
 .save-status strong { font-size: .95rem; }
 .save-actions { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: .5rem; }
 .save-actions button { min-height: 2.75rem; padding: .4rem .75rem; border: 1px solid var(--card-border); border-radius: .65rem; background: var(--surface-card); color: var(--text); cursor: pointer; touch-action: manipulation; }
-.bottom-nav { position: fixed; inset-inline: 0; bottom: 0; z-index: 5; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: min(100%, 58rem); margin-inline: auto; padding: .35rem max(.35rem, env(safe-area-inset-left, 0px)) max(.35rem, env(safe-area-inset-bottom, 0px)); border: 1px solid var(--card-border); border-bottom: 0; border-radius: 1rem 1rem 0 0; background: var(--navigation-surface); box-shadow: 0 -.6rem 1.5rem #0002; }
+.bottom-nav { position: fixed; inset-inline: 0; bottom: 0; z-index: 5; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: min(100%, 58rem); margin-inline: auto; padding: .35rem max(.35rem, env(safe-area-inset-left, 0px)) calc(.35rem + env(safe-area-inset-bottom, 0px)) max(.35rem, env(safe-area-inset-right, 0px)); border: 1px solid var(--card-border); border-bottom: 0; border-radius: 1rem 1rem 0 0; background: var(--navigation-surface); box-shadow: 0 -.6rem 1.5rem #0002; }
 .nav-button { display: flex; min-width: 0; min-height: 3.55rem; flex-direction: column; align-items: center; justify-content: center; gap: .05rem; padding: .2rem; border: 0; border-radius: .75rem; background: transparent; color: var(--text-muted); font-size: .75rem; font-weight: 650; cursor: pointer; touch-action: manipulation; }
 .nav-button[aria-current="page"] { background: var(--navigation-active); color: var(--accent); font-weight: 800; }
 .nav-icon { font-size: 1.1rem; line-height: 1.2; }
