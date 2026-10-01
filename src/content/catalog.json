@@ -5261,7 +5261,7 @@
       "reinforces": ["identity-topic-marker", "identity-polite-copula", "sentence-family-mother"],
       "blocks": [
         {"id":"numbers-time-title","kind":"heading","text":"Numbers and time"},
-        {"id":"numbers-time-bridge","kind":"paragraph","text":"Build on the family lesson: use the numbers you learn here to say what time it is and how many people are there."},
+        {"id":"numbers-time-bridge","kind":"paragraph","text":"Build on the family lesson: use the numbers you learn here to say what time it is and how many people there are."},
         {"id":"numbers-core","kind":"vocabulary-list","title":"Numbers 0–10","items":[
           {"japanese":"零","reading":"れい","translation":"zero"},{"japanese":"一","reading":"いち","translation":"one"},{"japanese":"二","reading":"に","translation":"two"},{"japanese":"三","reading":"さん","translation":"three"},{"japanese":"四","reading":"よん","translation":"four (common counting form)"},{"japanese":"五","reading":"ご","translation":"five"},{"japanese":"六","reading":"ろく","translation":"six"},{"japanese":"七","reading":"なな","translation":"seven (common counting form)"},{"japanese":"八","reading":"はち","translation":"eight"},{"japanese":"九","reading":"きゅう","translation":"nine (common counting form)"},{"japanese":"十","reading":"じゅう","translation":"ten"}]},
         {"id":"numbers-reading-note","kind":"callout","title":"Some numbers have more than one reading","text":"Four can be よん or し, seven can be なな or しち, and nine can be きゅう or く. Prefer よん, なな, and きゅう when counting by themselves. A counter can require another reading: 四時 is よじ, 七時 is しちじ, 九時 is くじ. Learn these useful combinations as whole forms."},
@@ -5382,7 +5382,7 @@
           "title": "Name or ask about a place",
           "japanese": "ここは学校です。駅はどこですか。",
           "reading": "ここはがっこうです。えきはどこですか。",
-          "translation": "This is a school. Where is the station?",
+          "translation": "This place is a school. Where is the station?",
           "parts": [
             {
               "text": "ここ・駅",
