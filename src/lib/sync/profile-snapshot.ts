@@ -17,7 +17,29 @@ export function cloudSaveState(state: CloudSavePayload): CloudSavePayload {
 export async function readProfileSnapshot(profileId: LearnerProfileId): Promise<ProfileSnapshot> {
   const repos = await openLocalRepositories(undefined, profileId);
   try {
-    const values = await Promise.all([repos.settings.list(), repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.list(), repos.reviews.getStates(), repos.pendingSync.list()]);
+    // Capture every store from one IndexedDB read transaction. Separate list()
+    // calls can observe different commits while a lesson completion updates its
+    // progress and concept state, producing a cloud document that never existed
+    // as a coherent local snapshot.
+    const transaction = repos.db.transaction([...PROFILE_STORES], "readonly");
+    const complete = new Promise<void>((resolve, reject) => {
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error ?? new Error("Profile snapshot read failed"));
+      transaction.onabort = () => reject(transaction.error ?? new Error("Profile snapshot read aborted"));
+    });
+    const requests = PROFILE_STORES.map((name) => {
+      const request = transaction.objectStore(name).getAll();
+      return new Promise<Record<string, unknown>[]>((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result as Record<string, unknown>[]);
+        request.onerror = () => reject(request.error ?? new Error(`Profile ${name} read failed`));
+      });
+    });
+    const [rawSettings, rawProgress, rawConcepts, rawEvents, rawStates, rawPending] = await Promise.all(requests);
+    await complete;
+    const scoped = (items: Record<string, unknown>[]) => items
+      .filter((item) => item.profileId === profileId)
+      .map((item) => ({ ...item, id: String(item.id).slice(profileId.length + 2) }));
+    const values = [scoped(rawSettings), scoped(rawProgress), scoped(rawConcepts), scoped(rawEvents), scoped(rawStates), scoped(rawPending)];
     const state = Object.fromEntries(PROFILE_STORES.map((name, index) => {
       if (name === "reviewEvents") return [name, values[index] as readonly Record<string, unknown>[]];
       if (name === "pendingSync") return [name, (values[index] as readonly Record<string, unknown>[]).filter((item) => item.operation !== "review-event")];
@@ -66,6 +88,23 @@ function canonicalValue(value: unknown): unknown {
   return Object.fromEntries(Object.entries(value as Record<string, unknown>).sort(([a], [b]) => a.localeCompare(b)).map(([key, item]) => [key, canonicalValue(item)]));
 }
 const canonical = (value: unknown) => JSON.stringify(canonicalValue(value));
+
+/** Reject an adapter response that does not acknowledge the submitted snapshot. */
+export function validateCloudSaveAcknowledgement(
+  value: unknown,
+  profileId: LearnerProfileId,
+  submitted: Pick<CloudSaveDocument, "revision" | "schemaVersion" | "updatedAt" | "state">,
+): CloudSaveDocument {
+  const acknowledged = validateCloudDocument(value, profileId);
+  if (acknowledged.revision !== submitted.revision
+    || acknowledged.schemaVersion !== submitted.schemaVersion
+    || acknowledged.updatedAt !== submitted.updatedAt
+    || canonical(acknowledged.state) !== canonical(submitted.state)) {
+    throw new TypeError("Cloud save acknowledgement does not match the submitted profile snapshot");
+  }
+  return acknowledged;
+}
+
 function newest<T extends Record<string, unknown>>(a: T, b: T): T {
   const av = Number(a.recordVersion ?? 0), bv = Number(b.recordVersion ?? 0);
   if (av !== bv) return av > bv ? a : b;

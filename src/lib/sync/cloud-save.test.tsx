@@ -42,15 +42,36 @@ describe("cloud convenience saves", () => {
   it("writes the selected profile's completed lesson progress in the cloud snapshot", async () => {
     const adapter = new FakeCloud();
     const repos = await openLocalRepositories(undefined, "kevin");
-    await repos.lessonProgress.put({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    await repos.lessonProgress.put({ id: "introduction", lessonId: "introduction", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    await repos.lessonProgress.put({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:01:00.000Z" });
     repos.close();
     render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
     await waitFor(() => expect(adapter.writes).toBe(1), { timeout: 3000 });
     expect(adapter.document?.state.lessonProgress).toEqual(expect.arrayContaining([
+      expect.objectContaining({ lessonId: "introduction", status: "completed" }),
       expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" }),
     ]));
     expect(adapter.document).toMatchObject({ profileId: CLOUD_PROFILE_IDS.kevin, revision: 1, schemaVersion: 1 });
     expect(screen.getByText("Saved")).toBeInTheDocument();
+  });
+
+  it("fails closed when the cloud acknowledgement omits submitted lesson progress", async () => {
+    const adapter = new FakeCloud();
+    const write = adapter.write.bind(adapter);
+    adapter.write = async (document, revision) => {
+      const acknowledged = await write(document, revision);
+      const { lessonProgress: _omitted, ...state } = acknowledged.state;
+      return { ...acknowledged, state };
+    };
+    const repos = await openLocalRepositories(undefined, "kevin");
+    await repos.lessonProgress.put({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    repos.close();
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+    expect(await screen.findByText("Conflict", {}, { timeout: 3000 })).toBeInTheDocument();
+    expect(screen.queryByText("Saved")).not.toBeInTheDocument();
+    const check = await openLocalRepositories(undefined, "kevin");
+    expect(await check.lessonProgress.get("hiragana-a-row")).toMatchObject({ status: "completed" });
+    check.close();
   });
 
   it("keeps a lesson completion pending until its completed progress reaches the cloud snapshot", async () => {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
 import { CLOUD_PROFILE_IDS, CLOUD_SAVE_SCHEMA_VERSION, CloudSaveConflictError, compareSaveMetadata, configuredCloudSave, type CloudSaveAdapter, type CloudSaveDocument, type SyncState } from "../../lib/sync/cloud-save.ts";
-import { applyMergedProfileSnapshot, cloudSaveState, mergeProfileSnapshots, readProfileSnapshot, saveCloudMetadata, validateCloudDocument } from "../../lib/sync/profile-snapshot.ts";
+import { applyMergedProfileSnapshot, cloudSaveState, mergeProfileSnapshots, readProfileSnapshot, saveCloudMetadata, validateCloudDocument, validateCloudSaveAcknowledgement } from "../../lib/sync/profile-snapshot.ts";
 import { retryPendingReviewEvents, syncReviewEventHistory } from "../../lib/sync/review-event-sync.ts";
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 
@@ -68,7 +68,8 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
         if (!navigator.onLine) { setStatus("offline"); return; }
         if (allowWrite && snapshot.updatedAt) {
           setStatus("saving");
-          const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: snapshot.updatedAt, state: boundedCloudState(snapshot.state) }, remote?.revision ?? 0);
+          const submitted = { profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: snapshot.updatedAt, state: boundedCloudState(snapshot.state) };
+          const written = validateCloudSaveAcknowledgement(await cloudAdapter.write(submitted, remote?.revision ?? 0), profileId, submitted);
           if (active) {
             saveCloudMetadata(profileId, written.revision, written.schemaVersion); known = written; setCloud(written);
             if (revisionAtStart !== localRevision) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 0); }
@@ -116,7 +117,8 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
       const latest = await cloudAdapter.read(CLOUD_PROFILE_IDS[profileId]);
       const validLatest = latest ? validateCloudDocument(latest, profileId) : undefined;
       if (validLatest && validLatest.revision !== cloud.revision) throw new CloudSaveConflictError();
-      const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (validLatest?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: merged.updatedAt ?? new Date().toISOString(), state: boundedCloudState(merged.state) }, validLatest?.revision ?? 0);
+      const submitted = { profileId: CLOUD_PROFILE_IDS[profileId], revision: (validLatest?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: merged.updatedAt ?? new Date().toISOString(), state: boundedCloudState(merged.state) };
+      const written = validateCloudSaveAcknowledgement(await cloudAdapter.write(submitted, validLatest?.revision ?? 0), profileId, submitted);
       saveCloudMetadata(profileId, written.revision, written.schemaVersion);
       setLocal(await readProfileSnapshot(profileId)); setCloud(written); setStatus("saved"); setMessage("");
     } catch (error) { setStatus("conflict"); setMessage(error instanceof TypeError ? "Cloud save could not be merged. This device's data is preserved." : "Save changed during merge. Compare again."); }
