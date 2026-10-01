@@ -28,6 +28,8 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
     let timer: ReturnType<typeof setTimeout> | undefined;
     let retryTimer: ReturnType<typeof setTimeout> | undefined;
     let known: CloudSaveDocument | undefined;
+    let localRevision = 0;
+    let refreshChain = Promise.resolve();
     let syncingEvents = false;
     let queuedEventSync: boolean | undefined;
     const syncEvents = async (reconcile = true) => {
@@ -49,12 +51,15 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
         if (active && queuedEventSync !== undefined) { const nextReconcile = queuedEventSync; queuedEventSync = undefined; void syncEvents(nextReconcile); }
       }
     };
-    const refresh = async (allowWrite: boolean) => {
+    const refresh = (allowWrite: boolean) => {
+      refreshChain = refreshChain.then(async () => {
+      const revisionAtStart = localRevision;
       try {
         const snapshot = await readProfileSnapshot(profileId);
         const rawRemote = await cloudAdapter.read(CLOUD_PROFILE_IDS[profileId]);
         const remote = rawRemote ? validateCloudDocument(rawRemote, profileId) : undefined;
         if (!active) return;
+        if (revisionAtStart !== localRevision) { timer = setTimeout(() => void refresh(true), 0); return; }
         const previouslyKnown = known;
         setLocal(snapshot); setCloud(remote); known = remote;
         if (remote && !allowWrite && (snapshot.updatedAt ? compareSaveMetadata(snapshot, remote) !== "same" : true)) { setStatus("conflict"); return; }
@@ -64,14 +69,21 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
         if (allowWrite && snapshot.updatedAt) {
           setStatus("saving");
           const written = await cloudAdapter.write({ profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: snapshot.updatedAt, state: boundedCloudState(snapshot.state) }, remote?.revision ?? 0);
-          if (active) { saveCloudMetadata(profileId, written.revision, written.schemaVersion); known = written; setCloud(written); setStatus("saved"); }
+          if (active) {
+            saveCloudMetadata(profileId, written.revision, written.schemaVersion); known = written; setCloud(written);
+            if (revisionAtStart !== localRevision) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 0); }
+            else setStatus("saved");
+          }
         } else if (!remote && snapshot.updatedAt) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 800); }
         else setStatus("saved");
       } catch (error) { if (active) { setStatus(error instanceof CloudSaveConflictError ? "conflict" : error instanceof TypeError ? "conflict" : "offline"); setMessage(error instanceof TypeError ? "Cloud save is invalid or from an unsupported version. This device's data is preserved." : ""); } }
+      });
+      return refreshChain;
     };
     const onChange = (event: Event) => {
       const detail = (event as CustomEvent<{ profileId: string; origin?: string }>).detail;
       if (detail?.profileId !== profileId || detail.origin === "restore") return;
+      localRevision++;
       if (timer) clearTimeout(timer);
       setStatus(navigator.onLine ? "saving" : "offline");
       timer = setTimeout(() => void refresh(true), 800);

@@ -3,6 +3,8 @@ import "fake-indexeddb/auto";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { CloudSavePanel } from "../../features/sync/CloudSavePanel.tsx";
+import { LessonSession } from "../../features/lessons/LessonSession.tsx";
+import { contentCatalog } from "../content/catalog.ts";
 import { openLocalRepositories } from "../storage/repositories.ts";
 import { STORAGE_DATABASE_NAME } from "../storage/types.ts";
 import { CLOUD_PROFILE_IDS, compareSaveMetadata, type CloudSaveAdapter, type CloudSaveDocument } from "./cloud-save.ts";
@@ -49,6 +51,39 @@ describe("cloud convenience saves", () => {
     ]));
     expect(adapter.document).toMatchObject({ profileId: CLOUD_PROFILE_IDS.kevin, revision: 1, schemaVersion: 1 });
     expect(screen.getByText("Saved")).toBeInTheDocument();
+  });
+
+  it("keeps a lesson completion pending until its completed progress reaches the cloud snapshot", async () => {
+    const adapter = new FakeCloud() as FakeCloud & { pauseNextWrite?: boolean; writeStarted?: boolean; releaseWrite?: () => void };
+    const write = adapter.write.bind(adapter);
+    adapter.write = async (document, revision) => {
+      if (adapter.pauseNextWrite) {
+        adapter.pauseNextWrite = false;
+        adapter.writeStarted = true;
+        await new Promise<void>((resolve) => { adapter.releaseWrite = resolve; });
+      }
+      return write(document, revision);
+    };
+    const lesson = contentCatalog.lessons.find((item) => item.id === "hiragana-a-row") ?? contentCatalog.lessons[0]!;
+    render(<><LessonSession lesson={lesson} profileId="kevin" /><CloudSavePanel profileId="kevin" adapter={adapter} /></>);
+    await waitFor(() => expect(screen.getByText("Saved")).toBeInTheDocument());
+    await screen.findByRole("button", { name: /Continue|Complete lesson/ });
+
+    while (!screen.queryByRole("button", { name: "Complete lesson" })) {
+      fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+      await waitFor(() => expect(screen.queryByRole("button", { name: "Continue" }) || screen.queryByRole("button", { name: "Complete lesson" })).toBeTruthy());
+    }
+    adapter.pauseNextWrite = true;
+    fireEvent.click(screen.getByRole("button", { name: "Complete lesson" }));
+    await screen.findByText("Lesson complete");
+    expect(screen.queryByRole("button", { name: "Complete lesson" })).not.toBeInTheDocument();
+    await waitFor(() => expect(adapter.writeStarted).toBe(true));
+    expect(screen.getByText("Saving")).toBeInTheDocument();
+    adapter.releaseWrite?.();
+    await waitFor(() => expect(screen.getByText("Saved")).toBeInTheDocument());
+    expect(adapter.document?.state.lessonProgress).toEqual(expect.arrayContaining([
+      expect.objectContaining({ lessonId: lesson.id, status: "completed" }),
+    ]));
   });
 
   it("syncs review UUIDs separately from the bounded profile snapshot", async () => {
