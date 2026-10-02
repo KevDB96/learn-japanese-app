@@ -2,6 +2,18 @@ import { expect, test } from '@playwright/test'
 
 const profileId = 'f32a6c14-8d1b-4b70-9a2e-61c5d9037f48'
 
+async function waitForLessonAction(page: import('@playwright/test').Page): Promise<'complete' | 'ready'> {
+  const state = await page.waitForFunction(() => {
+    const lesson = document.querySelector('.lesson-session')
+    if (!lesson) return false
+    const status = lesson.querySelector('[role="status"]')
+    if (status?.textContent?.includes('Lesson complete')) return 'complete'
+    const button = lesson.querySelector(':scope > button')
+    return button instanceof HTMLButtonElement && !button.disabled ? 'ready' : false
+  }, undefined, { timeout: 10_000 })
+  try { return await state.jsonValue() as 'complete' | 'ready' } finally { await state.dispose() }
+}
+
 test('cloud acknowledgement includes completed lesson progress after Saved', async ({ page, context }) => {
   const saves = new Map<string, { revision: number; state: Record<string, unknown> }>()
   const writes: Record<string, unknown>[] = []
@@ -44,15 +56,19 @@ test('cloud acknowledgement includes completed lesson progress after Saved', asy
   await expect(page.getByRole('heading', { name: 'Choose a profile' })).toBeVisible()
   await page.getByRole('button', { name: /Kevin/ }).click()
   await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
+  await page.getByRole('button', { name: 'Progress', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Learn', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Learn Japanese' })).toBeVisible()
 
   const completeLesson = async (exercise = false) => {
     let exercised = false
-    for (let step = 0; step < 30; step += 1) {
-      const complete = page.getByRole('button', { name: 'Complete lesson', exact: true })
-      if (await complete.count()) {
-        await complete.click()
-        await expect(page.getByText('Lesson complete')).toBeVisible()
-        return
+    for (let i = 0; i < 28; i += 1) {
+      if (await waitForLessonAction(page) === 'complete') break
+      const outer = page.locator('.lesson-session > button')
+      if (await outer.getAttribute('aria-label') === 'Complete lesson' || await outer.innerText() === 'Complete lesson') {
+        await outer.click()
+        continue
       }
       if (exercise && !exercised) {
         const group = page.locator('.lesson-session [role="group"]').first()
@@ -63,10 +79,10 @@ test('cloud acknowledgement includes completed lesson progress after Saved', asy
           exercised = true
         }
       }
-      await page.locator('.lesson-session > button').click()
-      await expect(page.locator('.lesson-session > button')).toBeEnabled()
+      if (await waitForLessonAction(page) === 'complete') break
+      await outer.click()
     }
-    throw new Error('Lesson did not reach completion')
+    await expect(page.getByRole('status').filter({ hasText: 'Lesson complete' })).toBeVisible()
   }
 
   await page.getByRole('button', { name: 'Learn', exact: true }).click()
@@ -78,11 +94,25 @@ test('cloud acknowledgement includes completed lesson progress after Saved', asy
   await page.getByRole('button', { name: 'Continue', exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Hiragana: A row' })).toBeVisible()
   await completeLesson(true)
+  const persistedAtMoreNavigation = await page.evaluate(() => new Promise<Array<Record<string, unknown>>>((resolve, reject) => {
+    const request = indexedDB.open('learn-japanese-local')
+    request.onerror = () => reject(request.error)
+    request.onsuccess = () => {
+      const db = request.result
+      const tx = db.transaction('lessonProgress', 'readonly')
+      const rows = tx.objectStore('lessonProgress').getAll()
+      tx.oncomplete = () => { resolve(rows.result); db.close() }
+      tx.onerror = () => reject(tx.error)
+    }
+  }))
+  expect(persistedAtMoreNavigation).toContainEqual(expect.objectContaining({ profileId: 'kevin', lessonId: 'hiragana-a-row', status: 'completed' }))
   await page.getByRole('button', { name: 'More', exact: true }).click()
   await expect(page.getByText('Saved', { exact: true })).toBeVisible({ timeout: 20_000 })
-  expect(writes.at(-1)?.lessonProgress).toEqual(expect.arrayContaining([
+  const intercepted = writes.at(-1)
+  expect(intercepted?.lessonProgress).toEqual(expect.arrayContaining([
     expect.objectContaining({ lessonId: 'hiragana-a-row', status: 'completed' }),
   ]))
+  expect(saves.get(profileId)?.state).toEqual(intercepted)
   expect(saves.get(profileId)?.state.lessonProgress).toEqual(expect.arrayContaining([
     expect.objectContaining({ lessonId: 'hiragana-a-row', status: 'completed' }),
   ]))

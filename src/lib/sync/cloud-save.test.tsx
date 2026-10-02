@@ -7,7 +7,8 @@ import { LessonSession } from "../../features/lessons/LessonSession.tsx";
 import { contentCatalog } from "../content/catalog.ts";
 import { openLocalRepositories } from "../storage/repositories.ts";
 import { STORAGE_DATABASE_NAME } from "../storage/types.ts";
-import { CLOUD_PROFILE_IDS, compareSaveMetadata, type CloudSaveAdapter, type CloudSaveDocument } from "./cloud-save.ts";
+import { CLOUD_PROFILE_IDS, compareSaveMetadata, SupabaseCloudSaveAdapter, type CloudSaveAdapter, type CloudSaveDocument } from "./cloud-save.ts";
+import { readProfileSnapshot } from "./profile-snapshot.ts";
 
 class FakeCloud implements CloudSaveAdapter {
   document?: CloudSaveDocument;
@@ -81,6 +82,82 @@ describe("cloud convenience saves", () => {
       ]));
     });
     expect(screen.getByText("Saved")).toBeInTheDocument();
+  });
+
+  it("sends a persisted profile-scoped lesson through the Supabase RPC before Saved", async () => {
+    let intercepted: Record<string, unknown> | undefined;
+    let acknowledgement: CloudSaveDocument | undefined;
+    const client = {
+      from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }),
+      rpc: async (_name: string, args: Record<string, unknown>) => {
+        intercepted = structuredClone(args.p_state as Record<string, unknown>);
+        const row = {
+          profile_id: args.p_profile_id,
+          revision: Number(args.p_expected_revision) + 1,
+          schema_version: args.p_schema_version,
+          updated_at: args.p_updated_at,
+          state: args.p_state,
+        };
+        acknowledgement = { profileId: String(row.profile_id), revision: row.revision, schemaVersion: Number(row.schema_version), updatedAt: String(row.updated_at), state: row.state as CloudSaveDocument["state"] };
+        return { data: [row], error: null };
+      },
+    } as never;
+    const adapter = new SupabaseCloudSaveAdapter(Promise.resolve(client));
+    const kevin = await openLocalRepositories(undefined, "kevin");
+    await kevin.lessonProgress.put({ id: "introduction", lessonId: "introduction", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    await kevin.lessonProgress.put({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:01:00.000Z" });
+    kevin.close();
+    const janne = await openLocalRepositories(undefined, "janne");
+    await janne.lessonProgress.put({ id: "janne-only", lessonId: "janne-only", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:02:00.000Z" });
+    janne.close();
+
+    const persisted = await readProfileSnapshot("kevin");
+    expect(persisted.state.lessonProgress).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed" }),
+    ]));
+    expect(persisted.state.lessonProgress).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ lessonId: "janne-only" }),
+    ]));
+
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+    await waitFor(() => expect(screen.getByText("Saved")).toBeInTheDocument(), { timeout: 3000 });
+    expect(intercepted?.lessonProgress).toEqual(expect.arrayContaining([
+      expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" }),
+    ]));
+    expect(acknowledgement?.state.lessonProgress).toEqual(expect.arrayContaining([
+      expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" }),
+    ]));
+  });
+
+  it("saves lesson completion after the lesson route unmounts and cloud sync mounts", async () => {
+    let intercepted: Record<string, unknown> | undefined;
+    let acknowledgement: CloudSaveDocument | undefined;
+    const client = {
+      from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null, error: null }) }) }) }),
+      rpc: async (_name: string, args: Record<string, unknown>) => {
+        intercepted = structuredClone(args.p_state as Record<string, unknown>);
+        const row = { profile_id: args.p_profile_id, revision: Number(args.p_expected_revision) + 1, schema_version: args.p_schema_version, updated_at: args.p_updated_at, state: args.p_state };
+        acknowledgement = { profileId: String(row.profile_id), revision: row.revision, schemaVersion: Number(row.schema_version), updatedAt: String(row.updated_at), state: row.state as CloudSaveDocument["state"] };
+        return { data: [row], error: null };
+      },
+    } as never;
+    const adapter = new SupabaseCloudSaveAdapter(Promise.resolve(client));
+    const lesson = contentCatalog.lessons.find((item) => item.id === "hiragana-a-row")!;
+    const { unmount } = render(<LessonSession lesson={lesson} profileId="kevin" />);
+    while (!screen.queryByRole("button", { name: "Complete lesson" })) {
+      fireEvent.click(await screen.findByRole("button", { name: "Continue" }));
+      await waitFor(() => expect(screen.queryByRole("button", { name: /Continue|Complete lesson/ })).toBeInTheDocument());
+    }
+    fireEvent.click(screen.getByRole("button", { name: "Complete lesson" }));
+    await screen.findByText("Lesson complete");
+    const persisted = await readProfileSnapshot("kevin");
+    expect(persisted.state.lessonProgress).toEqual(expect.arrayContaining([expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" })]));
+    unmount();
+
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+    await waitFor(() => expect(screen.getByText("Saved")).toBeInTheDocument(), { timeout: 3000 });
+    expect(intercepted?.lessonProgress).toEqual(expect.arrayContaining([expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" })]));
+    expect(acknowledgement?.state.lessonProgress).toEqual(expect.arrayContaining([expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" })]));
   });
 
   it("does not report Saved without writing a nonempty legacy snapshot that lacks timestamps", async () => {

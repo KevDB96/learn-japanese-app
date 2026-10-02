@@ -90,7 +90,7 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
             if (revisionAtStart !== localRevision) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 0); }
             else setStatus("saved");
           }
-        } else if (!remote && (snapshot.updatedAt || hasLocalState(snapshot))) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 800); }
+        } else if (!remote && !allowWrite) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 800); }
         else setStatus("saved");
       } catch (error) { if (active) { setStatus(error instanceof CloudSaveConflictError ? "conflict" : error instanceof TypeError ? "conflict" : "offline"); setMessage(error instanceof TypeError ? "Cloud save is invalid or from an unsupported version. This device's data is preserved." : ""); } }
       });
