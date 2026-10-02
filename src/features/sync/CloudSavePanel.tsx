@@ -14,6 +14,10 @@ function boundedCloudState(state: CloudSaveDocument["state"]): CloudSaveDocument
   };
 }
 
+function hasLocalState(snapshot: Awaited<ReturnType<typeof readProfileSnapshot>>): boolean {
+  return Object.values(snapshot.state).some((records) => Array.isArray(records) && records.length > 0);
+}
+
 export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfileId; adapter?: CloudSaveAdapter }) {
   const [cloudAdapter] = useState<CloudSaveAdapter | undefined>(() => adapter ?? configuredCloudSave());
   const [status, setStatus] = useState<SyncState>(cloudAdapter ? "saving" : "unavailable");
@@ -66,16 +70,27 @@ export function CloudSavePanel({ profileId, adapter }: { profileId: LearnerProfi
         if (allowWrite && remote && !previouslyKnown && (!snapshot.updatedAt || compareSaveMetadata(snapshot, remote) !== "same")) { setStatus("conflict"); return; }
         if (allowWrite && remote && previouslyKnown && remote.revision !== previouslyKnown.revision) { setStatus("conflict"); return; }
         if (!navigator.onLine) { setStatus("offline"); return; }
-        if (allowWrite && snapshot.updatedAt) {
+        if (allowWrite && (snapshot.updatedAt || hasLocalState(snapshot))) {
+          // Remote reads and event synchronization above can take long enough
+          // for a lesson completion to commit after the first snapshot. Read
+          // one coherent snapshot at the actual write boundary so the RPC is
+          // built from the latest local state, not merely the refresh start.
+          const writeRevision = localRevision;
+          const writeSnapshot = await readProfileSnapshot(profileId);
+          if (writeRevision !== localRevision || revisionAtStart !== localRevision) {
+            if (active) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 0); }
+            return;
+          }
+          if (!writeSnapshot.updatedAt && !hasLocalState(writeSnapshot)) { setStatus("saved"); return; }
           setStatus("saving");
-          const submitted = { profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: snapshot.updatedAt, state: boundedCloudState(snapshot.state) };
+          const submitted = { profileId: CLOUD_PROFILE_IDS[profileId], revision: (remote?.revision ?? 0) + 1, schemaVersion: CLOUD_SAVE_SCHEMA_VERSION, updatedAt: writeSnapshot.updatedAt ?? new Date().toISOString(), state: boundedCloudState(writeSnapshot.state) };
           const written = validateCloudSaveAcknowledgement(await cloudAdapter.write(submitted, remote?.revision ?? 0), profileId, submitted);
           if (active) {
             saveCloudMetadata(profileId, written.revision, written.schemaVersion); known = written; setCloud(written);
             if (revisionAtStart !== localRevision) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 0); }
             else setStatus("saved");
           }
-        } else if (!remote && snapshot.updatedAt) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 800); }
+        } else if (!remote && (snapshot.updatedAt || hasLocalState(snapshot))) { setStatus("saving"); timer = setTimeout(() => void refresh(true), 800); }
         else setStatus("saved");
       } catch (error) { if (active) { setStatus(error instanceof CloudSaveConflictError ? "conflict" : error instanceof TypeError ? "conflict" : "offline"); setMessage(error instanceof TypeError ? "Cloud save is invalid or from an unsupported version. This device's data is preserved." : ""); } }
       });

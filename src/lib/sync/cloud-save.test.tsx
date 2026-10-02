@@ -55,6 +55,49 @@ describe("cloud convenience saves", () => {
     expect(screen.getByText("Saved")).toBeInTheDocument();
   });
 
+  it("shows Saved only after the actual write and acknowledgement contain the completed row", async () => {
+    const adapter = new FakeCloud();
+    let submitted: CloudSaveDocument | undefined;
+    let acknowledged: CloudSaveDocument | undefined;
+    const write = adapter.write.bind(adapter);
+    adapter.write = async (document, revision) => {
+      submitted = structuredClone(document);
+      const response = await write(document, revision);
+      acknowledged = structuredClone(response);
+      return response;
+    };
+    const repos = await openLocalRepositories(undefined, "kevin");
+    await repos.lessonProgress.put({ id: "introduction", lessonId: "introduction", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:00:00.000Z" });
+    await repos.lessonProgress.put({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed", recordVersion: 1, updatedAt: "2026-01-01T00:01:00.000Z" });
+    repos.close();
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+
+    await waitFor(() => {
+      expect(submitted?.state.lessonProgress).toEqual(expect.arrayContaining([
+        expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" }),
+      ]));
+      expect(acknowledged?.state.lessonProgress).toEqual(expect.arrayContaining([
+        expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" }),
+      ]));
+    });
+    expect(screen.getByText("Saved")).toBeInTheDocument();
+  });
+
+  it("does not report Saved without writing a nonempty legacy snapshot that lacks timestamps", async () => {
+    const adapter = new FakeCloud();
+    const repos = await openLocalRepositories(undefined, "kevin");
+    await repos.lessonProgress.put({ id: "hiragana-a-row", lessonId: "hiragana-a-row", status: "completed", recordVersion: 1 } as never);
+    repos.close();
+    render(<CloudSavePanel profileId="kevin" adapter={adapter} />);
+
+    await waitFor(() => expect(adapter.writes).toBe(1));
+    expect(adapter.document?.updatedAt).toEqual(expect.any(String));
+    expect(adapter.document?.state.lessonProgress).toEqual(expect.arrayContaining([
+      expect.objectContaining({ lessonId: "hiragana-a-row", status: "completed" }),
+    ]));
+    expect(screen.getByText("Saved")).toBeInTheDocument();
+  });
+
   it("fails closed when the cloud acknowledgement omits submitted lesson progress", async () => {
     const adapter = new FakeCloud();
     const write = adapter.write.bind(adapter);
