@@ -22,6 +22,10 @@ The required GitHub Actions validation workflow also runs the full unit suite, t
 
 The same validator is used by the runtime registry and unit tests. Keep tests to small fixtures; the catalog is the canonical curriculum source.
 
+## Frozen release data
+
+`src/content/release-manifest.json` records the released schema/content/pronunciation versions, beginner module map, counts, complete authored ID lists and digests, and the asset file hashes and sizes. `npm run content:validate` checks it alongside content rules. A released ID or version change must be reviewed as a content release and the manifest regenerated deliberately with `npm run release:manifest -- --write`; do not regenerate it to silence a validation failure.
+
 ## Kana concepts and review forms
 
 Kana concepts use immutable content IDs and record script, glyph, Hepburn-style romanization, row/order, form (`base`, `marked`, `contracted`, or `small`), and component IDs. Review forms are reusable templates (`kana-glyph-to-sound`, `kana-sound-to-glyph`, and `kana-audio-to-glyph`); generated review-card IDs combine the kana concept ID and template ID, so review memory belongs to the concept/card pair. Audio IDs are logical references resolved through a versioned pronunciation manifest. Missing audio is reported by coverage and does not invalidate kana or review behavior. Browser speech synthesis is an optional pronunciation provider only.
