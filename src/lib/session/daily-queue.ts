@@ -9,20 +9,16 @@ export interface DailyQueueInput {
 }
 export interface DailyQueue { readonly profileId: string; readonly due: readonly DailyDueCard[]; readonly newConceptIds: readonly string[]; readonly newCardIds: readonly string[]; readonly orderedCardIds: readonly string[] }
 
-/** Stable daily selection: scheduler order first, then unseen curriculum order, capped by new cards. */
+/** Stable daily selection: scheduler order first, then unseen curriculum order, capped by new concepts. */
 export function buildDailyQueue(input: DailyQueueInput): DailyQueue {
   const introduced = new Set(input.introducedConceptIds);
   // reviews.due() supplies the scheduler's established overdue/due-time/card-ID order.
   const due = [...new Map(input.due.map((card) => [card.cardId, card])).values()];
   const cap = Math.min(5, Math.max(0, Math.floor(input.cap ?? 5)));
-  const unseen: DailyMaterial[] = [];
-  let newCardCount = 0;
-  for (const material of [...input.materials].sort((a, b) => a.order - b.order || a.conceptId.localeCompare(b.conceptId))) {
-    if (introduced.has(material.conceptId) || material.cardIds.length === 0) continue;
-    if (newCardCount + material.cardIds.length > cap) continue;
-    unseen.push(material);
-    newCardCount += material.cardIds.length;
-  }
+  const unseen = [...input.materials]
+    .sort((a, b) => a.order - b.order || a.conceptId.localeCompare(b.conceptId))
+    .filter((material) => !introduced.has(material.conceptId) && material.cardIds.length > 0)
+    .slice(0, cap);
   const newCardIds = unseen.flatMap((item) => item.cardIds);
   return { profileId: input.profileId, due, newConceptIds: unseen.map((item) => item.conceptId), newCardIds, orderedCardIds: [...due.map((item) => item.cardId), ...newCardIds] };
 }

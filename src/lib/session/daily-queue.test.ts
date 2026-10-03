@@ -9,16 +9,21 @@ describe("daily study queue", () => {
     expect(queue.newConceptIds).toEqual(["c0", "c1", "c2", "c3", "c4"]);
     expect(queue.orderedCardIds).toEqual(["due-first", "due-second", "c0-card", "c1-card", "c2-card", "c3-card", "c4-card"]);
   });
-  it("never adds more than five new cards in one generated session", () => {
+  it("caps at five new concepts and retains every card form for those concepts", () => {
     const multiCardMaterials = [
       { conceptId: "a", cardIds: ["a-1", "a-2", "a-3"], order: 0 },
       { conceptId: "b", cardIds: ["b-1", "b-2", "b-3"], order: 1 },
-      { conceptId: "c", cardIds: ["c-1"], order: 2 },
+      { conceptId: "c", cardIds: ["c-1", "c-2"], order: 2 },
+      { conceptId: "d", cardIds: ["d-1", "d-2"], order: 3 },
+      { conceptId: "e", cardIds: ["e-1", "e-2"], order: 4 },
+      { conceptId: "f", cardIds: ["f-1", "f-2"], order: 5 },
+      { conceptId: "g", cardIds: ["g-1", "g-2"], order: 6 },
     ];
     const queue = buildDailyQueue({ profileId: "kevin", due: [], materials: multiCardMaterials, introducedConceptIds: [], cap: 99 });
-    expect(queue.newCardIds).toEqual(["a-1", "a-2", "a-3", "c-1"]);
-    expect(queue.newCardIds.length).toBeLessThanOrEqual(5);
-    expect(queue.newConceptIds).toEqual(["a", "c"]);
+    expect(queue.newConceptIds).toEqual(["a", "b", "c", "d", "e"]);
+    expect(queue.newConceptIds.length).toBeLessThanOrEqual(5);
+    expect(queue.newCardIds).toEqual(["a-1", "a-2", "a-3", "b-1", "b-2", "b-3", "c-1", "c-2", "d-1", "d-2", "e-1", "e-2"]);
+    expect(queue.newCardIds.length).toBeGreaterThan(5);
   });
   it("keeps queue ownership explicit and excludes concepts already introduced for that profile", () => {
     expect(buildDailyQueue({ profileId: "janne", due: [], materials, introducedConceptIds: ["c0"] })).toMatchObject({ profileId: "janne", newConceptIds: ["c1", "c2", "c3", "c4", "c5"] });
