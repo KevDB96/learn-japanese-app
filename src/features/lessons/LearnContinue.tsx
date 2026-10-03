@@ -1,154 +1,96 @@
 import { useEffect, useState } from "react";
 import { contentCatalog } from "../../lib/content/catalog.ts";
-import type { ContentId } from "../../lib/content/types.ts";
-import { composeSession, type SessionPlan } from "../../lib/session/session.ts";
-import { openLocalRepositories } from "../../lib/storage/repositories.ts";
-import { getContinueLesson } from "./progress.ts";
-import { LessonSession } from "./LessonSession.tsx";
-import { targetedContrastGroups } from "../progress/hiragana.ts";
 import { kanaFixtures, katakanaFixtures, katakanaAdvancedFixtures } from "../../content/kana-fixtures.ts";
-import { KanaReviewSession } from "../review/KanaReviewSession.tsx";
-import { ConceptReviewSession } from "../review/ConceptReviewSession.tsx";
-import type { LearnerProfileId } from "../../lib/storage/types.ts";
 import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
 import { phraseFixtures } from "../../content/phrase-fixtures.ts";
+import { grammarFixtures } from "../../content/grammar-fixtures.ts";
+import { generateKanaReviewCards } from "../../lib/content/kana.ts";
 import { generateVocabularyReviewCards } from "../../lib/content/vocabulary.ts";
 import { generatePhraseReviewCards } from "../../lib/content/phrases.ts";
-import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { generateGrammarClozeReviewCards } from "../../lib/content/grammar.ts";
-import { generateKanaReviewCards, KANA_REVIEW_FORMS } from "../../lib/content/kana.ts";
-import { selectWeakConcepts } from "../review/weakness.ts";
+import { buildDailyQueue, type DailyMaterial } from "../../lib/session/daily-queue.ts";
+import { openLocalRepositories } from "../../lib/storage/repositories.ts";
+import type { LearnerProfileId } from "../../lib/storage/types.ts";
+import type { ContentId } from "../../lib/content/types.ts";
+import type { ReviewRating } from "../review/srs.ts";
+const kana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
+const cards = [  ...generateKanaReviewCards(kana),  ...generateVocabularyReviewCards(vocabularyFixtures),  ...generatePhraseReviewCards(phraseFixtures),  ...generateGrammarClozeReviewCards(grammarFixtures),].map((card) => {  if ("prompt" in card) return card;
+  const concept = kana.find((item) => item.id === card.conceptId)!;
+  const soundToGlyph = card.formId === "kana-sound-to-glyph";
+  return { ...card, prompt: soundToGlyph ? concept.romanization : concept.glyph, answers: [soundToGlyph ? concept.glyph : concept.romanization], reading: concept.romanization };
+});
+type Card = { id: string; conceptId: string; formId: string; prompt: string; answers: readonly string[]; reading: string; kind?: string; exercise?: { prompt: string; before: string; after: string; answer: string; explanation?: string } };
 
-type LearnState = { readonly plan: SessionPlan; readonly lessonId?: string; readonly contrast?: Extract<SessionPlan["items"][number], { kind: "contrast" }> };
-const NEW_MATERIAL_CAP = 5;
-type RemediationCard = { readonly conceptId: string; readonly prompt: string; readonly answers: readonly string[] };
-const remediationCards: RemediationCard[] = [
-  ...[...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures].filter((kana) => kana.reviewEligible !== false).map((kana) => ({ conceptId: kana.id, prompt: kana.glyph, answers: [kana.romanization] })),
-  ...generateVocabularyReviewCards(vocabularyFixtures), ...generatePhraseReviewCards(phraseFixtures), ...generateGrammarClozeReviewCards(grammarFixtures),
-];
+const cardsById = new Map(cards.map((card) => [card.id, card as Card]));
+function resolveCard(cardId: string): Card | undefined {
+  const current = cardsById.get(cardId);
+  if (current) return current;
+  const legacyKana = kana.find((item) => item.id === cardId);
+  return legacyKana ? { id: cardId, conceptId: cardId, formId: "kana-glyph-to-sound", prompt: legacyKana.glyph, answers: [legacyKana.romanization], reading: legacyKana.romanization } : undefined;
+}
+type QueueState = { cardIds: string[]; newCardIds: Set<string>; error?: boolean };
 
-export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {
-  const [state, setState] = useState<LearnState>();
-  const [started, setStarted] = useState(false);
-  const [contrastStarted, setContrastStarted] = useState(false);
-  const [error, setError] = useState(false);
-  const [returnLessonId, setReturnLessonId] = useState<string>();
-  const [activeRemediation, setActiveRemediation] = useState<string>();
-  const [activeRemediationLessonId, setActiveRemediationLessonId] = useState<string>();
-
-  useEffect(() => {
-    let cancelled = false;
-    void openLocalRepositories(undefined, profileId).then(async (repos) => {
-      try {
-        const now = Date.now();
-        const [progress, concepts, due, events] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(now), repos.reviews.list()]);
-        const lesson = getContinueLesson(contentCatalog, progress, concepts);
-        const lessonMode = progress.some((item) => item.lessonId === lesson?.id && item.status === "in-progress") ? "resume" : "new";
-        const availableKana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
-        const cards = generateKanaReviewCards(availableKana, KANA_REVIEW_FORMS);
-        const allCards = [...cards, ...generateVocabularyReviewCards(vocabularyFixtures), ...generatePhraseReviewCards(phraseFixtures), ...generateGrammarClozeReviewCards(grammarFixtures)];
-        const cardForms = new Map(allCards.map((card) => [card.id, card.formId]));
-        const dueReviews = due.slice().sort((a, b) => b.overdueMs - a.overdueMs || a.cardId.localeCompare(b.cardId)).flatMap((candidate) => {
-          const exactFormId = cardForms.get(candidate.cardId);
-          if (exactFormId) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: exactFormId }];
-          // Preserve cards created by earlier concept-level releases as glyph-to-sound reviews.
-          if (availableKana.some((item) => item.id === candidate.conceptId)) return [{ conceptId: candidate.conceptId as ContentId, cardId: candidate.cardId, formId: "kana-glyph-to-sound" }];
-          return [];
+function materialFor(lessonConceptIds: readonly string[]): DailyMaterial[] {  return lessonConceptIds.map((conceptId, order) => ({ conceptId, order, cardIds: cards.filter((card) => card.conceptId === conceptId).map((card) => card.id) })).filter((item) => item.cardIds.length > 0);}function generatedLesson(id: string, at: string, complete: boolean) {  return { id, lessonId: id, status: complete ? "completed" as const : "in-progress" as const, recordVersion: 1, updatedAt: at, ...(complete ? { completedAt: at } : {}) };
+}export function LearnContinue({ profileId }: { profileId: LearnerProfileId }) {  const [queue, setQueue] = useState<QueueState>();
+  const [explanation, setExplanation] = useState<string>();
+  useEffect(() => {    let cancelled = false;
+    void openLocalRepositories(undefined, profileId).then(async (repos) => {      try {        const now = Date.now();
+        const [progress, concepts, due, reviewStates] = await Promise.all([repos.lessonProgress.list(), repos.conceptStates.list(), repos.reviews.due(now), repos.reviews.getStates()]);
+        const introduced = new Set(concepts.filter((item) => item.lifecycle && item.lifecycle !== "UNSEEN").map((item) => item.conceptId));
+        reviewStates.forEach((item) => introduced.add(item.conceptId));
+        const completed = new Set(progress.filter((item) => item.status === "completed").map((item) => item.lessonId));
+        const stamp = new Date(now).toISOString();
+        for (const lesson of contentCatalog.lessons) {          if (lesson.introduces.length || !lesson.requires.every((required) => completed.has(required) || introduced.has(required))) continue;
+          if (!completed.has(lesson.id)) { await repos.lessonProgress.put(generatedLesson(lesson.id, stamp, true)); completed.add(lesson.id); }        }        const lessonMaterials: DailyMaterial[] = [];
+        let order = 0;
+        for (const lesson of contentCatalog.lessons) {          if (!lesson.requires.every((required) => completed.has(required) || introduced.has(required))) continue;
+          const eligible = materialFor(lesson.introduces.filter((id) => !introduced.has(id)));
+          if (eligible.length) { lessonMaterials.push(...eligible.map((item) => ({ ...item, order: order++ }))); }        }        const dueWithForms = due.flatMap((candidate) => {          const card = cardsById.get(candidate.cardId);
+          if (card) return [{ conceptId: candidate.conceptId, cardId: candidate.cardId, formId: card.formId, overdueMs: candidate.overdueMs }];
+          const oldKana = kana.some((item) => item.id === candidate.conceptId);
+          return oldKana ? [{ conceptId: candidate.conceptId, cardId: candidate.cardId, formId: "kana-glyph-to-sound", overdueMs: candidate.overdueMs }] : [];
         });
-        const weakConcepts = selectWeakConcepts(events, now);
-        const failureCutoff = now - 30 * 86_400_000;
-        const failureLoad = events.filter((event) => event.kind === "scheduled-review" && event.rating === "again" && Date.parse(event.reviewedAt) >= failureCutoff && Date.parse(event.reviewedAt) <= now).length;
-        const plan = composeSession({ dueReviews, reviewLimit: 10, weakConceptIds: weakConcepts.map((concept) => concept.conceptId as ContentId), remediationLimit: 3, contrastGroups: targetedContrastGroups(events, availableKana).map((group) => ({ ...group, conceptIds: group.conceptIds as ContentId[] })), currentLesson: lesson, lessonMode, newMaterialCap: NEW_MATERIAL_CAP, recentFailureCount: failureLoad, allowOversizedLesson: failureLoad < 3 });
-        if (!cancelled) setState({ plan, lessonId: lesson?.id, contrast: plan.items.find((item): item is Extract<typeof item, { kind: "contrast" }> => item.kind === "contrast") });
-      } catch {
-        if (!cancelled) setError(true);
-      } finally {
-        repos.close();
-      }
-    }).catch(() => { if (!cancelled) setError(true); });
+        const selected = buildDailyQueue({ profileId, due: dueWithForms, materials: lessonMaterials, introducedConceptIds: [...introduced], cap: 5 });
+        const newConceptIds = selected.newConceptIds;
+        const materialByConcept = new Map(lessonMaterials.map((item) => [item.conceptId, item]));
+        for (const conceptId of newConceptIds) {          for (const cardId of materialByConcept.get(conceptId)?.cardIds ?? []) await repos.reviews.introduce(conceptId, now, cardId);
+          const previous = await repos.conceptStates.get(conceptId);
+          if (!previous || previous.lifecycle === "UNSEEN") await repos.conceptStates.put({ id: conceptId, recordVersion: 1, updatedAt: stamp, conceptId, lifecycle: "INTRODUCED", familiarity: previous?.familiarity ?? 0 });
+        }
+        // Auto-record curriculum progression from introduction state; a lesson never gates card review.
+        for (const lesson of contentCatalog.lessons) {          if (!lesson.introduces.length || !lesson.introduces.every((id) => introduced.has(id) || newConceptIds.includes(id))) continue;
+          const existing = progress.find((item) => item.lessonId === lesson.id);
+          if (existing?.status === "completed") continue;
+          await repos.lessonProgress.put(generatedLesson(lesson.id, stamp, true));
+        }
+        // Existing supported cards stay first; new cards retain curriculum/form order.
+        const cardIds = [...new Set(selected.orderedCardIds)];
+        if (!cancelled) setQueue({ cardIds, newCardIds: new Set(selected.newCardIds) });
+      } catch { if (!cancelled) setQueue({ cardIds: [], newCardIds: new Set(), error: true }); }
+      finally { repos.close(); }    }).catch(() => { if (!cancelled) setQueue({ cardIds: [], newCardIds: new Set(), error: true }); });
     return () => { cancelled = true; };
+
   }, [profileId]);
-
-  if (error) return <p role="status">Learning progress is unavailable.</p>;
-  if (!state) return <p role="status">Loading…</p>;
-  const reviews = state.plan.items.filter((item): item is Extract<typeof item, { kind: "review" }> => item.kind === "review");
-  const firstReview = reviews[0];
-  const remediationItems = state.plan.items.filter((item): item is Extract<typeof item, { kind: "remediation" }> => item.kind === "remediation");
-  const nextRemediation = remediationItems[0];
-  const remediationCard = nextRemediation && remediationCards.find((card) => card.conceptId === nextRemediation.conceptId);
-  const explanationLesson = nextRemediation && contentCatalog.lessons.find((item) => item.introduces.includes(nextRemediation.conceptId) || item.reinforces.includes(nextRemediation.conceptId));
-  const nextLessonItem = state.plan.items.find((item): item is Extract<typeof item, { kind: "lesson" }> => item.kind === "lesson");
-  const nextLessonLabel = nextLessonItem ? contentCatalog.lessons.find((item) => item.id === nextLessonItem.lessonId)?.display : undefined;
-  if (firstReview) {
-    const props = { key: `${profileId}:${firstReview.cardId}`, profileId, item: firstReview, nextLabel: nextLessonLabel ? `${reviews.length} reviews due · Next: ${nextLessonLabel}` : reviews.length > 1 ? `${reviews.length - 1} more reviews` : undefined, onRated: () => setState((current) => current ? ({ ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "review" || item.cardId !== firstReview.cardId), summary: { ...current.plan.summary, reviewCount: Math.max(0, current.plan.summary.reviewCount - 1) } } }) : current) };
-    return firstReview.formId.startsWith("kana-") ? <KanaReviewSession {...props} /> : <ConceptReviewSession {...props} />;
-  }
-  if (activeRemediation && remediationCard) return <RemediationPractice card={remediationCard} onDone={() => {
-    setActiveRemediation(undefined);
-    setState((current) => current ? { ...current, plan: { ...current.plan, items: current.plan.items.filter((item) => item.kind !== "remediation" || item.conceptId !== activeRemediation), summary: { ...current.plan.summary, remediationCount: Math.max(0, current.plan.summary.remediationCount - 1) } } } : current);
-  }} />;
-  if (activeRemediationLessonId) {
-    const lesson = contentCatalog.lessons.find((item) => item.id === activeRemediationLessonId);
-    if (lesson) return <LessonSession key={lesson.id} lesson={lesson} profileId={profileId} reviewOnly onExitReview={() => setActiveRemediationLessonId(undefined)} />;
-  }
-  if (contrastStarted && state.contrast) return <KanaContrastPractice glyphs={state.contrast.glyphs} onDone={() => setContrastStarted(false)} />;
-  if (started && state.lessonId) {
-    const lesson = contentCatalog.lessons.find((item) => item.id === state.lessonId)!;
-    return <LessonSession key={lesson.id} lesson={lesson} profileId={profileId} reviewOnly={Boolean(returnLessonId)} onOpenLesson={(lessonId) => {
-      if (contentCatalog.lessons.some((item) => item.id === lessonId)) {
-        setReturnLessonId((current) => current ?? state.lessonId);
-        setState((current) => current ? { ...current, lessonId } : current);
-      }
-    }} onExitReview={returnLessonId ? () => {
-      setState((current) => current ? { ...current, lessonId: returnLessonId } : current);
-      setReturnLessonId(undefined);
-    } : undefined} />;
-  }
-  if (nextRemediation) return <section className="learn-continue" aria-label="Focused review">
-    <h2>Review {contentCatalog.concepts.find((item) => item.id === nextRemediation.conceptId)?.display ?? nextRemediation.conceptId}</h2>
-    {explanationLesson && <button type="button" onClick={() => setActiveRemediationLessonId(explanationLesson.id)}>Explain</button>}
-    {remediationCard && <button type="button" onClick={() => setActiveRemediation(nextRemediation.conceptId)}>Practice</button>}
-    {!explanationLesson && !remediationCard && <p role="status">No focused review is available.</p>}
-  </section>;
-  const nextItem = state.plan.items.find((item) => item.kind === "lesson");
-  if (!nextItem) return <div className="learn-continue">
-    {state.contrast && <section aria-label="Kana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
-    {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
-    {!state.contrast && state.plan.summary.reviewCount === 0 && <section className="learning-empty"><img src={`/assets/states/all-caught-up-${profileId}.webp`} alt="" loading="lazy" decoding="async" /><p>All caught up</p></section>}
-  </div>;
-  const lesson = contentCatalog.lessons.find((item) => item.id === nextItem.lessonId)!;
-  return <div className="learn-continue">
-    {state.contrast && <section aria-label="Kana contrast practice"><p>Contrast practice: <span lang="ja">{state.contrast.glyphs.join(" / ")}</span></p><button type="button" onClick={() => setContrastStarted(true)}>Practice contrast</button></section>}
-    {state.plan.summary.reviewCount > 0 && <p>{state.plan.summary.reviewCount} reviews due</p>}
-    <p>{lesson.display}</p>
-    <button className="primary-action" type="button" onClick={() => setStarted(true)}>Continue</button>
-  </div>;
+  if (!queue) return <p role="status">Loading…</p>;
+  if (queue.error) return <p role="alert">Learning progress is unavailable.</p>;
+  const cardId = queue.cardIds[0];
+  if (!cardId) return <section className="learning-empty" aria-label="Study queue"><p>All caught up</p></section>;
+  if (explanation) return <section className="learn-continue" aria-label="Card explanation"><h2>{explanation}</h2><p>{contentCatalog.lessons.find((lesson) => lesson.id === explanation)?.blocks.find((block) => block.kind === "paragraph" || block.kind === "callout")?.kind === "paragraph" ? (contentCatalog.lessons.find((lesson) => lesson.id === explanation)?.blocks.find((block) => block.kind === "paragraph") as { text: string } | undefined)?.text : ""}</p><button type="button" onClick={() => setExplanation(undefined)}>Back to card</button></section>;
+  const card = resolveCard(cardId);
+  if (!card) return <p role="status">Review card unavailable.</p>;
+  const remain = queue.cardIds.length;
+  const lesson = contentCatalog.lessons.find((item) => item.introduces.includes(card.conceptId as ContentId));
+  return <Flashcard key={`${profileId}:${cardId}`} card={card} profileId={profileId} remaining={remain} isNew={queue.newCardIds.has(cardId)} lessonId={lesson?.id} onExplain={setExplanation} onRated={() => setQueue((current) => current ? { ...current, cardIds: current.cardIds.filter((id) => id !== cardId) } : current)} />;
 }
-
-function RemediationPractice({ card, onDone }: { card: RemediationCard; onDone: () => void }) {
-  const [answer, setAnswer] = useState("");
-  const [checked, setChecked] = useState(false);
-  const correct = card.answers.some((value) => value.trim().toLocaleLowerCase() === answer.trim().toLocaleLowerCase());
-  return <section className="learn-continue" aria-label="Focused practice">
-    <p>Practice</p><h2>{card.prompt}</h2>
-    <form onSubmit={(event) => { event.preventDefault(); setChecked(true); }}>
-      <label>Answer <input autoComplete="off" value={answer} onChange={(event) => { setAnswer(event.target.value); setChecked(false); }} /></label>
-      <button type="submit" disabled={!answer.trim() || checked}>Check</button>
-    </form>
-    {checked && <><p role="status">{correct ? "Correct." : `Answer: ${card.answers.join(" / ")}`}</p><button type="button" onClick={onDone}>Done</button></>}
-  </section>;
-}
-
-function KanaContrastPractice({ glyphs, onDone }: { glyphs: readonly string[]; onDone: () => void }) {
-  const [targetIndex, setTargetIndex] = useState(0);
-  const [message, setMessage] = useState("");
-  const target = glyphs[targetIndex]!;
-  const choose = (glyph: string) => {
-    if (glyph !== target) { setMessage("Try again"); return; }
-    if (targetIndex + 1 >= glyphs.length) { setMessage("Contrast complete"); return; }
-    setTargetIndex((index) => index + 1);
-    setMessage("Correct");
-  };
-  if (message === "Contrast complete") return <section aria-label="Kana contrast practice"><p role="status">{message}</p><button type="button" onClick={onDone}>Done</button></section>;
-  return <section aria-label="Kana contrast practice"><h2>Choose <span lang="ja">{target}</span></h2><div role="group" aria-label="Kana choices">{glyphs.map((glyph) => <button key={glyph} type="button" onClick={() => choose(glyph)}><span lang="ja">{glyph}</span></button>)}</div>{message && <p role="status">{message}</p>}</section>;
-}
+function Flashcard({ card, profileId, remaining, isNew, lessonId, onExplain, onRated }: { card: Card; profileId: LearnerProfileId; remaining: number; isNew: boolean; lessonId?: string; onExplain: (id: string) => void; onRated: () => void }) {  const [revealed, setRevealed] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(false);
+  async function rate(label: "Again" | "Hard" | "Good" | "Easy") {    setSaving(true); setError(false);
+    const repos = await openLocalRepositories(undefined, profileId).catch(() => undefined);
+    if (!repos) { setSaving(false); setError(true); return; }
+    const rating: ReviewRating = ({ Again: "Forgot", Hard: "Hard", Good: "Got It", Easy: "Easy" } as const)[label];
+    try {      await repos.reviews.record({ id: `review-${crypto.randomUUID()}`, conceptId: card.conceptId, cardId: card.id, rating, reviewedAt: new Date().toISOString() });
+      onRated();
+    } catch { setError(true); } finally { repos.close(); setSaving(false); }
+  }
+  return <section className="kana-review" aria-label="Daily study card" data-card-id={card.id}>    <p>{remaining} {remaining === 1 ? "card" : "cards"} remaining</p>    {isNew && <p>New</p>}    <h2 lang="ja">{card.prompt}</h2>    {!revealed && <button className="primary-action" type="button" onClick={() => setRevealed(true)}>Show answer</button>}    {revealed && <><p role="status" lang="ja">{card.answers.join(" / ")}{card.reading && card.reading !== card.answers[0] ? ` · ${card.reading}` : ""}</p>      {isNew && lessonId && <button type="button" onClick={() => onExplain(lessonId)}>Learn more</button>}      <div className="review-ratings" role="group" aria-label="Review rating">{(["Again", "Hard", "Good", "Easy"] as const).map((label) => <button key={label} type="button" disabled={saving} onClick={() => void rate(label)}>{label}</button>)}</div></>}    {error && <p role="alert">Review could not be saved.</p>}  </section>;}

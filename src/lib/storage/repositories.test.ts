@@ -74,6 +74,20 @@ describe("local storage repositories", () => {
     expect(plan.summary.reviewCount).toBe(1);
   });
 
+  it("introduces each card idempotently within its learner profile", async () => {
+    const db = await openLocalDatabase(`${STORAGE_DATABASE_NAME}-test`);
+    opened.push(db);
+    const kevin = createRepositories(db, "kevin");
+    const janne = createRepositories(db, "janne");
+    const at = Date.parse("2026-01-01T00:00:00.000Z");
+    await kevin.reviews.introduce("kana-a", at, "kana-a--glyph");
+    await kevin.reviews.introduce("kana-a", at + 1, "kana-a--glyph");
+    await janne.reviews.introduce("kana-a", at, "kana-a--glyph");
+    expect(await kevin.reviews.getStates()).toHaveLength(1);
+    expect(await janne.reviews.getStates()).toHaveLength(1);
+    expect((await kevin.reviews.getStates())[0]?.state.nextDueAt).toBe(new Date(at).toISOString());
+  });
+
   it("repairs derived state from long out-of-order history without changing source events", async () => {
     const { repos } = await fresh();
     const origin = Date.parse("2024-01-01T00:00:00.000Z");

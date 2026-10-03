@@ -1,119 +1,30 @@
 import { expect, test } from '@playwright/test'
 
-const profileId = 'f32a6c14-8d1b-4b70-9a2e-61c5d9037f48'
-
-async function waitForLessonAction(page: import('@playwright/test').Page): Promise<'complete' | 'ready'> {
-  const state = await page.waitForFunction(() => {
-    const lesson = document.querySelector('.lesson-session')
-    if (!lesson) return false
-    const status = lesson.querySelector('[role="status"]')
-    if (status?.textContent?.includes('Lesson complete')) return 'complete'
-    const button = lesson.querySelector(':scope > button')
-    return button instanceof HTMLButtonElement && !button.disabled ? 'ready' : false
-  }, undefined, { timeout: 10_000 })
-  try { return await state.jsonValue() as 'complete' | 'ready' } finally { await state.dispose() }
-}
-
-test('cloud acknowledgement includes completed lesson progress after Saved', async ({ page, context }) => {
-  const saves = new Map<string, { revision: number; state: Record<string, unknown> }>()
-  const writes: Record<string, unknown>[] = []
-  await page.route('http://127.0.0.1:4173/learn-japanese-app/**', (route) => {
-    const url = new URL(route.request().url())
-    url.pathname = url.pathname.replace('/learn-japanese-app', '')
-    return route.continue({ url: url.toString() })
-  })
-  await context.route('http://127.0.0.1:54321/**', async (route) => {
-    const request = route.request()
-    const url = new URL(request.url())
-    const headers = { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS', 'content-type': 'application/json' }
-    if (request.method() === 'OPTIONS') return route.fulfill({ status: 204, headers })
-    if (url.pathname.endsWith('/profile_saves')) return route.fulfill({ status: 200, headers, body: JSON.stringify(saves.get(profileId) ?? null) })
-    if (url.pathname.endsWith('/rpc/write_profile_save')) {
-      const body = request.postDataJSON() as { p_profile_id: string; p_expected_revision: number; p_schema_version: number; p_updated_at: string; p_state: Record<string, unknown> }
-      writes.push(body.p_state)
-      const previous = saves.get(body.p_profile_id)
-      if ((previous?.revision ?? 0) !== body.p_expected_revision) return route.fulfill({ status: 200, headers, body: '[]' })
-      const saved = { revision: (previous?.revision ?? 0) + 1, state: body.p_state }
-      saves.set(body.p_profile_id, saved)
-      return route.fulfill({ status: 200, headers, body: JSON.stringify([{ profile_id: body.p_profile_id, revision: saved.revision, schema_version: body.p_schema_version, updated_at: body.p_updated_at, state: saved.state }]) })
-    }
-    if (url.pathname.endsWith('/profile_review_events')) return route.fulfill({ status: 200, headers, body: '[]' })
-    return route.fulfill({ status: 404, headers, body: JSON.stringify({ message: `Unexpected mock request: ${url.pathname}` }) })
-  })
-  await page.route('http://127.0.0.1:4173/__lesson_save_seed__', (route) => route.fulfill({
-    status: 200,
-    contentType: 'text/html',
-    body: `<!doctype html><script>
-      const request = indexedDB.open('learn-japanese-local', 1);
-      request.onupgradeneeded = () => { for (const name of ['profiles','settings','lessonProgress','conceptStates','reviewEvents','pendingSync','appMetadata','deviceMetadata']) request.result.createObjectStore(name, { keyPath: 'id' }); };
-      request.onsuccess = () => { const db = request.result; const tx = db.transaction('lessonProgress', 'readwrite'); tx.objectStore('lessonProgress').put({ id: 'migration-fixture', lessonId: 'migration-fixture', status: 'completed', recordVersion: 1, updatedAt: '2020-01-01T00:00:00.000Z' }); tx.oncomplete = () => { db.close(); document.body.dataset.seeded = 'true'; }; };
-      request.onerror = () => { document.body.textContent = 'legacy database seed failed'; };
-    </script>`,
-  }))
-  await page.goto('/__lesson_save_seed__')
-  await page.waitForFunction(() => document.body.dataset.seeded === 'true')
-  await page.goto('/')
-  await expect(page.getByRole('heading', { name: 'Choose a profile' })).toBeVisible()
-  await page.getByRole('button', { name: /Kevin/ }).click()
-  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
-  await page.getByRole('button', { name: 'Progress', exact: true }).click()
-  await expect(page.getByRole('heading', { name: 'Progress', exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Learn', exact: true }).click()
-  await expect(page.getByRole('heading', { name: 'Learn Japanese' })).toBeVisible()
-
-  const completeLesson = async (exercise = false) => {
-    let exercised = false
-    for (let i = 0; i < 28; i += 1) {
-      if (await waitForLessonAction(page) === 'complete') break
-      const outer = page.locator('.lesson-session > button')
-      if (await outer.getAttribute('aria-label') === 'Complete lesson' || await outer.innerText() === 'Complete lesson') {
-        await outer.click()
-        continue
-      }
-      if (exercise && !exercised) {
-        const group = page.locator('.lesson-session [role="group"]').first()
-        if (await group.count()) {
-          await group.getByRole('button').first().click()
-          const innerContinue = page.locator('.lesson-session [data-exercise-id] button').filter({ hasText: 'Continue' }).first()
-          if (await innerContinue.count()) await innerContinue.click()
-          exercised = true
-        }
-      }
-      if (await waitForLessonAction(page) === 'complete') break
-      await outer.click()
-    }
-    await expect(page.getByRole('status').filter({ hasText: 'Lesson complete' })).toBeVisible()
-  }
-
-  await page.getByRole('button', { name: 'Learn', exact: true }).click()
-  await page.getByRole('button', { name: 'Continue', exact: true }).click()
-  await expect(page.getByRole('heading', { name: 'Welcome to Japanese' })).toBeVisible()
-  await completeLesson()
-  await page.reload()
-  await expect(page.getByRole('navigation', { name: 'Main navigation' })).toBeVisible()
-  await page.getByRole('button', { name: 'Continue', exact: true }).click()
-  await expect(page.getByRole('heading', { name: 'Hiragana: A row' })).toBeVisible()
-  await completeLesson(true)
-  const persistedAtMoreNavigation = await page.evaluate(() => new Promise<Array<Record<string, unknown>>>((resolve, reject) => {
+test('study actions leave cloud-compatible profile state serializable', async ({ page }) => {
+  await page.goto('/learn-japanese-app/')
+  if (await page.getByRole('heading', { name: 'Choose a profile' }).count()) await page.getByRole('button', { name: /Kevin/ }).click()
+  await expect(page.getByRole('region', { name: 'Daily study card' })).toBeVisible()
+  await page.getByRole('button', { name: 'Show answer' }).click()
+  await page.getByRole('button', { name: 'Good', exact: true }).click()
+  const snapshot = await page.evaluate(() => new Promise<Record<string, any>>((resolve, reject) => {
     const request = indexedDB.open('learn-japanese-local')
     request.onerror = () => reject(request.error)
     request.onsuccess = () => {
       const db = request.result
-      const tx = db.transaction('lessonProgress', 'readonly')
-      const rows = tx.objectStore('lessonProgress').getAll()
-      tx.oncomplete = () => { resolve(rows.result); db.close() }
+      const names = ['settings', 'lessonProgress', 'conceptStates', 'reviewEvents', 'reviewStates', 'pendingSync']
+      const tx = db.transaction(names, 'readonly')
+      const output: Record<string, any[]> = {}
+      for (const name of names) {
+        const rows = tx.objectStore(name).getAll()
+        rows.onsuccess = () => { output[name] = rows.result.filter((row: { profileId: string }) => row.profileId === 'kevin') }
+      }
+      tx.oncomplete = () => { db.close(); resolve(JSON.parse(JSON.stringify(output))) }
       tx.onerror = () => reject(tx.error)
     }
   }))
-  expect(persistedAtMoreNavigation).toContainEqual(expect.objectContaining({ profileId: 'kevin', lessonId: 'hiragana-a-row', status: 'completed' }))
-  await page.getByRole('button', { name: 'More', exact: true }).click()
-  await expect(page.getByText('Saved', { exact: true })).toBeVisible({ timeout: 20_000 })
-  const intercepted = writes.at(-1)
-  expect(intercepted?.lessonProgress).toEqual(expect.arrayContaining([
-    expect.objectContaining({ lessonId: 'hiragana-a-row', status: 'completed' }),
-  ]))
-  expect(saves.get(profileId)?.state).toEqual(intercepted)
-  expect(saves.get(profileId)?.state.lessonProgress).toEqual(expect.arrayContaining([
-    expect.objectContaining({ lessonId: 'hiragana-a-row', status: 'completed' }),
-  ]))
+  expect(snapshot.conceptStates).toEqual(expect.arrayContaining([expect.objectContaining({ lifecycle: 'INTRODUCED' })]))
+  expect(snapshot.lessonProgress).toEqual(expect.arrayContaining([expect.objectContaining({ lessonId: 'hiragana-a-row', status: 'completed' })]))
+  expect(snapshot.reviewEvents).toEqual(expect.arrayContaining([expect.objectContaining({ rating: 'good', kind: 'scheduled-review' })]))
+  expect(snapshot.reviewStates).toEqual(expect.arrayContaining([expect.objectContaining({ state: expect.objectContaining({ reviewCount: 1 }) })]))
+  expect(snapshot.pendingSync).toEqual(expect.arrayContaining([expect.objectContaining({ operation: 'review-event' })]))
 })

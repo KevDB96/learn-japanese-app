@@ -50,8 +50,17 @@ export function createRepositories(db: IDBDatabase, profileId: LearnerProfileId 
       async introduce(conceptId: string, at: number, cardId = conceptId) {
         const state = createSrsState(conceptId, at);
         const scopedCardId = storageId(profileId, cardId);
-        const existing = await withStore<ReviewCardState | undefined>(db, "reviewStates", "readonly", (s) => s.get(scopedCardId));
-        if (!existing) { await withStore(db, "reviewStates", "readwrite", (s) => s.add({ id: scopedCardId, profileId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId, state } satisfies ReviewCardState)); changed(profileId); }
+        const tx = db.transaction("reviewStates", "readwrite");
+        const store = tx.objectStore("reviewStates");
+        const existing = store.get(scopedCardId);
+        existing.onsuccess = () => {
+          if (!existing.result) store.add({ id: scopedCardId, profileId, recordVersion: 1, updatedAt: new Date(at).toISOString(), conceptId, cardId, state } satisfies ReviewCardState);
+        };
+        await new Promise<void>((resolve, reject) => {
+          tx.oncomplete = () => { if (!existing.result) changed(profileId); resolve(); };
+          tx.onerror = () => reject(tx.error ?? new Error("Review introduction failed"));
+          tx.onabort = () => reject(tx.error ?? new Error("Review introduction aborted"));
+        });
       },
       async record(input: { id: string; conceptId: string; cardId: string; rating: ReviewRating; reviewedAt: string; sessionId?: string; kind?: "scheduled-review" | "practice"; confusedConceptId?: string; contrastConceptId?: string; responseTimeMs?: number }) {
         const kind = input.kind ?? "scheduled-review";
