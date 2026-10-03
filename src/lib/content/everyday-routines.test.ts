@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { eligiblePracticeExercises } from "../../features/lessons/ExerciseEngine.tsx";
 import { contentCatalog } from "./catalog.ts";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
@@ -20,11 +21,11 @@ describe("everyday routines lesson", () => {
     expect(contentCatalog.units.find(({ id }) => id === "everyday-routines")?.lessonIds).toEqual(["lesson-everyday-routines"]);
   });
 
-  it("includes reading, production, cloze, and sentence-order practice", () => {
+  it("renders only recognition and comprehension practice", () => {
     expect(exercises.some(({ type }) => type === "multiple-choice")).toBe(true);
-    expect(exercises.some(({ type }) => type === "short-text")).toBe(true);
-    expect(exercises.some(({ type }) => type === "cloze")).toBe(true);
-    expect(exercises.filter(({ type }) => type === "sentence-order")).toHaveLength(2);
+    const rendered = eligiblePracticeExercises(exercises);
+    expect(rendered.length).toBeGreaterThan(0);
+    expect(rendered.every(({ type }) => type === "multiple-choice" || type === "audio-choice")).toBe(true);
     expect(exercises.find(({ id }) => id === "routine-read-eat")?.prompt).toContain("食べました");
   });
 

@@ -104,8 +104,8 @@ describe("canonical basic Hiragana course", () => {
       reviews: { introduce: async (id, _at, cardId) => { scheduled.push(cardId ?? id); } },
     };
     await completeLesson(repos, contentCatalog, lesson, () => new Date("2026-09-28T00:00:00Z"));
-    expect(scheduled).toHaveLength(10);
-    expect(new Set(scheduled).size).toBe(10);
+    expect(scheduled).toHaveLength(5);
+    expect(new Set(scheduled).size).toBe(5);
     expect([...states.values()].map((state) => state.lifecycle)).toEqual(Array(5).fill("INTRODUCED"));
     expect([...states.values()].some((state) => state.lifecycle === "MASTERED")).toBe(false);
   });
@@ -122,8 +122,8 @@ describe("canonical basic Hiragana course", () => {
     for (const lesson of lessons) await completeLesson(repos, contentCatalog, lesson, () => new Date("2026-09-28T00:00:00Z"));
     expect(states.size).toBe(46);
     expect([...states.values()].every((state) => state.lifecycle === "INTRODUCED")).toBe(true);
-    expect(scheduled).toHaveLength(92);
-    expect(new Set(scheduled).size).toBe(92);
+    expect(scheduled).toHaveLength(46);
+    expect(new Set(scheduled).size).toBe(46);
   });
   it("introduces the final segment without replacing existing long-term review state", async () => {
     const lesson = contentCatalog.lessons.find((item) => item.id === "hiragana-w-row")!;

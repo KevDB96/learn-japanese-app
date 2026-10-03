@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { eligiblePracticeExercises } from "../../features/lessons/ExerciseEngine.tsx";
 import { contentCatalog } from "./catalog.ts";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
@@ -28,8 +29,7 @@ describe("places and location lesson", () => {
     expect(grammar.fullExplanation).toContain("nonliving things");
     expect(grammar.examples.every(({ reading }) => !/[\u4e00-\u9fff]/.test(reading))).toBe(true);
     expect(lesson.blocks.some((block) => block.kind === "exercise-slot" && block.exercises.some(({ type }) => type === "multiple-choice"))).toBe(true);
-    expect(lesson.blocks.some((block) => block.kind === "exercise-slot" && block.exercises.some(({ type }) => type === "cloze"))).toBe(true);
-    expect(lesson.blocks.some((block) => block.kind === "exercise-slot" && block.exercises.some(({ type }) => type === "sentence-order"))).toBe(true);
+    expect(eligiblePracticeExercises(lesson.blocks.flatMap((block) => block.kind === "exercise-slot" ? block.exercises : [])).every(({ type }) => type === "multiple-choice" || type === "audio-choice")).toBe(true);
   });
 
   it("adds common place words to scheduled vocabulary review", () => {

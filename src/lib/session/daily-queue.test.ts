@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { buildDailyQueue } from "./daily-queue.ts";
+import { buildDailyQueue, filterEligibleDueCards } from "./daily-queue.ts";
 
 describe("daily study queue", () => {
   const materials = Array.from({ length: 8 }, (_, order) => ({ conceptId: `c${order}`, cardIds: [`c${order}-card`], order }));
+  it("ignores retired due card state while retaining eligible recognition reviews", () => {
+    const due = [
+      { conceptId: "vocab-neko", cardId: "vocab-neko--vocabulary-production", formId: "vocabulary-production", overdueMs: 500 },
+      { conceptId: "vocab-neko", cardId: "vocab-neko--vocabulary-meaning", formId: "vocabulary-meaning", overdueMs: 200 },
+    ];
+    expect(filterEligibleDueCards(due, new Set(["vocab-neko--vocabulary-meaning"]))).toEqual([due[1]]);
+  });
   it("orders existing due cards before canonical new material", () => {
     const queue = buildDailyQueue({ profileId: "kevin", due: [{ conceptId: "old", cardId: "due-first", formId: "kana", overdueMs: 8 }, { conceptId: "older", cardId: "due-second", formId: "kana", overdueMs: 4 }], materials, introducedConceptIds: [] });
     expect(queue.due.map((item) => item.cardId)).toEqual(["due-first", "due-second"]);

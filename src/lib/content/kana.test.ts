@@ -12,7 +12,9 @@ describe("kana content model", () => {
   it("generates stable concept-scoped review cards and omits unavailable audio", () => {
     const forms = generateKanaReviewCards(kanaFixtures);
     expect(forms).toEqual(generateKanaReviewCards(kanaFixtures));
-    expect(forms).toHaveLength(kanaFixtures.filter((concept) => concept.reviewEligible !== false).length * 2);
+    expect(forms).toHaveLength(kanaFixtures.filter((concept) => concept.reviewEligible !== false).length);
+    expect(forms.every((card) => card.formId === "kana-glyph-to-sound")).toBe(true);
+    expect(forms.some((card) => card.formId === "kana-sound-to-glyph" || card.formId === "kana-audio-to-glyph")).toBe(false);
     expect(new Set(forms.map((card) => card.id)).size).toBe(forms.length);
     expect(forms.every((card) => card.id === `${card.conceptId}--${card.formId}`)).toBe(true);
   });

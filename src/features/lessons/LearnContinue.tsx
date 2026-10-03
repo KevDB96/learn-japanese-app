@@ -7,17 +7,18 @@ import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { generateKanaReviewCards } from "../../lib/content/kana.ts";
 import { generateVocabularyReviewCards } from "../../lib/content/vocabulary.ts";
 import { generatePhraseReviewCards } from "../../lib/content/phrases.ts";
-import { generateGrammarClozeReviewCards } from "../../lib/content/grammar.ts";
-import { buildDailyQueue, type DailyMaterial } from "../../lib/session/daily-queue.ts";
+import { generateGrammarRecognitionReviewCards } from "../../lib/content/grammar.ts";
+import { buildDailyQueue, filterEligibleDueCards, type DailyMaterial } from "../../lib/session/daily-queue.ts";
 import { openLocalRepositories } from "../../lib/storage/repositories.ts";
 import type { LearnerProfileId } from "../../lib/storage/types.ts";
 import type { ContentId } from "../../lib/content/types.ts";
 import type { ReviewRating } from "../review/srs.ts";
 const kana = [...kanaFixtures, ...katakanaFixtures, ...katakanaAdvancedFixtures];
-const cards = [  ...generateKanaReviewCards(kana),  ...generateVocabularyReviewCards(vocabularyFixtures),  ...generatePhraseReviewCards(phraseFixtures),  ...generateGrammarClozeReviewCards(grammarFixtures),].map((card) => {  if ("prompt" in card) return card;
+export const ELIGIBLE_REVIEW_FORMS = ["kana-glyph-to-sound", "vocabulary-meaning", "vocabulary-reading", "phrase-meaning", "grammar-recognition"] as const;
+const eligibleReviewFormIds: ReadonlySet<string> = new Set(ELIGIBLE_REVIEW_FORMS);
+const cards = [  ...generateKanaReviewCards(kana),  ...generateVocabularyReviewCards(vocabularyFixtures),  ...generatePhraseReviewCards(phraseFixtures),  ...generateGrammarRecognitionReviewCards(grammarFixtures),].filter((card) => eligibleReviewFormIds.has(card.formId)).map((card) => {  if ("prompt" in card) return card;
   const concept = kana.find((item) => item.id === card.conceptId)!;
-  const soundToGlyph = card.formId === "kana-sound-to-glyph";
-  return { ...card, prompt: soundToGlyph ? concept.romanization : concept.glyph, answers: [soundToGlyph ? concept.glyph : concept.romanization], reading: concept.romanization };
+  return { ...card, prompt: concept.glyph, answers: [concept.romanization], reading: concept.romanization };
 });
 type Card = { id: string; conceptId: string; formId: string; prompt: string; answers: readonly string[]; reading: string; kind?: string; exercise?: { prompt: string; before: string; after: string; answer: string; explanation?: string } };
 
@@ -47,10 +48,10 @@ function materialFor(lessonConceptIds: readonly string[]): DailyMaterial[] {  re
           const eligible = materialFor(lesson.introduces.filter((id) => !introduced.has(id)));
           if (eligible.length) { lessonMaterials.push(...eligible.map((item) => ({ ...item, order: order++ }))); }        }        const dueWithForms = due.flatMap((candidate) => {          const card = cardsById.get(candidate.cardId);
           if (card) return [{ conceptId: candidate.conceptId, cardId: candidate.cardId, formId: card.formId, overdueMs: candidate.overdueMs }];
-          const oldKana = kana.some((item) => item.id === candidate.conceptId);
-          return oldKana ? [{ conceptId: candidate.conceptId, cardId: candidate.cardId, formId: "kana-glyph-to-sound", overdueMs: candidate.overdueMs }] : [];
+          // Retired production IDs remain in history/state, but never re-enter the active queue.
+          return [];
         });
-        const selected = buildDailyQueue({ profileId, due: dueWithForms, materials: lessonMaterials, introducedConceptIds: [...introduced], cap: 5 });
+        const selected = buildDailyQueue({ profileId, due: filterEligibleDueCards(dueWithForms, new Set(cardsById.keys())), materials: lessonMaterials, introducedConceptIds: [...introduced], cap: 5 });
         const newConceptIds = selected.newConceptIds;
         const materialByConcept = new Map(lessonMaterials.map((item) => [item.conceptId, item]));
         for (const conceptId of newConceptIds) {          for (const cardId of materialByConcept.get(conceptId)?.cardIds ?? []) await repos.reviews.introduce(conceptId, now, cardId);

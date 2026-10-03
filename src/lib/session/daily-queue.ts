@@ -9,6 +9,11 @@ export interface DailyQueueInput {
 }
 export interface DailyQueue { readonly profileId: string; readonly due: readonly DailyDueCard[]; readonly newConceptIds: readonly string[]; readonly newCardIds: readonly string[]; readonly orderedCardIds: readonly string[] }
 
+/** Ignore persisted SRS states whose card IDs are absent from the generated active catalog. */
+export function filterEligibleDueCards(due: readonly DailyDueCard[], activeCardIds: ReadonlySet<string>): DailyDueCard[] {
+  return due.filter((card) => activeCardIds.has(card.cardId));
+}
+
 /** Stable daily selection: scheduler order first, then unseen curriculum order, capped by new concepts. */
 export function buildDailyQueue(input: DailyQueueInput): DailyQueue {
   const introduced = new Set(input.introducedConceptIds);

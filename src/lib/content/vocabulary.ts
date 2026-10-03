@@ -4,7 +4,6 @@ import { CONTENT_ID_PATTERN } from "./types.ts";
 export const VOCABULARY_REVIEW_FORMS: readonly VocabularyReviewForm[] = Object.freeze([
   { id: "vocabulary-meaning", kind: "meaning", prompt: "written", answer: "meanings" },
   { id: "vocabulary-reading", kind: "reading", prompt: "written", answer: "reading" },
-  { id: "vocabulary-production", kind: "production", prompt: "meaning", answer: "written" },
 ]);
 
 export interface VocabularyReviewCard {

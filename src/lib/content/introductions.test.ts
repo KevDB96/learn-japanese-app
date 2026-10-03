@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { eligiblePracticeExercises } from "../../features/lessons/ExerciseEngine.tsx";
 import { contentCatalog } from "./catalog.ts";
 import { validateGrammarContent } from "./grammar.ts";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
@@ -27,8 +28,9 @@ describe("first post-kana self-introduction module", () => {
 
   it("contains guided practice, retrieval, kana readings, explanations, and polite review content", () => {
     expect(lesson.blocks.some((block) => block.kind === "grammar-breakdown")).toBe(true);
-    const exerciseTypes = lesson.blocks.flatMap((block) => block.kind === "exercise-slot" ? block.exercises.map(({ type }) => type) : []);
-    expect(exerciseTypes).toEqual(expect.arrayContaining(["multiple-choice", "cloze", "sentence-order", "short-text"]));
+    const exercises = eligiblePracticeExercises(lesson.blocks.flatMap((block) => block.kind === "exercise-slot" ? block.exercises : []));
+    expect(exercises.some(({ type }) => type === "multiple-choice")).toBe(true);
+    expect(exercises.every(({ type }) => type === "multiple-choice" || type === "audio-choice")).toBe(true);
     expect(validateVocabularyContent(vocabularyFixtures)).toEqual([]);
     expect(validateGrammarContent(grammarFixtures)).toEqual([]);
     expect(validatePhraseContent(phraseFixtures, undefined, { grammarIds: grammarFixtures.map(({ id }) => id) })).toEqual([]);

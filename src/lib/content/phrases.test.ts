@@ -10,13 +10,14 @@ describe("phrase concepts and review forms", () => {
     expect(phraseFixtures.find(({ learningMode }) => learningMode === "compositional")?.grammarIds).toHaveLength(3);
   });
 
-  it("generates only two deterministic cards for memorized phrases", () => {
+  it("generates one deterministic comprehension card per memorized phrase", () => {
     const cards = generatePhraseReviewCards(phraseFixtures);
     expect(cards).toEqual(generatePhraseReviewCards(phraseFixtures));
-    expect(cards).toHaveLength(phraseFixtures.filter(({ learningMode }) => learningMode === "memorized").length * PHRASE_REVIEW_FORMS.length);
+    expect(cards).toHaveLength(phraseFixtures.filter(({ learningMode }) => learningMode === "memorized").length);
+    expect(cards.every(({ kind }) => kind === "meaning")).toBe(true);
+    expect(cards.some(({ formId }) => formId === "phrase-production")).toBe(false);
     expect(new Set(cards.map(({ id }) => id)).size).toBe(cards.length);
     expect(cards.every(({ conceptId }) => phraseFixtures.find((phrase) => phrase.id === conceptId)?.learningMode === "memorized")).toBe(true);
-    expect(cards.find(({ conceptId, kind }) => conceptId === "phrase-ohayou-gozaimasu" && kind === "production")?.answers).toEqual(["おはようございます"]);
   });
 
   it("rejects invalid readings, broken dependencies and missing audio", () => {

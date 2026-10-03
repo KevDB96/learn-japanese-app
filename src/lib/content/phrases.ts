@@ -2,7 +2,6 @@ import { CONTENT_ID_PATTERN, type PhraseConcept, type PhraseReviewForm } from ".
 
 export const PHRASE_REVIEW_FORMS: readonly PhraseReviewForm[] = Object.freeze([
   { id: "phrase-meaning", kind: "meaning", prompt: "japanese", answer: "meaning" },
-  { id: "phrase-production", kind: "production", prompt: "meaning", answer: "japanese" },
 ]);
 
 export interface PhraseReviewCard {

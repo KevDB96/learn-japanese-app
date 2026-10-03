@@ -2,7 +2,7 @@ import '@testing-library/jest-dom/vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { ExerciseDefinition } from '../../lib/content/types.ts'
-import { evaluateExerciseAnswer, evaluateSentenceOrder, ExerciseRendererView, ExerciseSlot, normalizeExerciseAnswer } from './ExerciseEngine.tsx'
+import { eligiblePracticeExercises, evaluateExerciseAnswer, evaluateSentenceOrder, ExerciseRendererView, ExerciseSlot, normalizeExerciseAnswer } from './ExerciseEngine.tsx'
 
 afterEach(cleanup)
 
@@ -102,10 +102,20 @@ describe('lesson exercises', () => {
     expect(onComplete).toHaveBeenCalledTimes(1)
   })
 
-  it('renders the three Introduction exercise definitions through the slot registry', () => {
+  it('renders only recognition exercises through the slot registry', () => {
     render(<ExerciseSlot title="Quick check" exercises={[choice, kana, text]} />)
     expect(screen.getByRole('button', { name: 'Hiragana' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'あ' })).toBeInTheDocument()
-    expect(screen.getAllByRole('textbox')).toHaveLength(1)
+    expect(screen.queryByRole('button', { name: 'あ' })).toBeNull()
+    expect(screen.queryByRole('textbox')).toBeNull()
+  })
+
+  it('keeps production and audio-to-glyph activities out of Practice', () => {
+    const audioGlyph: ExerciseDefinition = { id: 'audio-glyph-check' as ExerciseDefinition['id'], type: 'audio-choice', prompt: 'Choose the kana', audioId: 'audio-a', target: 'glyph', options: ['あ', 'い'], answer: 'あ', feedback }
+    const eligible = eligiblePracticeExercises([choice, kana, text, cloze, sentenceOrder, audioGlyph])
+    expect(eligible.map(({ id }) => id)).toEqual([choice.id])
+    render(<ExerciseSlot title="Reading practice" exercises={[text, cloze, sentenceOrder, audioGlyph]} />)
+    expect(screen.queryByRole('region', { name: 'Reading practice' })).toBeNull()
+    expect(screen.queryByRole('textbox')).toBeNull()
+    expect(screen.queryByText(/write|type the japanese|build the sentence/i)).toBeNull()
   })
 })

@@ -1,23 +1,28 @@
 import { CONTENT_ID_PATTERN, type GrammarMiniLesson } from "./types.ts";
-import type { ContentId, ExerciseDefinition } from "./types.ts";
+import type { ContentId } from "./types.ts";
 
-export interface GrammarClozeReviewCard {
+export interface GrammarRecognitionReviewCard {
   readonly id: string;
   readonly conceptId: ContentId;
-  readonly formId: "grammar-cloze";
-  readonly kind: "cloze";
+  readonly formId: "grammar-recognition";
+  readonly kind: "meaning";
   readonly prompt: string;
   readonly answers: readonly string[];
   readonly reading: string;
-  readonly exercise: Extract<ExerciseDefinition, { type: "cloze" }>;
 }
 
-/** Scheduled clozes reuse authored lesson blanks and keep scheduling at grammar-point granularity. */
-export function generateGrammarClozeReviewCards(lessons: readonly GrammarMiniLesson[]): GrammarClozeReviewCard[] {
-  return lessons.flatMap((lesson) => lesson.exercises.flatMap((exercise) => exercise.type === "cloze" ? [{
-    id: `${lesson.id}--${exercise.id}`, conceptId: lesson.id, formId: "grammar-cloze" as const, kind: "cloze" as const,
-    prompt: exercise.prompt, answers: [exercise.answer, ...(exercise.acceptedAnswers ?? [])], reading: `${exercise.before}___${exercise.after}`, exercise,
-  }] : [])).sort((a, b) => a.conceptId.localeCompare(b.conceptId) || a.id.localeCompare(b.id));
+/** One recognition card per authored grammar point, derived only from its authored example/explanation. */
+export function generateGrammarRecognitionReviewCards(lessons: readonly GrammarMiniLesson[]): GrammarRecognitionReviewCard[] {
+  return lessons.flatMap((lesson) => {
+    const example = lesson.examples[0];
+    const prompt = example?.japanese || lesson.display;
+    const reading = example?.reading || prompt;
+    const answer = example?.translation || lesson.shortExplanation;
+    return prompt.trim() && answer.trim() ? [{
+      id: `${lesson.id}--grammar-recognition`, conceptId: lesson.id, formId: "grammar-recognition" as const,
+      kind: "meaning" as const, prompt, answers: [answer], reading,
+    }] : [];
+  }).sort((a, b) => a.conceptId.localeCompare(b.conceptId));
 }
 
 const nonEmpty = (value: unknown): value is string => typeof value === "string" && value.trim().length > 0;

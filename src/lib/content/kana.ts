@@ -3,8 +3,6 @@ import { CONTENT_ID_PATTERN } from "./types.ts";
 
 export const KANA_REVIEW_FORMS: readonly KanaReviewForm[] = Object.freeze([
   { id: "kana-glyph-to-sound", kind: "glyph-to-sound", prompt: "glyph", answer: "sound" },
-  { id: "kana-sound-to-glyph", kind: "sound-to-glyph", prompt: "sound", answer: "glyph" },
-  { id: "kana-audio-to-glyph", kind: "audio-to-glyph", prompt: "audio", answer: "glyph" },
 ]);
 
 export interface KanaReviewCard {

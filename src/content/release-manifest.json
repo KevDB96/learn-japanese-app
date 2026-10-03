@@ -35,7 +35,7 @@
     "vocabulary": 56,
     "grammar": 9,
     "phrases": 8,
-    "reviewForms": 8,
+    "reviewForms": 4,
     "pronunciation": 0
   },
   "ids": {
@@ -956,13 +956,9 @@
     ],
     "reviewForms": [
       "kana-glyph-to-sound",
-      "kana-sound-to-glyph",
-      "kana-audio-to-glyph",
       "vocabulary-meaning",
       "vocabulary-reading",
-      "vocabulary-production",
-      "phrase-meaning",
-      "phrase-production"
+      "phrase-meaning"
     ],
     "pronunciation": []
   },
@@ -978,7 +974,7 @@
     "vocabulary": "3adfdeaf3fac1b691c14e954f4373558f1c0dd6e8bd47ac79a8c00b7e7ad1d8f",
     "grammar": "d5964a23d840c4eca4ea87808b2736fb1c05cfbee62cdb4da4d7f212693c5411",
     "phrases": "9b264774cda95305b90504fa7bf893079e509daebff1ea104c5fc8d245f38243",
-    "reviewForms": "e9bf4ee3ad87f019888b2953a68dec9534af2798abfaf6dbb05bf249b98133a1",
+    "reviewForms": "67d7f4d493b90de346412c4f3ef2dde055366686e22614f759d59e61927afa91",
     "pronunciation": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "assets": {

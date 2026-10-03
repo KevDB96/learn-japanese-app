@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
-import { generateGrammarClozeReviewCards, validateGrammarContent } from "./grammar.ts";
+import { generateGrammarRecognitionReviewCards, validateGrammarContent } from "./grammar.ts";
 import type { ContentId } from "./types.ts";
 const ids = (...values: string[]) => values.map((value) => value as ContentId);
 
@@ -34,11 +34,11 @@ describe("grammar mini-lessons", () => {
     expect(errors).toContain("grammar dependency cycle:");
   });
 
-  it("generates stable scheduled cloze cards from explicitly authored grammar blanks", () => {
-    const cards = generateGrammarClozeReviewCards(grammarFixtures);
-    expect(cards.map((card) => card.id)).toEqual(generateGrammarClozeReviewCards(grammarFixtures).map((card) => card.id));
+  it("generates stable recognition cards from authored grammar examples without production", () => {
+    const cards = generateGrammarRecognitionReviewCards(grammarFixtures);
+    expect(cards.map((card) => card.id)).toEqual(generateGrammarRecognitionReviewCards(grammarFixtures).map((card) => card.id));
     expect(cards.length).toBeGreaterThan(0);
-    expect(cards.every((card) => card.kind === "cloze" && card.conceptId.startsWith("grammar-") && card.answers.length > 0)).toBe(true);
+    expect(cards.every((card) => card.kind === "meaning" && card.formId === "grammar-recognition" && card.conceptId.startsWith("grammar-") && card.answers.length > 0)).toBe(true);
   });
 
   it("rejects sentence orderings that are not permutations of authored chunks", () => {

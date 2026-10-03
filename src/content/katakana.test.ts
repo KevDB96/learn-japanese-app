@@ -93,8 +93,8 @@ describe("canonical base Katakana course", () => {
     expect([...states.keys()].sort()).toEqual(katakanaFixtures.map((item) => item.id).sort());
     expect([...states.values()].every((state) => state.lifecycle === "INTRODUCED")).toBe(true);
     expect([...states.values()].some((state) => state.lifecycle === "MASTERED")).toBe(false);
-    expect(scheduled).toHaveLength(92);
-    expect(new Set(scheduled).size).toBe(92);
+    expect(scheduled).toHaveLength(46);
+    expect(new Set(scheduled).size).toBe(46);
   });
 });
 
@@ -107,7 +107,7 @@ describe("voiced and contracted Katakana course", () => {
     expect(katakanaAdvancedFixtures.filter((item) => item.row === "extended-loanword").map((item) => item.glyph)).toEqual(["ティ", "ディ", "ファ", "フィ", "フェ", "フォ", "ウィ", "ウェ", "ウォ", "チェ"]);
     const derived = katakanaAdvancedFixtures.filter((item) => item.form === "contracted");
     expect(derived.every((item) => item.componentIds.length === 2 && item.reviewEligible === false)).toBe(true);
-    expect(generateKanaReviewCards(katakanaAdvancedFixtures)).toHaveLength(50);
+    expect(generateKanaReviewCards(katakanaAdvancedFixtures)).toHaveLength(25);
     expect(validateKanaContent([...katakanaFixtures, ...katakanaAdvancedFixtures], KANA_REVIEW_FORMS, kanaAudioManifest)).toEqual([]);
   });
 
@@ -136,7 +136,7 @@ describe("voiced and contracted Katakana course", () => {
       reviews: { introduce: async (_id, _at, cardId) => { if (cardId) scheduled.push(cardId); } },
     };
     for (const lesson of advancedLessons()) await completeLesson(repos, contentCatalog, lesson, () => new Date("2026-09-30T00:00:00Z"));
-    expect(scheduled).toHaveLength(50);
+    expect(scheduled).toHaveLength(25);
     expect(scheduled.every((cardId) => katakanaAdvancedFixtures.some((item) => item.form === "marked" && cardId.startsWith(`${item.id}--`)))).toBe(true);
     expect([...conceptStates.values()]).toHaveLength(katakanaAdvancedFixtures.length);
     expect([...conceptStates.values()].every((state) => state.lifecycle === "INTRODUCED")).toBe(true);

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { eligiblePracticeExercises } from "../../features/lessons/ExerciseEngine.tsx";
 import { contentCatalog } from "./catalog.ts";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
@@ -16,7 +17,7 @@ describe("numbers and time lesson", () => {
     expect(contentCatalog.units.find(({ id }) => id === "numbers-and-time")?.lessonIds).toEqual(["lesson-numbers-and-time"]);
   });
 
-  it("explains irregular clock, minute, and people readings and practices comprehension and production", () => {
+  it("explains irregular clock, minute, and people readings and supports comprehension practice", () => {
     const text = JSON.stringify(lesson);
     expect(text).toContain("四時 is よじ");
     expect(text).toContain("七時 is しちじ");
@@ -28,7 +29,7 @@ describe("numbers and time lesson", () => {
     expect(text).toContain("ひとり");
     expect(text).toContain("ふたり");
     expect(lesson.blocks.some((block) => block.kind === "exercise-slot" && block.exercises.some(({ type }) => type === "multiple-choice"))).toBe(true);
-    expect(lesson.blocks.some((block) => block.kind === "exercise-slot" && block.exercises.some(({ type }) => type === "short-text" || type === "sentence-order"))).toBe(true);
+    expect(eligiblePracticeExercises(lesson.blocks.flatMap((block) => block.kind === "exercise-slot" ? block.exercises : [])).every(({ type }) => type === "multiple-choice" || type === "audio-choice")).toBe(true);
     expect(grammarFixtures.find(({ id }) => id === "grammar-time-and-counters")?.examples.every(({ reading }) => !/[\u4e00-\u9fff]/.test(reading))).toBe(true);
   });
 

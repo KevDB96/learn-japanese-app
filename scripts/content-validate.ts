@@ -58,9 +58,9 @@ addIds("vocabulary", vocabularyFixtures);
 addIds("grammar", grammarFixtures);
 addIds("phrases", phraseFixtures);
 const expectedForms = [
-  ["kana", KANA_REVIEW_FORMS, [["kana-glyph-to-sound", "glyph-to-sound", "glyph", "sound"], ["kana-sound-to-glyph", "sound-to-glyph", "sound", "glyph"], ["kana-audio-to-glyph", "audio-to-glyph", "audio", "glyph"]]],
-  ["vocabulary", VOCABULARY_REVIEW_FORMS, [["vocabulary-meaning", "meaning", "written", "meanings"], ["vocabulary-reading", "reading", "written", "reading"], ["vocabulary-production", "production", "meaning", "written"]]],
-  ["phrase", PHRASE_REVIEW_FORMS, [["phrase-meaning", "meaning", "japanese", "meaning"], ["phrase-production", "production", "meaning", "japanese"]]],
+  ["kana", KANA_REVIEW_FORMS, [["kana-glyph-to-sound", "glyph-to-sound", "glyph", "sound"]]],
+  ["vocabulary", VOCABULARY_REVIEW_FORMS, [["vocabulary-meaning", "meaning", "written", "meanings"], ["vocabulary-reading", "reading", "written", "reading"]]],
+  ["phrase", PHRASE_REVIEW_FORMS, [["phrase-meaning", "meaning", "japanese", "meaning"]]],
 ] as const;
 const formIssues = expectedForms.flatMap(([label, actual, expected]) => JSON.stringify(actual.map(({ id, kind, prompt, answer }) => [id, kind, prompt, answer])) === JSON.stringify(expected) ? [] : [`${label} review form IDs and mappings changed; preserve released form IDs and mappings`]);
 const issues = [...validateContent(catalog), ...validateKanaContent(allKana, KANA_REVIEW_FORMS, kanaAudioManifest, { bundledAssets: publicFiles, providerIds: ["bundled", "speech-synthesis"] }), ...brokenBundledAudio, ...validateVocabularyContent(vocabularyFixtures, VOCABULARY_REVIEW_FORMS, { audioIds: [...audioIds], existingIds: [...catalogIds, ...allKana.map(({ id }) => id)] }), ...validateGrammarContent(grammarFixtures), ...validatePhraseContent(phraseFixtures, PHRASE_REVIEW_FORMS, { grammarIds: grammarFixtures.map(({ id }) => id), audioIds: [...audioIds], existingIds: [...catalogIds, ...allKana.map(({ id }) => id), ...vocabularyFixtures.map(({ id }) => id), ...grammarFixtures.map(({ id }) => id)] }), ...missingExerciseAudio, ...inventory, ...globalIdIssues, ...formIssues];

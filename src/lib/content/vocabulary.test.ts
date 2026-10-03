@@ -4,15 +4,15 @@ import { generateVocabularyReviewCards, VOCABULARY_REVIEW_FORMS, validateVocabul
 import { vocabularyFixtures } from "../../content/vocabulary-fixtures.ts";
 
 describe("vocabulary concepts and review forms", () => {
-  it("generates deterministic meaning, reading, and production cards from each concept", () => {
+  it("generates deterministic recognition cards without production", () => {
     const cards = generateVocabularyReviewCards(vocabularyFixtures);
     expect(cards).toEqual(generateVocabularyReviewCards(vocabularyFixtures));
-    expect(cards).toHaveLength(vocabularyFixtures.length * 3);
+    expect(cards).toHaveLength(vocabularyFixtures.length * 2);
     expect(new Set(cards.map(({ id }) => id)).size).toBe(cards.length);
-    expect(cards.map(({ kind }) => kind)).toEqual(vocabularyFixtures.flatMap(() => ["meaning", "production", "reading"]));
+    expect(cards.every(({ kind }) => kind === "meaning" || kind === "reading")).toBe(true);
     expect(cards.find(({ kind, conceptId }) => kind === "meaning" && conceptId === "vocab-neko")?.answers).toEqual(["cat"]);
     expect(cards.find(({ kind, conceptId }) => kind === "reading" && conceptId === "vocab-neko")?.answers).toEqual(["ねこ"]);
-    expect(cards.find(({ kind, conceptId }) => kind === "production" && conceptId === "vocab-neko")?.answers).toEqual(["猫"]);
+    expect(cards.some(({ formId }) => formId === "vocabulary-production")).toBe(false);
     expect(cards.filter(({ conceptId }) => conceptId === "vocab-neko").every(({ reading }) => reading === "ねこ")).toBe(true);
   });
 

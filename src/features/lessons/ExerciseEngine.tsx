@@ -167,10 +167,16 @@ export function ExerciseRendererView(props: ExerciseRendererProps) {
   return <Renderer {...props} />;
 }
 
+export function eligiblePracticeExercises(exercises: readonly ExerciseDefinition[]): ExerciseDefinition[] {
+  return exercises.filter((exercise) => exercise.type === "multiple-choice" || (exercise.type === "audio-choice" && exercise.target !== "glyph"));
+}
+
 export function ExerciseSlot({ title, exercises, onIncorrect }: { title: string; exercises: readonly ExerciseDefinition[]; onIncorrect?: (exercise: ExerciseDefinition, answer: string) => void }) {
   const [completed, setCompleted] = useState<ReadonlySet<string>>(() => new Set());
   const complete = (id: string) => setCompleted((current) => current.has(id) ? current : new Set(current).add(id));
-  return <section aria-label={title}><h3>{title}</h3>{exercises.map((exercise) => <div key={exercise.id} data-exercise-id={exercise.id}>
+  const eligible = eligiblePracticeExercises(exercises);
+  if (!eligible.length) return null;
+  return <section aria-label={title}><h3>{title}</h3>{eligible.map((exercise) => <div key={exercise.id} data-exercise-id={exercise.id}>
     <ExerciseRendererView exercise={exercise} onComplete={complete} onIncorrect={onIncorrect} />{completed.has(exercise.id) && <span className="sr-only" aria-label="Exercise completed">Completed</span>}
   </div>)}</section>;
 }

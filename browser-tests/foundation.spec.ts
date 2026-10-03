@@ -16,6 +16,8 @@ test('Learn opens directly to a study card and remains usable offline on mobile'
   const card = page.getByRole('region', { name: 'Daily study card' })
   await expect(card).toBeVisible()
   await expect(card.getByRole('heading')).toBeVisible()
+  await expect(card.getByRole('textbox')).toHaveCount(0)
+  await expect(card).not.toContainText(/type the japanese|write .* japanese|meaning .* japanese/i)
   await expect(page.getByRole('button', { name: 'Continue', exact: true })).toHaveCount(0)
   await expect(page.getByText('YOUR FIRST COURSE')).toHaveCount(0)
   await expect(card.getByRole('group', { name: 'Review rating' })).toHaveCount(0)

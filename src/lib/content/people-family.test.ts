@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { eligiblePracticeExercises } from "../../features/lessons/ExerciseEngine.tsx";
 import { contentCatalog } from "./catalog.ts";
 import { grammarFixtures } from "../../content/grammar-fixtures.ts";
 import { phraseFixtures } from "../../content/phrase-fixtures.ts";
@@ -14,13 +15,13 @@ describe("people and family lesson", () => {
     expect(lesson.introduces).toEqual(expect.arrayContaining(["family-mother", "family-father", "family-older-brother", "family-older-sister", "sentence-family-mother", "sentence-family-brother"]));
   });
 
-  it("teaches respectful family wording and includes comprehension, production, and kana-readable kanji", () => {
+  it("teaches respectful family wording and supports comprehension and kana-readable kanji", () => {
     const text = JSON.stringify(lesson);
     expect(text).toContain("母 (はは)");
     expect(text).toContain("お母さん (おかあさん)");
     expect(text).toContain("姉");
     expect(lesson.blocks.some((block) => block.kind === "exercise-slot" && block.exercises.some(({ type }) => type === "multiple-choice"))).toBe(true);
-    expect(lesson.blocks.some((block) => block.kind === "exercise-slot" && block.exercises.some(({ type }) => type === "short-text" || type === "sentence-order"))).toBe(true);
+    expect(eligiblePracticeExercises(lesson.blocks.flatMap((block) => block.kind === "exercise-slot" ? block.exercises : [])).every(({ type }) => type === "multiple-choice" || type === "audio-choice")).toBe(true);
     expect(contentCatalog.sentences.filter(({ id }) => id.startsWith("sentence-family-")).every(({ reading }) => !/[\u4e00-\u9fff]/.test(reading))).toBe(true);
     expect(grammarFixtures.find(({ id }) => id === "grammar-family-terms")?.examples.every(({ reading }) => !/[\u4e00-\u9fff]/.test(reading))).toBe(true);
     expect(vocabularyFixtures.some(({ id }) => id === "vocab-ani" && generateVocabularyReviewCards(vocabularyFixtures).some((card) => card.conceptId === id))).toBe(true);
